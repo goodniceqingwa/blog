@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+/* ============================================
+   QingWaaa.top — Design System (Tailwind v4)
+   ============================================ */
+
+/* --- CSS Variables (Dark default) --- */
+:root {
+  --bg-deepest: #0a0a0a;
+  --bg-deep: #1c1c1c;
+  --bg-mid: #2e2e2e;
+  --bg-light: #4a4a4a;
+  --text-primary: #ffffff;
+  --text-secondary: #e5e5e5;
+  --text-muted: #a0a0a0;
+  --accent-purple: #a020f0;
+  --accent-cyan: #00f5ff;
+  --accent-silver: #c0c0c0;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+.light {
+  --bg-deepest: #ffffff;
+  --bg-deep: #f5f5f5;
+  --bg-mid: #ebebeb;
+  --bg-light: #d4d4d4;
+  --text-primary: #0a0a0a;
+  --text-secondary: #3a3a3a;
+  --text-muted: #6b6b6b;
+  --accent-purple: #7b16c9;
+  --accent-cyan: #00b8d4;
+  --accent-silver: #888888;
+  --glass-bg: rgba(0, 0, 0, 0.03);
+  --glass-border: rgba(0, 0, 0, 0.08);
+}
+
+/* --- Tailwind v4 Theme Tokens --- */
+@theme inline {
+  /* Colors */
+  --color-bg-deepest: var(--bg-deepest);
+  --color-bg-deep: var(--bg-deep);
+  --color-bg-mid: var(--bg-mid);
+  --color-bg-light: var(--bg-light);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-silver: var(--accent-silver);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+
+  /* Fonts */
+  --font-heading: var(--font-space-grotesk), var(--font-noto-sans-sc), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), var(--font-noto-sans-sc), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* Animations */
+  --animate-bounce-slow: bounce 2s infinite;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+  --animate-float: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(160, 32, 240, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(160, 32, 240, 0.6); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* --- Base Styles --- */
+body {
+  background-color: var(--bg-deepest);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background: rgba(160, 32, 240, 0.3);
+  color: #ffffff;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(160, 32, 240, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(160, 32, 240, 0.6);
+}
+
+/* --- Utility Classes --- */
+@utility glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+@utility glass-hover {
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  transition: all 0.3s ease;
+}
+
+@utility glow-purple {
+  box-shadow: 0 0 20px rgba(160, 32, 240, 0.3);
+}
+
+@utility glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+}
+
+@utility text-gradient {
+  background: linear-gradient(to right, var(--accent-purple), var(--accent-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --- Prose (Blog MDX) --- */
+.prose-custom h1 { font-size: 1.875rem; font-weight: 700; color: var(--text-primary); margin-top: 2rem; margin-bottom: 1rem; font-family: var(--font-heading); }
+.prose-custom h2 { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-top: 1.5rem; margin-bottom: 0.75rem; font-family: var(--font-heading); }
+.prose-custom h3 { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); margin-top: 1.25rem; margin-bottom: 0.5rem; font-family: var(--font-heading); }
+.prose-custom p { color: var(--text-secondary); line-height: 1.75; margin-bottom: 1rem; }
+.prose-custom a { color: var(--accent-purple); text-decoration: underline; transition: color 0.2s; }
+.prose-custom a:hover { color: var(--accent-cyan); }
+.prose-custom ul { list-style: disc inside; color: var(--text-secondary); margin-bottom: 1rem; }
+.prose-custom ol { list-style: decimal inside; color: var(--text-secondary); margin-bottom: 1rem; }
+.prose-custom li { color: var(--text-secondary); margin-bottom: 0.25rem; }
+.prose-custom blockquote { border-left: 4px solid rgba(160, 32, 240, 0.5); padding-left: 1rem; font-style: italic; color: var(--text-muted); margin: 1rem 0; }
+.prose-custom code { background: var(--bg-mid); padding: 0.125rem 0.5rem; border-radius: 0.25rem; font-size: 0.875rem; font-family: var(--font-mono); color: var(--accent-cyan); }
+.prose-custom pre { background: var(--bg-deep); border-radius: 0.75rem; padding: 1rem; overflow-x: auto; margin: 1rem 0; border: 1px solid var(--glass-border); }
+.prose-custom pre code { background: transparent; padding: 0; color: var(--text-secondary); }
+.prose-custom table { width: 100%; color: var(--text-secondary); margin: 1rem 0; }
+.prose-custom th { text-align: left; padding: 0.5rem; border-bottom: 1px solid var(--glass-border); color: var(--text-primary); font-weight: 500; }
+.prose-custom td { padding: 0.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.prose-custom strong { color: var(--text-primary); font-weight: 600; }
+.prose-custom hr { border-color: var(--glass-border); margin: 2rem 0; }

@@ -11,3 +11,11 @@ export function formatDate(date: string): string {
     day: "numeric",
   });
 }
+
+/**
+ * Prepend basePath to static asset paths (images in public/).
+ * next/image with unoptimized:true doesn't auto-prepend basePath.
+ */
+export function assetPath(path: string): string {
+  return `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${path}`;
+}

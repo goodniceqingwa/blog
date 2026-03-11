@@ -1,0 +1,128 @@
+1:"$Sreact.fragment"
+2:I[22016,["/_next/static/chunks/f25d9d9ccf4f33d2.js","/_next/static/chunks/139e2097087bfffa.js"],""]
+3b:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/f3e35d9a80465ef3.js"],"OutletBoundary"]
+3c:"$Sreact.suspense"
+3:T5be,#!/usr/bin/env bash
+set -euo pipefail
+
+log() {
+  printf '\n[%s] %s\n' "$(date '+%H:%M:%S')" "$*"
+}
+
+if [[ "${EUID}" -eq 0 ]]; then
+  echo "请不要直接使用 root 运行此脚本。请用普通用户执行，脚本会按需调用 sudo。"
+  exit 1
+fi
+
+. /etc/os-release
+CODENAME="${UBUNTU_CODENAME:-${VERSION_CODENAME:-}}"
+
+if [[ "${ID:-}" != "ubuntu" || "${VERSION_ID:-}" != "22.04" || "${CODENAME}" != "jammy" ]]; then
+  echo "此脚本仅支持 Ubuntu 22.04 (jammy)。当前系统: ${PRETTY_NAME:-unknown}"
+  exit 1
+fi
+
+log "Refreshing sudo credential"
+sudo -v
+
+log "Refreshing apt metadata"
+sudo apt-get update
+
+log "Installing Gazebo Fortress and ROS 2 integration"
+sudo apt-get install -y ignition-fortress ros-humble-ros-gz
+
+BASHRC="${HOME}/.bashrc"
+ROS_BEGIN="# >>> ROS 2 Humble >>>"
+
+if ! grep -Fq "${ROS_BEGIN}" "${BASHRC}"; then
+  cat >> "${BASHRC}" <<'EOF'
+
+# >>> ROS 2 Humble >>>
+if [ -f /opt/ros/humble/setup.bash ]; then
+  . /opt/ros/humble/setup.bash
+fi
+# <<< ROS 2 Humble <<<
+EOF
+  log "Appended ROS 2 environment to ${BASHRC}"
+else
+  log "ROS 2 environment already exists in ${BASHRC}"
+fi
+
+log "Verifying Gazebo CLI"
+ign gazebo --versions
+
+log "Verifying ROS 2 integration"
+bash -lc 'source /opt/ros/humble/setup.bash && ros2 pkg executables ros_gz_bridge | head -n 5'
+
+cat <<'EOF'
+
+Gazebo Fortress installation finished.
+
+Next:
+  source ~/.bashrc
+
+Verify:
+  ign gazebo --versions
+  ros2 pkg executables ros_gz_bridge
+
+Run Gazebo:
+  ign gazebo
+
+EOF
+0:{"buildId":"nVb_A5a2hh_fkVPb1uVgP","rsc":["$","$1","c",{"children":[["$","article",null,{"className":"min-h-screen py-24 px-6","children":["$","div",null,{"className":"max-w-3xl mx-auto","children":[["$","$L2",null,{"href":"/blog","className":"text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block","children":"← 返回博客"}],["$","header",null,{"className":"mb-12","children":[["$","h1",null,{"className":"text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4","children":"Ubuntu 22.04 安装 Gazebo Fortress 实战：附 ROS 2 Humble 集成与一键安装脚本"}],["$","div",null,{"className":"flex items-center gap-4 text-text-muted text-sm","children":[["$","span",null,{"children":"2026年3月11日"}],["$","span",null,{"children":"·"}],["$","span",null,{"children":"8 min read"}]]}],["$","div",null,{"className":"flex flex-wrap gap-2 mt-4","children":[["$","span","Gazebo",{"className":"text-xs px-3 py-1 rounded-full bg-accent-purple/10 text-accent-purple","children":"Gazebo"}],["$","span","ROS2",{"className":"text-xs px-3 py-1 rounded-full bg-accent-purple/10 text-accent-purple","children":"ROS2"}],["$","span","Ubuntu",{"className":"text-xs px-3 py-1 rounded-full bg-accent-purple/10 text-accent-purple","children":"Ubuntu"}],["$","span","仿真",{"className":"text-xs px-3 py-1 rounded-full bg-accent-purple/10 text-accent-purple","children":"仿真"}],["$","span","机器人",{"className":"text-xs px-3 py-1 rounded-full bg-accent-purple/10 text-accent-purple","children":"机器人"}]]}]]}],["$","div",null,{"className":"prose-custom","children":[["$","h2",null,{"children":"适用范围"}],"\n",["$","p",null,{"children":["这篇文章对应的是我在 ",["$","code",null,{"children":"Ubuntu 22.04.5 LTS"}]," 上的实际安装过程，目标组合是："]}],"\n",["$","ul",null,{"children":["\n",["$","li",null,{"children":["$","code",null,{"children":"ROS 2 Humble"}]}],"\n",["$","li",null,{"children":["$","code",null,{"children":"Gazebo Fortress"}]}],"\n",["$","li",null,{"children":[["$","code",null,{"children":"ros_gz"}]," 集成包"]}],"\n"]}],"\n",["$","p",null,{"children":["如果你的系统不是 ",["$","code",null,{"children":"Ubuntu 22.04 (jammy)"}],"，不要直接照抄下面的脚本。Gazebo 的可用版本、ROS 2 的兼容发行版，以及软件源里的包名都会随着系统版本变化。"]}],"\n",["$","h2",null,{"children":"为什么这篇文章选 Gazebo Fortress"}],"\n",["$","p",null,{"children":["在 ",["$","code",null,{"children":"Ubuntu 22.04 + ROS 2 Humble"}]," 这个组合下，",["$","code",null,{"children":"Gazebo Fortress"}]," 是更合适的搭配。它和 Humble 的生态兼容度高，而且 ROS 源里可以直接装到 ",["$","code",null,{"children":"ros_humble + ros_gz"}]," 这一套桥接包。"]}],"\n",["$","p",null,{"children":["这篇文章不走 ",["$","code",null,{"children":"Gazebo Classic"}],"，也不写 ",["$","code",null,{"children":"Gazebo Harmonic"}],"，原因很简单："]}],"\n",["$","ul",null,{"children":["\n",["$","li",null,{"children":[["$","code",null,{"children":"Gazebo Classic"}]," 已经不再是现在更推荐的新线"]}],"\n",["$","li",null,{"children":[["$","code",null,{"children":"Gazebo Harmonic"}]," 更常见于更新的系统和 ROS 发行版组合"]}],"\n",["$","li",null,{"children":"这篇文章追求的是“和当前机器实际安装结果一致”"}],"\n"]}],"\n",["$","h2",null,{"children":"这次安装走的是什么方式"}],"\n",["$","p",null,{"children":["我这次使用的是 ROS 软件源中的 ",["$","code",null,{"children":"apt"}]," 安装方式，核心步骤是："]}],"\n",["$","ol",null,{"children":["\n",["$","li",null,{"children":["确认系统是 ",["$","code",null,{"children":"Ubuntu 22.04"}]]}],"\n",["$","li",null,{"children":["安装 ",["$","code",null,{"children":"ignition-fortress"}]]}],"\n",["$","li",null,{"children":["安装 ",["$","code",null,{"children":"ros-humble-ros-gz"}]]}],"\n",["$","li",null,{"children":["确保 ",["$","code",null,{"children":"~/.bashrc"}]," 里自动加载 ROS 2 环境"]}],"\n",["$","li",null,{"children":"验证 Gazebo CLI 和 ROS 2 bridge 都可用"}],"\n"]}],"\n",["$","h2",null,{"children":"安装前先确认系统版本"}],"\n",["$","p",null,{"children":"先执行："}],"\n",["$","pre",null,{"children":["$","code",null,{"className":"language-bash","children":"cat /etc/os-release\n"}]}],"\n",["$","p",null,{"children":"你至少要看到类似下面的信息："}],"\n",["$","pre",null,{"children":["$","code",null,{"className":"language-text","children":"NAME=\"Ubuntu\"\nVERSION_ID=\"22.04\"\nVERSION_CODENAME=jammy\n"}]}],"\n",["$","p",null,{"children":"如果你还没装 ROS 2 Humble，建议先把 ROS 2 装好，再继续下面的 Gazebo 部分。"}],"\n",["$","h2",null,{"children":"一键安装脚本"}],"\n",["$","p",null,{"children":["下面这个脚本就是我根据这次实际安装过程整理出来的公开版。它不会硬编码 ",["$","code",null,{"children":"sudo"}]," 密码，执行时正常输入即可。"]}],"\n",["$","pre",null,{"children":["$","code",null,{"className":"language-bash","children":"$3"}]}],"\n","$L4","\n","$L5","\n","$L6","\n","$L7","\n","$L8","\n","$L9","\n","$La","\n","$Lb","\n","$Lc","\n","$Ld","\n","$Le","\n","$Lf","\n","$L10","\n","$L11","\n","$L12","\n","$L13","\n","$L14","\n","$L15","\n","$L16","\n","$L17","\n","$L18","\n","$L19","\n","$L1a","\n","$L1b","\n","$L1c","\n","$L1d","\n","$L1e","\n","$L1f","\n","$L20","\n","$L21","\n","$L22","\n","$L23","\n","$L24","\n","$L25","\n","$L26","\n","$L27","\n","$L28","\n","$L29","\n","$L2a","\n","$L2b","\n","$L2c","\n","$L2d","\n","$L2e","\n","$L2f","\n","$L30","\n","$L31","\n","$L32","\n","$L33","\n","$L34","\n","$L35","\n","$L36","\n","$L37","\n","$L38","\n","$L39"]}]]}]}],null,"$L3a"]}],"loading":null,"isPartial":false}
+4:["$","h2",null,{"children":"怎么执行这个脚本"}]
+5:["$","p",null,{"children":"最简单的方式是手动保存成一个文件："}]
+6:["$","pre",null,{"children":["$","code",null,{"className":"language-bash","children":"nano install_gazebo_fortress.sh\n"}]}]
+7:["$","p",null,{"children":"把上面的脚本粘进去，保存后执行："}]
+8:["$","pre",null,{"children":["$","code",null,{"className":"language-bash","children":"chmod +x install_gazebo_fortress.sh\n./install_gazebo_fortress.sh\n"}]}]
+9:["$","p",null,{"children":["安装过程中会提示你输入 ",["$","code",null,{"children":"sudo"}]," 密码。"]}]
+a:["$","h2",null,{"children":"安装完成后怎么验证"}]
+b:["$","p",null,{"children":"先让当前 shell 重新加载环境："}]
+c:["$","pre",null,{"children":["$","code",null,{"className":"language-bash","children":"source ~/.bashrc\n"}]}]
+d:["$","p",null,{"children":"然后验证 Gazebo 自身："}]
+e:["$","pre",null,{"children":["$","code",null,{"className":"language-bash","children":"ign gazebo --versions\n"}]}]
+f:["$","p",null,{"children":"我这台机器上的输出版本是："}]
+10:["$","pre",null,{"children":["$","code",null,{"className":"language-text","children":"6.16.0\n"}]}]
+11:["$","p",null,{"children":"再验证 ROS 2 侧桥接包："}]
+12:["$","pre",null,{"children":["$","code",null,{"className":"language-bash","children":"ros2 pkg executables ros_gz_bridge\n"}]}]
+13:["$","p",null,{"children":["如果你能看到类似下面这些条目，就说明 ",["$","code",null,{"children":"ros_gz"}]," 已经就位："]}]
+14:["$","ul",null,{"children":["\n",["$","li",null,{"children":["$","code",null,{"children":"ros_gz_bridge bridge_node"}]}],"\n",["$","li",null,{"children":["$","code",null,{"children":"ros_gz_bridge parameter_bridge"}]}],"\n",["$","li",null,{"children":["$","code",null,{"children":"ros_gz_bridge static_bridge"}]}],"\n"]}]
+15:["$","h2",null,{"children":"装完以后能做什么"}]
+16:["$","p",null,{"children":"最直接的测试就是先把 Gazebo 启起来："}]
+17:["$","pre",null,{"children":["$","code",null,{"className":"language-bash","children":"ign gazebo\n"}]}]
+18:["$","p",null,{"children":"如果你已经有 ROS 2 工作空间，接下来就可以往下玩："}]
+19:["$","ul",null,{"children":["\n",["$","li",null,{"children":["使用 ",["$","code",null,{"children":"ros_gz_bridge"}]," 做 ROS 和 Gazebo Transport 的桥接"]}],"\n",["$","li",null,{"children":"在 Gazebo 里加载机器人模型"}],"\n",["$","li",null,{"children":"用 ROS 2 节点和仿真世界通信"}],"\n"]}]
+1a:["$","h2",null,{"children":"这个脚本实际帮你做了什么"}]
+1b:["$","p",null,{"children":"如果你想自己手动装，可以把它理解成下面几步："}]
+1c:["$","h3",null,{"children":["1. 安装 ",["$","code",null,{"children":"ignition-fortress"}]]}]
+1d:["$","p",null,{"children":"这会带上 Gazebo Fortress 本体和一大串仿真依赖，包括渲染、传感器、物理引擎相关组件。"}]
+1e:["$","h3",null,{"children":["2. 安装 ",["$","code",null,{"children":"ros-humble-ros-gz"}]]}]
+1f:["$","p",null,{"children":"这是 ROS 2 Humble 和 Gazebo 之间的集成元包，会把你常用的桥接与仿真工具一起装上。"}]
+20:["$","p",null,{"children":"我这次实际安装后，至少确认了这些包已经存在："}]
+21:["$","ul",null,{"children":["\n",["$","li",null,{"children":["$","code",null,{"children":"ros-humble-ros-gz"}]}],"\n",["$","li",null,{"children":["$","code",null,{"children":"ros-humble-ros-gz-sim"}]}],"\n",["$","li",null,{"children":["$","code",null,{"children":"ros-humble-ros-gz-bridge"}]}],"\n"]}]
+22:["$","h3",null,{"children":"3. 自动补上 ROS 2 环境"}]
+23:["$","p",null,{"children":["如果你的 ",["$","code",null,{"children":"~/.bashrc"}]," 里还没有 ROS 2 Humble 的环境加载段，这个脚本会自动补进去，避免你每次手工执行："]}]
+24:["$","pre",null,{"children":["$","code",null,{"className":"language-bash","children":"source /opt/ros/humble/setup.bash\n"}]}]
+25:["$","h3",null,{"children":"4. 做命令级验证"}]
+26:["$","p",null,{"children":"脚本最后会直接检查："}]
+27:["$","ul",null,{"children":["\n",["$","li",null,{"children":["$","code",null,{"children":"ign gazebo --versions"}]}],"\n",["$","li",null,{"children":["$","code",null,{"children":"ros2 pkg executables ros_gz_bridge"}]}],"\n"]}]
+28:["$","p",null,{"children":["这样你执行完就知道环境有没有真的装好，而不是只看 ",["$","code",null,{"children":"apt"}]," 有没有报错。"]}]
+29:["$","h2",null,{"children":"常见问题"}]
+2a:["$","h3",null,{"children":["1. 为什么包名还是 ",["$","code",null,{"children":"ignition-fortress"}]]}]
+2b:["$","p",null,{"children":["Gazebo 新版的发展过程中经历过 ",["$","code",null,{"children":"Ignition"}]," 这条命名线，所以你现在仍然会看到很多 ",["$","code",null,{"children":"ign"}]," 和 ",["$","code",null,{"children":"ignition-*"}]," 的包名、命令名。这是正常现象，不是装错了。"]}]
+2c:["$","h3",null,{"children":["2. 为什么命令是 ",["$","code",null,{"children":"ign gazebo"}]]}]
+2d:["$","p",null,{"children":"因为在 Fortress 这代里，命令行入口仍然是："}]
+2e:["$","pre",null,{"children":["$","code",null,{"className":"language-bash","children":"ign gazebo\n"}]}]
+2f:["$","p",null,{"children":["所以看到 ",["$","code",null,{"children":"ign"}]," 前缀不用慌。"]}]
+30:["$","h3",null,{"children":"3. 已经装过一次了，还能再跑脚本吗"}]
+31:["$","p",null,{"children":["可以。",["$","code",null,{"children":"apt"}]," 本身会识别已安装的软件包，而脚本对 ",["$","code",null,{"children":"~/.bashrc"}]," 的处理也做了幂等判断，不会反复追加同一段 ROS 环境。"]}]
+32:["$","h3",null,{"children":"4. 没装 ROS 2 能不能只装 Gazebo"}]
+33:["$","p",null,{"children":["可以，但这篇文章写的是 ",["$","code",null,{"children":"Gazebo Fortress + ROS 2 Humble 集成"}],"。如果你完全不需要 ROS 2，只装 ",["$","code",null,{"children":"ignition-fortress"}]," 也能单独用。"]}]
+34:["$","h3",null,{"children":"5. 为什么不是 Gazebo Harmonic"}]
+35:["$","p",null,{"children":["因为这篇文章对应的是 ",["$","code",null,{"children":"Ubuntu 22.04 + ROS 2 Humble"}]," 的实际安装结果，选 ",["$","code",null,{"children":"Fortress"}]," 更稳妥，也更贴近这个环境下的常见用法。"]}]
+36:["$","h2",null,{"children":"官方参考"}]
+37:["$","ul",null,{"children":["\n",["$","li",null,{"children":["$","a",null,{"href":"https://gazebosim.org/docs","children":"Gazebo 安装文档"}]}],"\n",["$","li",null,{"children":["$","a",null,{"href":"https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html","children":"ROS 2 Humble Ubuntu 安装文档"}]}],"\n",["$","li",null,{"children":["$","a",null,{"href":"https://github.com/gazebosim/ros_gz","children":[["$","code",null,{"children":"ros_gz"}]," 仓库"]}]}],"\n"]}]
+38:["$","p",null,{"children":"如果你后面想继续折腾，我可以再帮你补一篇："}]
+39:["$","ul",null,{"children":["\n",["$","li",null,{"children":"Gazebo 跑空场景和基础界面说明"}],"\n",["$","li",null,{"children":["ROS 2 + Gazebo 的 ",["$","code",null,{"children":"ros_gz_bridge"}]," 最小例子"]}],"\n",["$","li",null,{"children":"把机器人模型放进 Gazebo 的入门流程"}],"\n"]}]
+3a:["$","$L3b",null,{"children":["$","$3c",null,{"name":"Next.MetadataOutlet","children":"$@3d"}]}]
+3d:null

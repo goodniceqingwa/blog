@@ -1,0 +1,267 @@
+---
+title: "Ubuntu 22.04 安装 Gazebo Fortress 实战：附 ROS 2 Humble 集成与一键安装脚本"
+date: 2026-03-11
+tags: ["Gazebo", "ROS2", "Ubuntu", "仿真", "机器人"]
+categories: ["技术"]
+summary: "记录我在 Ubuntu 22.04.5 上安装 Gazebo Fortress 和 ROS 2 Humble 集成包 ros_gz 的完整过程，并整理成一个可直接复用的一键安装脚本。"
+---
+
+## 适用范围
+
+这篇文章对应的是我在 `Ubuntu 22.04.5 LTS` 上的实际安装过程，目标组合是：
+
+- `ROS 2 Humble`
+- `Gazebo Fortress`
+- `ros_gz` 集成包
+
+如果你的系统不是 `Ubuntu 22.04 (jammy)`，不要直接照抄下面的脚本。Gazebo 的可用版本、ROS 2 的兼容发行版，以及软件源里的包名都会随着系统版本变化。
+
+## 为什么这篇文章选 Gazebo Fortress
+
+在 `Ubuntu 22.04 + ROS 2 Humble` 这个组合下，`Gazebo Fortress` 是更合适的搭配。它和 Humble 的生态兼容度高，而且 ROS 源里可以直接装到 `ros_humble + ros_gz` 这一套桥接包。
+
+这篇文章不走 `Gazebo Classic`，也不写 `Gazebo Harmonic`，原因很简单：
+
+- `Gazebo Classic` 已经不再是现在更推荐的新线
+- `Gazebo Harmonic` 更常见于更新的系统和 ROS 发行版组合
+- 这篇文章追求的是“和当前机器实际安装结果一致”
+
+## 这次安装走的是什么方式
+
+我这次使用的是 ROS 软件源中的 `apt` 安装方式，核心步骤是：
+
+1. 确认系统是 `Ubuntu 22.04`
+2. 安装 `ignition-fortress`
+3. 安装 `ros-humble-ros-gz`
+4. 确保 `~/.bashrc` 里自动加载 ROS 2 环境
+5. 验证 Gazebo CLI 和 ROS 2 bridge 都可用
+
+## 安装前先确认系统版本
+
+先执行：
+
+```bash
+cat /etc/os-release
+```
+
+你至少要看到类似下面的信息：
+
+```text
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION_CODENAME=jammy
+```
+
+如果你还没装 ROS 2 Humble，建议先把 ROS 2 装好，再继续下面的 Gazebo 部分。
+
+## 一键安装脚本
+
+下面这个脚本就是我根据这次实际安装过程整理出来的公开版。它不会硬编码 `sudo` 密码，执行时正常输入即可。
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+log() {
+  printf '\n[%s] %s\n' "$(date '+%H:%M:%S')" "$*"
+}
+
+if [[ "${EUID}" -eq 0 ]]; then
+  echo "请不要直接使用 root 运行此脚本。请用普通用户执行，脚本会按需调用 sudo。"
+  exit 1
+fi
+
+. /etc/os-release
+CODENAME="${UBUNTU_CODENAME:-${VERSION_CODENAME:-}}"
+
+if [[ "${ID:-}" != "ubuntu" || "${VERSION_ID:-}" != "22.04" || "${CODENAME}" != "jammy" ]]; then
+  echo "此脚本仅支持 Ubuntu 22.04 (jammy)。当前系统: ${PRETTY_NAME:-unknown}"
+  exit 1
+fi
+
+log "Refreshing sudo credential"
+sudo -v
+
+log "Refreshing apt metadata"
+sudo apt-get update
+
+log "Installing Gazebo Fortress and ROS 2 integration"
+sudo apt-get install -y ignition-fortress ros-humble-ros-gz
+
+BASHRC="${HOME}/.bashrc"
+ROS_BEGIN="# >>> ROS 2 Humble >>>"
+
+if ! grep -Fq "${ROS_BEGIN}" "${BASHRC}"; then
+  cat >> "${BASHRC}" <<'EOF'
+
+# >>> ROS 2 Humble >>>
+if [ -f /opt/ros/humble/setup.bash ]; then
+  . /opt/ros/humble/setup.bash
+fi
+# <<< ROS 2 Humble <<<
+EOF
+  log "Appended ROS 2 environment to ${BASHRC}"
+else
+  log "ROS 2 environment already exists in ${BASHRC}"
+fi
+
+log "Verifying Gazebo CLI"
+ign gazebo --versions
+
+log "Verifying ROS 2 integration"
+bash -lc 'source /opt/ros/humble/setup.bash && ros2 pkg executables ros_gz_bridge | head -n 5'
+
+cat <<'EOF'
+
+Gazebo Fortress installation finished.
+
+Next:
+  source ~/.bashrc
+
+Verify:
+  ign gazebo --versions
+  ros2 pkg executables ros_gz_bridge
+
+Run Gazebo:
+  ign gazebo
+
+EOF
+```
+
+## 怎么执行这个脚本
+
+最简单的方式是手动保存成一个文件：
+
+```bash
+nano install_gazebo_fortress.sh
+```
+
+把上面的脚本粘进去，保存后执行：
+
+```bash
+chmod +x install_gazebo_fortress.sh
+./install_gazebo_fortress.sh
+```
+
+安装过程中会提示你输入 `sudo` 密码。
+
+## 安装完成后怎么验证
+
+先让当前 shell 重新加载环境：
+
+```bash
+source ~/.bashrc
+```
+
+然后验证 Gazebo 自身：
+
+```bash
+ign gazebo --versions
+```
+
+我这台机器上的输出版本是：
+
+```text
+6.16.0
+```
+
+再验证 ROS 2 侧桥接包：
+
+```bash
+ros2 pkg executables ros_gz_bridge
+```
+
+如果你能看到类似下面这些条目，就说明 `ros_gz` 已经就位：
+
+- `ros_gz_bridge bridge_node`
+- `ros_gz_bridge parameter_bridge`
+- `ros_gz_bridge static_bridge`
+
+## 装完以后能做什么
+
+最直接的测试就是先把 Gazebo 启起来：
+
+```bash
+ign gazebo
+```
+
+如果你已经有 ROS 2 工作空间，接下来就可以往下玩：
+
+- 使用 `ros_gz_bridge` 做 ROS 和 Gazebo Transport 的桥接
+- 在 Gazebo 里加载机器人模型
+- 用 ROS 2 节点和仿真世界通信
+
+## 这个脚本实际帮你做了什么
+
+如果你想自己手动装，可以把它理解成下面几步：
+
+### 1. 安装 `ignition-fortress`
+
+这会带上 Gazebo Fortress 本体和一大串仿真依赖，包括渲染、传感器、物理引擎相关组件。
+
+### 2. 安装 `ros-humble-ros-gz`
+
+这是 ROS 2 Humble 和 Gazebo 之间的集成元包，会把你常用的桥接与仿真工具一起装上。
+
+我这次实际安装后，至少确认了这些包已经存在：
+
+- `ros-humble-ros-gz`
+- `ros-humble-ros-gz-sim`
+- `ros-humble-ros-gz-bridge`
+
+### 3. 自动补上 ROS 2 环境
+
+如果你的 `~/.bashrc` 里还没有 ROS 2 Humble 的环境加载段，这个脚本会自动补进去，避免你每次手工执行：
+
+```bash
+source /opt/ros/humble/setup.bash
+```
+
+### 4. 做命令级验证
+
+脚本最后会直接检查：
+
+- `ign gazebo --versions`
+- `ros2 pkg executables ros_gz_bridge`
+
+这样你执行完就知道环境有没有真的装好，而不是只看 `apt` 有没有报错。
+
+## 常见问题
+
+### 1. 为什么包名还是 `ignition-fortress`
+
+Gazebo 新版的发展过程中经历过 `Ignition` 这条命名线，所以你现在仍然会看到很多 `ign` 和 `ignition-*` 的包名、命令名。这是正常现象，不是装错了。
+
+### 2. 为什么命令是 `ign gazebo`
+
+因为在 Fortress 这代里，命令行入口仍然是：
+
+```bash
+ign gazebo
+```
+
+所以看到 `ign` 前缀不用慌。
+
+### 3. 已经装过一次了，还能再跑脚本吗
+
+可以。`apt` 本身会识别已安装的软件包，而脚本对 `~/.bashrc` 的处理也做了幂等判断，不会反复追加同一段 ROS 环境。
+
+### 4. 没装 ROS 2 能不能只装 Gazebo
+
+可以，但这篇文章写的是 `Gazebo Fortress + ROS 2 Humble 集成`。如果你完全不需要 ROS 2，只装 `ignition-fortress` 也能单独用。
+
+### 5. 为什么不是 Gazebo Harmonic
+
+因为这篇文章对应的是 `Ubuntu 22.04 + ROS 2 Humble` 的实际安装结果，选 `Fortress` 更稳妥，也更贴近这个环境下的常见用法。
+
+## 官方参考
+
+- [Gazebo 安装文档](https://gazebosim.org/docs)
+- [ROS 2 Humble Ubuntu 安装文档](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html)
+- [`ros_gz` 仓库](https://github.com/gazebosim/ros_gz)
+
+如果你后面想继续折腾，我可以再帮你补一篇：
+
+- Gazebo 跑空场景和基础界面说明
+- ROS 2 + Gazebo 的 `ros_gz_bridge` 最小例子
+- 把机器人模型放进 Gazebo 的入门流程

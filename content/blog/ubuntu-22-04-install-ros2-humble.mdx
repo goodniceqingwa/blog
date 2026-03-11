@@ -1,0 +1,271 @@
+---
+title: "Ubuntu 22.04 安装 ROS 2 Humble 实战：附一键安装脚本"
+date: 2026-03-11
+tags: ["ROS2", "ROS", "Ubuntu", "Linux", "机器人"]
+categories: ["技术"]
+summary: "记录我在 Ubuntu 22.04.5 上安装 ROS 2 Humble 的完整过程，并整理成一个可直接复用的一键安装脚本。"
+---
+
+## 适用范围
+
+这篇文章对应的是我在 `Ubuntu 22.04.5 LTS` 上的实际安装过程，目标版本是 `ROS 2 Humble`。
+
+如果你的系统不是 `Ubuntu 22.04 (jammy)`，不要直接照抄下面的脚本。ROS 2 的发行版和 Ubuntu 版本是强绑定的，版本不匹配很容易装出一堆依赖问题。
+
+## 这次安装走的是什么方式
+
+我这次使用的是 ROS 官方推荐的 `apt` 安装方式，核心步骤是：
+
+1. 安装前置依赖并启用 `universe`
+2. 安装官方的 `ros2-apt-source`
+3. 安装 `ros-humble-desktop` 和 `ros-dev-tools`
+4. 初始化 `rosdep`
+5. 把 `source /opt/ros/humble/setup.bash` 写入 `~/.bashrc`
+
+这样装出来的环境比较标准，后续建工作空间、拉包、跑 `colcon` 都更顺手。
+
+## 安装前先确认系统版本
+
+先执行：
+
+```bash
+cat /etc/os-release
+```
+
+你至少要看到类似下面的信息：
+
+```text
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION_CODENAME=jammy
+```
+
+## 一键安装脚本
+
+下面这个脚本就是我根据这次实际安装过程整理出来的公开版。它不会硬编码 `sudo` 密码，执行时正常输入即可。
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+log() {
+  printf '\n[%s] %s\n' "$(date '+%H:%M:%S')" "$*"
+}
+
+if [[ "${EUID}" -eq 0 ]]; then
+  echo "请不要直接使用 root 运行此脚本。请用普通用户执行，脚本会按需调用 sudo。"
+  exit 1
+fi
+
+. /etc/os-release
+CODENAME="${UBUNTU_CODENAME:-${VERSION_CODENAME:-}}"
+
+if [[ "${ID:-}" != "ubuntu" || "${VERSION_ID:-}" != "22.04" || "${CODENAME}" != "jammy" ]]; then
+  echo "此脚本仅支持 Ubuntu 22.04 (jammy)。当前系统: ${PRETTY_NAME:-unknown}"
+  exit 1
+fi
+
+log "Refreshing sudo credential"
+sudo -v
+
+log "Installing prerequisites"
+sudo apt-get update
+sudo apt-get install -y software-properties-common curl ca-certificates
+
+log "Enabling universe repository"
+sudo add-apt-repository -y universe
+
+log "Refreshing apt metadata"
+sudo apt-get update
+
+TMP_DEB="$(mktemp /tmp/ros2-apt-source.XXXXXX.deb)"
+cleanup() {
+  rm -f "${TMP_DEB}"
+}
+trap cleanup EXIT
+
+if ! dpkg -s ros2-apt-source >/dev/null 2>&1; then
+  log "Resolving latest ros2-apt-source release"
+  RELEASE_URL="$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/ros-infrastructure/ros-apt-source/releases/latest)"
+  RELEASE_TAG="${RELEASE_URL##*/}"
+  VERSION="${RELEASE_TAG#v}"
+
+  log "Downloading ros2-apt-source ${VERSION}"
+  curl -L --fail -o "${TMP_DEB}" \
+    "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${RELEASE_TAG}/ros2-apt-source_${VERSION}.${CODENAME}_all.deb"
+
+  log "Installing ros2-apt-source"
+  sudo dpkg -i "${TMP_DEB}"
+else
+  log "ros2-apt-source already installed, skipping"
+fi
+
+log "Installing ROS 2 Humble desktop and development tools"
+sudo apt-get update
+sudo apt-get install -y ros-humble-desktop ros-dev-tools
+
+if [[ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]]; then
+  log "Initializing rosdep"
+  sudo rosdep init
+else
+  log "rosdep already initialized, skipping"
+fi
+
+log "Updating rosdep index"
+rosdep update
+
+BASHRC="${HOME}/.bashrc"
+ROS_BEGIN="# >>> ROS 2 Humble >>>"
+ROS_END="# <<< ROS 2 Humble <<<"
+
+if ! grep -Fq "${ROS_BEGIN}" "${BASHRC}"; then
+  cat >> "${BASHRC}" <<'EOF'
+
+# >>> ROS 2 Humble >>>
+if [ -f /opt/ros/humble/setup.bash ]; then
+  . /opt/ros/humble/setup.bash
+fi
+# <<< ROS 2 Humble <<<
+EOF
+  log "Appended ROS 2 environment to ${BASHRC}"
+else
+  log "ROS 2 environment already exists in ${BASHRC}"
+fi
+
+log "Verifying installation"
+bash -lc 'source /opt/ros/humble/setup.bash && ros2 --help >/dev/null'
+bash -lc 'source /opt/ros/humble/setup.bash && ros2 pkg executables demo_nodes_cpp | head -n 5'
+
+cat <<'EOF'
+
+ROS 2 Humble installation finished.
+
+Next:
+  source ~/.bashrc
+
+Verify:
+  ros2 --help
+  ros2 pkg executables demo_nodes_cpp
+
+EOF
+```
+
+## 怎么执行这个脚本
+
+最简单的方式是手动保存成一个文件：
+
+```bash
+nano install_ros2_humble.sh
+```
+
+把上面的脚本粘进去，保存后执行：
+
+```bash
+chmod +x install_ros2_humble.sh
+./install_ros2_humble.sh
+```
+
+安装过程中会提示你输入 `sudo` 密码。
+
+## 安装完成后怎么验证
+
+先让当前 shell 重新加载环境：
+
+```bash
+source ~/.bashrc
+```
+
+然后验证：
+
+```bash
+ros2 --help
+ros2 pkg executables demo_nodes_cpp
+```
+
+如果第二条命令能列出 `demo_nodes_cpp` 下面的一串可执行程序，说明基础环境已经可用了。
+
+还可以继续检查 `rosdep`：
+
+```bash
+rosdep update
+```
+
+## 这个脚本实际帮你做了什么
+
+如果你想自己手动装，可以把它理解成下面几步：
+
+### 1. 启用 Ubuntu 的 `universe`
+
+很多 ROS 相关依赖都在这里，不开的话后面会缺包。
+
+### 2. 安装 `ros2-apt-source`
+
+这是 ROS 官方维护的仓库配置包。现在官方推荐用它来注册 ROS 软件源，而不是手工复制一长串源和 key 命令。
+
+### 3. 安装 `ros-humble-desktop`
+
+这个包会带上桌面版常用组件，比如：
+
+- `rviz2`
+- `rqt`
+- `turtlesim`
+- 常见 demo 节点
+
+如果你只想要更小的安装体积，也可以改成 `ros-humble-ros-base`，但那就不是这篇文章的目标了。
+
+### 4. 安装 `ros-dev-tools`
+
+这个包会补齐常见开发工具，后面做工作空间开发会方便很多。
+
+### 5. 初始化 `rosdep`
+
+后面很多 ROS 工作空间会依赖：
+
+```bash
+rosdep install --from-paths src --ignore-src -r -y
+```
+
+所以这里顺手初始化掉最省事。
+
+### 6. 自动写入 `~/.bashrc`
+
+这样你下次开终端就不用手工执行：
+
+```bash
+source /opt/ros/humble/setup.bash
+```
+
+## 常见问题
+
+### 1. 为什么脚本限制必须是 Ubuntu 22.04
+
+因为这篇文章对应的是 `ROS 2 Humble + Ubuntu 22.04`。如果你是 `Ubuntu 24.04`，更合适的是 `ROS 2 Jazzy`；如果系统版本不对，最容易出问题的就是依赖关系和软件源。
+
+### 2. 为什么安装会很慢
+
+`ros-humble-desktop` 体积不小，而且会拉很多 Ubuntu 依赖。网络一般的时候，安装几十分钟都不奇怪。
+
+### 3. 已经装过一次了，还能再跑脚本吗
+
+可以。脚本做了几处幂等处理：
+
+- 已装过 `ros2-apt-source` 会跳过
+- 已初始化 `rosdep` 会跳过
+- `~/.bashrc` 已有 ROS 段落时不会重复追加
+
+### 4. 当前终端里为什么 `ros2` 还是找不到
+
+通常是因为你还没执行：
+
+```bash
+source ~/.bashrc
+```
+
+或者你开这个终端的时机早于安装完成时间。
+
+## 官方参考
+
+- [ROS 2 Humble Ubuntu 安装文档](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html)
+- [`ros-apt-source` 发布页](https://github.com/ros-infrastructure/ros-apt-source/releases/latest)
+
+如果你只是想快速装好环境，直接用上面的脚本就够了。如果你后面还要配工作空间、`colcon`、`rviz2`、`turtlesim` 示例，我可以再继续补一篇从零开始的开发环境文章。

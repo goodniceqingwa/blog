@@ -230,3 +230,90 @@ ros2 topic echo /uav/odometry --once
 - ROS 2 侧可以看到 `/uav/...` 话题
 
 这时候你就可以继续往下接自己的 ROS 2 节点了，比如控制节点、视觉节点或者定位节点。
+
+## 这次真实踩到的几个坑
+
+这次场景不是一次就跑通的，下面这几个问题都是真实出现过的。
+
+### 1. `Link quadrotor/base_link could not be found`
+
+我一开始在多旋翼控制插件里把 `comLinkName`、`jointName`、`linkName` 写成了带模型名前缀的形式，比如：
+
+```text
+quadrotor/base_link
+quadrotor/rotor_0_joint
+```
+
+但这个模型是通过 `ros_gz_sim create -file` 动态生成的，本质上更适合按模型内局部引用去写。  
+改成 `base_link`、`rotor_0_joint` 这类局部名称之后，这个错误就消失了。
+
+### 2. `allocation matrix rank is 3`
+
+这个问题更隐蔽一点。Gazebo 没有直接告诉你“哪个旋翼写错了”，只会报：
+
+```text
+allocation matrix rank is 3
+```
+
+它的本质是四旋翼的旋向配置退化了，导致控制分配矩阵不满秩。
+
+我最后回到模型文件里逐个检查：
+
+- `turningDirection`
+- 控制器里的 `direction`
+
+把 4 个旋翼改成交替方向之后，控制器才能正常初始化。
+
+### 3. `ros2 run` 提示 `No executable found`
+
+我最开始虽然把 `takeoff_demo.py` 安装进了包里，但脚本本身没有执行权限，所以：
+
+```bash
+ros2 run uav_open_field_sim takeoff_demo.py
+```
+
+会直接报：
+
+```text
+No executable found
+```
+
+这个问题最后不是改 launch，也不是改 Python 代码，而是给脚本补执行权限，并重新构建工作区。
+
+## 别人怎么复用这个场景
+
+现在这个场景已经整理到公开仓库里：
+
+`https://github.com/goodniceqingwa/uav_sim_ws`
+
+别人最短可以这样复现：
+
+```bash
+git clone https://github.com/goodniceqingwa/uav_sim_ws.git
+cd uav_sim_ws
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch uav_open_field_sim open_field_uav.launch.py use_rviz:=false
+```
+
+如果只想确认控制链路，再开第二个终端执行：
+
+```bash
+source /opt/ros/humble/setup.bash
+source ~/uav_sim_ws/install/setup.bash
+ros2 run uav_open_field_sim takeoff_demo.py
+```
+
+## 结语
+
+这次场景搭建对我来说最有价值的一点，不是“把 Gazebo 打开了”，而是把一套可持续扩展的结构整理出来了。
+
+到这里为止，这个工作区已经可以作为后续无人机算法开发的一个基础底座：
+
+- 你可以继续加传感器
+- 可以把空旷场地换成更复杂的场景
+- 可以接自己的 ROS 2 控制节点
+- 也可以继续往 PX4 / 更高保真链路扩展
+
+如果你当前只需要一个“先跑起来、后面能继续改”的 ROS 2 无人机场景，这套结构已经够用了。

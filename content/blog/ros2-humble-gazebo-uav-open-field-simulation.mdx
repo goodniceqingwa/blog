@@ -5,3 +5,124 @@ tags: ["ROS2", "Gazebo", "无人机", "仿真", "机器人"]
 categories: ["技术"]
 summary: "记录我如何基于 ROS 2 Humble、ros_gz 和本地四旋翼模型，搭建一个可直接运行的无人机仿真场景，并整理出目录结构、关键文件说明、运行命令和踩坑记录。"
 ---
+
+## 适用范围
+
+这篇文章默认你已经准备好了下面这套环境：
+
+- `Ubuntu 22.04`
+- `ROS 2 Humble`
+- 可用的 Gazebo / `ros_gz`
+
+如果你还没有装环境，可以先看我前面两篇文章：
+
+- [Ubuntu 22.04 安装 ROS 2 Humble 实战：附一键安装脚本](/blog/ubuntu-22-04-install-ros2-humble)
+- [Ubuntu 22.04 安装 Gazebo Fortress 实战：附 ROS 2 Humble 集成与一键安装脚本](/blog/ubuntu-22-04-install-gazebo-fortress)
+
+这篇文章不重复写环境安装，而是直接进入无人机场景本身的搭建。
+
+## 这次搭的是什么场景
+
+这次我搭的是一个“空旷起降场 + 本地四旋翼模型 + ROS 2 桥接接口”的无人机仿真场景，目标不是 PX4 那种飞控级高保真链路，而是先把一个适合算法开发、调试和演示的标准 ROS 2 仿真环境跑起来。
+
+最终这个场景包含：
+
+- 一个空旷起降场 world
+- 一个本地四旋翼模型
+- `IMU`、`GPS`、前视相机、里程计
+- `ROS 2 <-> Gazebo` 桥接
+- 一个基础起飞演示脚本
+
+这样做的好处是很直接：后面你想接自己的控制节点、视觉节点、定位节点，都可以直接基于这套结构往下扩展。
+
+## 工作区结构
+
+这次我把整个仿真场景放在一个独立工作区 `~/uav_sim_ws` 里，目录结构如下：
+
+```text
+uav_sim_ws/
+├── src/
+│   └── uav_open_field_sim/
+│       ├── config/
+│       │   └── bridge.yaml
+│       ├── launch/
+│       │   └── open_field_uav.launch.py
+│       ├── models/
+│       │   └── quadrotor/
+│       │       ├── model.config
+│       │       └── model.sdf
+│       ├── rviz/
+│       │   └── uav_open_field.rviz
+│       ├── scripts/
+│       │   └── takeoff_demo.py
+│       ├── test/
+│       ├── worlds/
+│       │   └── open_field.sdf
+│       ├── CMakeLists.txt
+│       └── package.xml
+└── README.md
+```
+
+我把它拆成这个结构，主要是为了把“场景资源”“桥接配置”“启动逻辑”“演示脚本”分开。后面你想换 world、换传感器或者换控制入口时，不会全堆在一个文件里。
+
+## 核心文件说明
+
+下面这几个文件是整个场景能跑起来的关键。
+
+### `worlds/open_field.sdf`
+
+这个文件定义空旷起降场本身，包括：
+
+- 地面
+- 光照
+- Gazebo 物理系统
+- 传感器系统
+- 起降标记和少量静态参照物
+
+它的职责很单纯，就是提供一个稳定、简单、便于观察的场景底座。
+
+### `models/quadrotor/model.sdf`
+
+这个文件定义无人机模型本身。里面除了机体、旋翼、惯性参数和关节，还挂了 Gazebo 的多旋翼控制插件和电机模型插件。
+
+同时我在这个模型里挂了几类基础传感器：
+
+- `IMU`
+- `NavSat`
+- 前视 `Camera`
+
+它是整个仿真场景里最核心的文件。
+
+### `config/bridge.yaml`
+
+这个文件负责整理桥接目标，也就是把哪些 Gazebo 话题映射到 ROS 2，哪些 ROS 2 控制命令转回 Gazebo。
+
+我这次主要桥了这些接口：
+
+- `/uav/cmd_vel`
+- `/uav/enable`
+- `/uav/imu`
+- `/uav/navsat`
+- `/uav/camera/image_raw`
+- `/uav/odometry`
+
+这样你后面用 ROS 2 工具查看数据会很直接。
+
+### `launch/open_field_uav.launch.py`
+
+这是整个场景的一键启动入口。它负责：
+
+- 启动 Gazebo
+- 加载 `open_field.sdf`
+- 生成四旋翼模型
+- 启动 `ros_gz_bridge`
+- 按参数决定是否启动 RViz
+
+正常情况下，你日常最常用的就是这个 launch 文件。
+
+### `scripts/takeoff_demo.py`
+
+这个脚本不是必须的，但非常适合验证整个场景是不是已经真正打通。
+
+它会往 `/uav/enable` 和 `/uav/cmd_vel` 发一组简单命令，让无人机先上升，再进入悬停附近状态。  
+如果这个脚本能跑通，通常就说明“模型、控制入口、桥接、运行环境”这几层已经基本通了。

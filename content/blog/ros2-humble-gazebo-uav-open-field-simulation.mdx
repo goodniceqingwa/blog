@@ -126,3 +126,107 @@ uav_sim_ws/
 
 它会往 `/uav/enable` 和 `/uav/cmd_vel` 发一组简单命令，让无人机先上升，再进入悬停附近状态。  
 如果这个脚本能跑通，通常就说明“模型、控制入口、桥接、运行环境”这几层已经基本通了。
+
+## 实际搭建和运行步骤
+
+如果你只是想把这个场景快速跑起来，可以直接照下面这套流程做。
+
+### 1. 获取项目
+
+我已经把这次场景整理成了一个独立仓库：
+
+```bash
+git clone https://github.com/goodniceqingwa/uav_sim_ws.git
+cd uav_sim_ws
+```
+
+### 2. 安装依赖
+
+如果你的机器已经装好了 `ROS 2 Humble`，但还没补齐 Gazebo 和桥接相关包，可以先装这一组：
+
+```bash
+sudo apt install -y \
+  ros-humble-ros-gz \
+  ros-humble-ros-gz-sim \
+  ros-humble-ros-gz-bridge \
+  ros-humble-ros-gz-image \
+  ros-humble-gps-msgs
+```
+
+### 3. 构建工作区
+
+```bash
+cd ~/uav_sim_ws
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install
+source install/setup.bash
+```
+
+如果 `colcon build` 这一步都过不了，不要急着继续 launch，先把构建问题解决掉。
+
+### 4. 启动仿真场景
+
+最直接的启动方式：
+
+```bash
+cd ~/uav_sim_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 launch uav_open_field_sim open_field_uav.launch.py use_rviz:=false
+```
+
+如果你想一起打开 RViz：
+
+```bash
+ros2 launch uav_open_field_sim open_field_uav.launch.py use_rviz:=true
+```
+
+### 5. 运行基础起飞演示
+
+另开一个终端，执行：
+
+```bash
+cd ~/uav_sim_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 run uav_open_field_sim takeoff_demo.py
+```
+
+这个脚本会发一组最基础的起飞 / 悬停控制命令，适合确认场景是不是已经真正打通。
+
+### 6. 检查 ROS 2 话题
+
+如果 launch 成功，你至少应该能看到这些话题：
+
+```bash
+ros2 topic list | rg '^/uav/|^/clock$'
+```
+
+我这次场景里主要关注的是：
+
+- `/clock`
+- `/uav/cmd_vel`
+- `/uav/enable`
+- `/uav/imu`
+- `/uav/navsat`
+- `/uav/camera/image_raw`
+- `/uav/odometry`
+
+如果你想进一步确认某个数据流是不是活的，可以直接查看：
+
+```bash
+ros2 topic echo /uav/imu --once
+ros2 topic echo /uav/navsat --once
+ros2 topic echo /uav/odometry --once
+```
+
+## 启动后你应该看到什么
+
+如果一切正常，启动后通常会看到这些结果：
+
+- Gazebo 打开一个空旷场地
+- 原点附近生成一架四旋翼
+- `create` 节点退出，但 Gazebo 和 `parameter_bridge` 保持运行
+- ROS 2 侧可以看到 `/uav/...` 话题
+
+这时候你就可以继续往下接自己的 ROS 2 节点了，比如控制节点、视觉节点或者定位节点。

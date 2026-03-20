@@ -31,8 +31,8 @@ export const works: Work[] = [
       "基于 Qt/QML 的 PPI 雷达态势与避碰系统，包含 DCPA/TCPA 计算、风险加权、警戒区告警与目标跟踪联动。",
     category: "other",
     categoryLabel: "工程项目",
-    image: assetPath("/images/works/placeholder-3.svg"),
-    thumbnail: assetPath("/images/works/placeholder-3.svg"),
+    image: assetPath("/images/works/ppiais-qt-cover.svg"),
+    thumbnail: assetPath("/images/works/ppiais-qt-cover.svg"),
     date: "2026-03-20",
     tags: ["qt", "qml", "radar", "cpa", "collision-avoidance"],
     featured: true,
@@ -126,7 +126,10 @@ export const works: Work[] = [
 ];
 
 export function getFeaturedWorks(): Work[] {
-  return works.filter((w) => w.featured);
+  return works
+    .filter((w) => w.featured)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
 }
 
 export function getWorksByCategory(category: string): Work[] {

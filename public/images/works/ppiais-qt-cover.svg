@@ -1,0 +1,40 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">PPIAIS-Qt 雷达避碰系统封面</title>
+  <desc id="desc">展示 PPI 雷达界面风格与避碰算法关键词</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#05090f"/>
+      <stop offset="60%" stop-color="#0a141c"/>
+      <stop offset="100%" stop-color="#0d1f2c"/>
+    </linearGradient>
+    <radialGradient id="sweep" cx="0.45" cy="0.52" r="0.5">
+      <stop offset="0%" stop-color="#2be59a" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#2be59a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="720" cy="460" r="300" fill="none" stroke="#24536a" stroke-width="2"/>
+  <circle cx="720" cy="460" r="225" fill="none" stroke="#24536a" stroke-width="1.6"/>
+  <circle cx="720" cy="460" r="150" fill="none" stroke="#24536a" stroke-width="1.4"/>
+  <circle cx="720" cy="460" r="75" fill="none" stroke="#24536a" stroke-width="1.2"/>
+  <line x1="420" y1="460" x2="1020" y2="460" stroke="#1f4154" stroke-width="1"/>
+  <line x1="720" y1="160" x2="720" y2="760" stroke="#1f4154" stroke-width="1"/>
+
+  <path d="M720 460 L980 330 A300 300 0 0 1 1020 460 Z" fill="url(#sweep)"/>
+
+  <circle cx="865" cy="390" r="8" fill="#7cf9c8"/>
+  <circle cx="630" cy="540" r="7" fill="#7cf9c8"/>
+  <circle cx="780" cy="640" r="6" fill="#7cf9c8"/>
+
+  <rect x="1040" y="210" width="420" height="480" rx="24" fill="#0f1b24" stroke="#2a4d60" stroke-width="2"/>
+  <text x="1080" y="290" fill="#8eeec9" font-size="54" font-family="'Segoe UI', 'PingFang SC', 'Noto Sans SC', sans-serif" font-weight="700">PPIAIS-Qt</text>
+  <text x="1080" y="355" fill="#9cc3d9" font-size="32" font-family="'Segoe UI', 'PingFang SC', 'Noto Sans SC', sans-serif">Radar Collision Avoidance</text>
+
+  <text x="1080" y="430" fill="#c7d8e3" font-size="28" font-family="'JetBrains Mono', 'Consolas', monospace">DCPA / TCPA</text>
+  <text x="1080" y="475" fill="#c7d8e3" font-size="28" font-family="'JetBrains Mono', 'Consolas', monospace">Risk Scoring</text>
+  <text x="1080" y="520" fill="#c7d8e3" font-size="28" font-family="'JetBrains Mono', 'Consolas', monospace">Guard Zone Alerts</text>
+
+  <rect x="1080" y="570" width="290" height="64" rx="12" fill="#1b3d4e"/>
+  <text x="1225" y="612" text-anchor="middle" fill="#9ff8d0" font-size="28" font-family="'Segoe UI', 'PingFang SC', sans-serif" font-weight="600">Qt / QML</text>
+</svg>

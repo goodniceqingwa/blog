@@ -19,7 +19,7 @@ export function FeaturedWorks() {
             精选作品
           </h2>
           <p className="text-text-muted text-center mb-16 max-w-2xl mx-auto">
-            探索我最喜爱的同人艺术创作
+            展示我最近的重点项目与创作
           </p>
         </ScrollReveal>
 
@@ -38,9 +38,8 @@ export function FeaturedWorks() {
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
-                      {/* Hover overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-6">
                         <span className="text-xs text-accent-purple font-medium uppercase tracking-wider">
                           {work.categoryLabel}
                         </span>

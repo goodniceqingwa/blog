@@ -25,6 +25,21 @@ export const categories = [
 
 export const works: Work[] = [
   {
+    slug: "ppiais-qt-ppi-collision-avoidance",
+    title: "PPIAIS-Qt 雷达避碰系统",
+    description:
+      "基于 Qt/QML 的 PPI 雷达态势与避碰系统，包含 DCPA/TCPA 计算、风险加权、警戒区告警与目标跟踪联动。",
+    category: "other",
+    categoryLabel: "工程项目",
+    image: assetPath("/images/works/placeholder-3.svg"),
+    thumbnail: assetPath("/images/works/placeholder-3.svg"),
+    date: "2026-03-20",
+    tags: ["qt", "qml", "radar", "cpa", "collision-avoidance"],
+    featured: true,
+    width: 1600,
+    height: 900,
+  },
+  {
     slug: "zim-invasion",
     title: "Zim's Invasion",
     description: "Invader Zim 正在执行他的地球征服计划",

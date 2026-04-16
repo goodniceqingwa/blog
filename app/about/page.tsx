@@ -100,11 +100,11 @@ export default function AboutPage() {
                   boxShadow: "0 0 20px rgba(160, 32, 240, 0.4)",
                 }}
                 className={`px-5 py-2 rounded-full text-sm cursor-default transition-colors ${
-                  skill.category === "fandom"
+                  skill.category === "language"
                     ? "bg-accent-purple/20 text-accent-purple border border-accent-purple/30"
-                    : skill.category === "tools"
-                    ? "glass text-text-secondary border border-glass-border"
-                    : "bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/20"
+                    : skill.category === "framework"
+                    ? "bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/20"
+                    : "glass text-text-secondary border border-glass-border"
                 }`}
               >
                 {skill.name}

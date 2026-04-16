@@ -16,10 +16,10 @@ export function FeaturedWorks() {
       <div className="max-w-7xl mx-auto">
         <ScrollReveal>
           <h2 className="text-4xl md:text-5xl font-heading font-bold text-text-primary text-center mb-4">
-            精选作品
+            精选项目
           </h2>
           <p className="text-text-muted text-center mb-16 max-w-2xl mx-auto">
-            展示我最近的重点项目与创作
+            我参与和主导的技术项目
           </p>
         </ScrollReveal>
 
@@ -60,7 +60,7 @@ export function FeaturedWorks() {
 
         <div className="text-center mt-12">
           <Button href="/works" variant="outline" size="lg">
-            查看全部作品 →
+            查看全部项目 →
           </Button>
         </div>
       </div>

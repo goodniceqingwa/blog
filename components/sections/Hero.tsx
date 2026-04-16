@@ -37,7 +37,7 @@ export function Hero() {
           transition={{ delay: 0.8, duration: 0.6 }}
           className="text-xl md:text-2xl text-text-muted font-body mb-10"
         >
-          Digital Artist | Fanart Creator
+          Developer | AI Explorer
         </motion.p>
 
         <motion.div
@@ -46,11 +46,11 @@ export function Hero() {
           transition={{ delay: 1.2, duration: 0.4, type: "spring" }}
           className="flex gap-4 justify-center flex-wrap"
         >
-          <Button href="/works" variant="primary" size="lg">
-            探索作品
+          <Button href="/blog" variant="primary" size="lg">
+            阅读博客
           </Button>
           <Button href="/about" variant="outline" size="lg">
-            了解更多
+            了解我
           </Button>
         </motion.div>
 

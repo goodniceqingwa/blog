@@ -4,8 +4,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 const footerLinks = [
-  { href: "/works", label: "作品集" },
   { href: "/blog", label: "博客" },
+  { href: "/works", label: "项目" },
   { href: "/about", label: "关于" },
   { href: "/contact", label: "联系" },
 ];
@@ -21,7 +21,7 @@ export function Footer() {
               QingWaaa
             </h3>
             <p className="text-text-muted text-sm">
-              Digital Artist | Fanart Creator
+              Developer | AI Explorer
             </p>
           </div>
 

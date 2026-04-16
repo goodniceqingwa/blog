@@ -24,11 +24,10 @@ export function AboutPreview() {
             关于我
           </h2>
           <p className="text-text-secondary mb-4 leading-relaxed">
-            大家好，我是 QingWaaa，一名数字艺术爱好者和同人画师。
+            大家好，我是 QingWaaa，一名热爱探索的开发者。
           </p>
           <p className="text-text-muted mb-8 leading-relaxed">
-            我热爱用数字工具创作，主要围绕 Invader Zim、South Park、Stranger
-            Things 等我喜欢的动画和影视作品进行同人创作。每一幅作品都倾注了我对角色和故事的理解与热爱。
+            我对机器人、AI 和全栈开发充满热情，喜欢用技术解决实际问题。这个博客记录了我的学习笔记、项目经验和技术思考。
           </p>
           <Button href="/about" variant="outline">
             了解更多 →

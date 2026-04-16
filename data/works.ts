@@ -4,7 +4,7 @@ export interface Work {
   slug: string;
   title: string;
   description: string;
-  category: "invader-zim" | "south-park" | "stranger-things" | "other";
+  category: "robotics" | "frontend" | "algorithm" | "other";
   categoryLabel: string;
   image: string;
   thumbnail: string;
@@ -17,9 +17,9 @@ export interface Work {
 
 export const categories = [
   { id: "all", label: "全部" },
-  { id: "invader-zim", label: "Invader Zim" },
-  { id: "south-park", label: "South Park" },
-  { id: "stranger-things", label: "Stranger Things" },
+  { id: "robotics", label: "机器人" },
+  { id: "frontend", label: "前端" },
+  { id: "algorithm", label: "算法" },
   { id: "other", label: "其他" },
 ] as const;
 
@@ -29,8 +29,8 @@ export const works: Work[] = [
     title: "PPIAIS-Qt 雷达避碰系统",
     description:
       "基于 Qt/QML 的 PPI 雷达态势与避碰系统，包含 DCPA/TCPA 计算、风险加权、警戒区告警与目标跟踪联动。",
-    category: "other",
-    categoryLabel: "工程项目",
+    category: "algorithm",
+    categoryLabel: "算法",
     image: assetPath("/images/works/ppiais-qt-cover.svg"),
     thumbnail: assetPath("/images/works/ppiais-qt-cover.svg"),
     date: "2026-03-20",
@@ -40,88 +40,34 @@ export const works: Work[] = [
     height: 900,
   },
   {
-    slug: "zim-invasion",
-    title: "Zim's Invasion",
-    description: "Invader Zim 正在执行他的地球征服计划",
-    category: "invader-zim",
-    categoryLabel: "Invader Zim",
+    slug: "ros2-uav-simulation",
+    title: "ROS2 无人机仿真系统",
+    description:
+      "基于 ROS2 Humble + Gazebo 的四旋翼无人机仿真平台，支持自主起降、航线规划与避障。",
+    category: "robotics",
+    categoryLabel: "机器人",
     image: assetPath("/images/works/placeholder-1.svg"),
     thumbnail: assetPath("/images/works/placeholder-1.svg"),
-    date: "2026-02-15",
-    tags: ["invader zim", "fanart", "digital"],
+    date: "2026-03-11",
+    tags: ["ros2", "gazebo", "uav", "simulation"],
     featured: true,
     width: 1200,
     height: 1600,
   },
   {
-    slug: "cartman-rage",
-    title: "Cartman's Fury",
-    description: "South Park 经典角色 Cartman 的愤怒时刻",
-    category: "south-park",
-    categoryLabel: "South Park",
+    slug: "personal-tech-blog",
+    title: "个人技术博客",
+    description:
+      "基于 Next.js 16 + Tailwind CSS v4 的个人技术博客，支持 MDX、暗色主题与动画交互。",
+    category: "frontend",
+    categoryLabel: "前端",
     image: assetPath("/images/works/placeholder-2.svg"),
     thumbnail: assetPath("/images/works/placeholder-2.svg"),
-    date: "2026-02-10",
-    tags: ["south park", "fanart", "character"],
+    date: "2026-02-27",
+    tags: ["nextjs", "react", "tailwind", "typescript"],
     featured: true,
     width: 1400,
     height: 1000,
-  },
-  {
-    slug: "upside-down",
-    title: "The Upside Down",
-    description: "Stranger Things 颠倒世界的奇幻景象",
-    category: "stranger-things",
-    categoryLabel: "Stranger Things",
-    image: assetPath("/images/works/placeholder-3.svg"),
-    thumbnail: assetPath("/images/works/placeholder-3.svg"),
-    date: "2026-02-05",
-    tags: ["stranger things", "fanart", "landscape"],
-    featured: true,
-    width: 1600,
-    height: 900,
-  },
-  {
-    slug: "gir-snacks",
-    title: "GIR's Snack Time",
-    description: "GIR 正在享受他最爱的零食",
-    category: "invader-zim",
-    categoryLabel: "Invader Zim",
-    image: assetPath("/images/works/placeholder-4.svg"),
-    thumbnail: assetPath("/images/works/placeholder-4.svg"),
-    date: "2026-01-28",
-    tags: ["invader zim", "GIR", "cute"],
-    featured: false,
-    width: 1000,
-    height: 1200,
-  },
-  {
-    slug: "kenny-immortal",
-    title: "Kenny's Return",
-    description: "Kenny 又活过来了",
-    category: "south-park",
-    categoryLabel: "South Park",
-    image: assetPath("/images/works/placeholder-5.svg"),
-    thumbnail: assetPath("/images/works/placeholder-5.svg"),
-    date: "2026-01-20",
-    tags: ["south park", "kenny", "comedy"],
-    featured: false,
-    width: 1200,
-    height: 1200,
-  },
-  {
-    slug: "eleven-power",
-    title: "Eleven's Power",
-    description: "Eleven 释放她的超能力",
-    category: "stranger-things",
-    categoryLabel: "Stranger Things",
-    image: assetPath("/images/works/placeholder-6.svg"),
-    thumbnail: assetPath("/images/works/placeholder-6.svg"),
-    date: "2026-01-15",
-    tags: ["stranger things", "eleven", "powers"],
-    featured: false,
-    width: 1400,
-    height: 1800,
   },
 ];
 

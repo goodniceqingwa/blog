@@ -38,15 +38,18 @@ const notoSansSC = Noto_Sans_SC({
 });
 
 export const metadata: Metadata = {
-  title: "QingWaaa | Digital Artist & Fanart Creator",
+  title: "QingWaaa | Developer & AI Explorer",
   description:
-    "个人艺术作品集 — Invader Zim, South Park, Stranger Things 同人艺术展示",
+    "个人技术博客 — 机器人、AI、全栈开发与工程实践",
   keywords: [
-    "fanart",
-    "digital art",
-    "invader zim",
-    "south park",
-    "stranger things",
+    "developer",
+    "AI",
+    "LLM",
+    "robotics",
+    "ROS2",
+    "full-stack",
+    "Qt",
+    "Next.js",
   ],
 };
 

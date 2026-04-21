@@ -1,0 +1,220 @@
+<!DOCTYPE html><!--55PjQke4HDJH9pG4Mn6YL--><html lang="zh-CN" class="space_grotesk_e6988195-module__RNs2Mq__variable inter_c15e96cb-module__0bjUvq__variable jetbrains_mono_7ea1d0f9-module__6GV5LG__variable noto_sans_sc_c25b8282-module__pnEi6G__variable"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/feb57b2dc8f29018-s.p.2539f70a.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/e5d3f102d41f5630.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/a2acf40391e8e49b.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/80fc4d7125e06aa5.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/0e5ec002b973a262.js"/><script src="/_next/static/chunks/f091501564eb2ea3.js" async=""></script><script src="/_next/static/chunks/0381c808fbaec563.js" async=""></script><script src="/_next/static/chunks/aee6c7720838f8a2.js" async=""></script><script src="/_next/static/chunks/turbopack-4c948ebe0e5cd4e4.js" async=""></script><script src="/_next/static/chunks/95166580d1eed87b.js" async=""></script><script src="/_next/static/chunks/139e2097087bfffa.js" async=""></script><script src="/_next/static/chunks/ff1a16fafef87110.js" async=""></script><script src="/_next/static/chunks/f3e35d9a80465ef3.js" async=""></script><meta name="next-size-adjust" content=""/><title>LLM 学习工作流（六）：AI 教练入口暴露 | QingWaaa</title><meta name="description" content="把 /coach 路由、AICoach 页面 shell、aiCoach store 真正暴露到用户面前：首页入口卡片 + 全局导航 + 匿名路径设计。功能存在不等于可达，入口页也要尊重数据契约。"/><meta name="keywords" content="developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="font-body"><div hidden=""><!--$--><!--/$--></div><script>((a,b,c,d,e,f,g,h)=>{let i=document.documentElement,j=["light","dark"];function k(b){var c;(Array.isArray(a)?a:[a]).forEach(a=>{let c="class"===a,d=c&&f?e.map(a=>f[a]||a):e;c?(i.classList.remove(...d),i.classList.add(f&&f[b]?f[b]:b)):i.setAttribute(a,b)}),c=b,h&&j.includes(c)&&(i.style.colorScheme=c)}if(d)k(d);else try{let a=localStorage.getItem(b)||c,d=g&&"system"===a?window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light":a;k(d)}catch(a){}})("class","theme","dark",null,["light","dark"],{"dark":"dark","light":"light"},false,true)</script><div class="fixed top-0 left-0 w-2 h-2 bg-accent-purple rounded-full pointer-events-none z-[9999] mix-blend-difference"></div><div class="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] border border-accent-purple/50"></div><header class="fixed top-0 left-0 right-0 z-50 glass border-b border-glass-border" style="transform:none"><nav class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"><a class="font-mono text-xl font-bold text-text-primary hover:text-accent-purple transition-colors" href="/"><span class="text-term-green">$ </span>qingwa@blog:~</a><div class="hidden md:flex items-center gap-8"><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/">首页</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/works">作品集</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/blog">博客</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/about">关于</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/contact">联系</a></div><button class="md:hidden relative w-10 h-10 flex items-center justify-center" aria-label="Toggle menu"><div class="flex flex-col gap-1.5"><span class="w-6 h-0.5 bg-text-primary block"></span><span class="w-6 h-0.5 bg-text-primary block"></span><span class="w-6 h-0.5 bg-text-primary block"></span></div></button></nav></header><main class="pt-16"><article class="min-h-screen py-24 px-6"><div class="max-w-3xl mx-auto"><a class="text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block font-mono text-sm" href="/blog"><span class="text-term-green">$ </span>cd ../blog</a><header class="mb-12"><div class="font-mono text-xs text-text-muted mb-4 break-all"><span class="text-term-green">$ </span>cat ~/blog/<!-- -->AI 应用开发<!-- -->/<!-- -->llm-workflow-06-coach-entry-points<!-- -->.mdx</div><h1 class="text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4">LLM 学习工作流（六）：AI 教练入口暴露</h1><div class="flex items-center gap-4 text-text-muted text-sm font-mono"><span>2026年4月21日</span><span>·</span><span>8 min read</span></div><div class="flex flex-wrap gap-2 mt-4"><span class="code-tag">&lt;<!-- -->AI 应用开发<!-- --> /&gt;</span></div><div class="flex flex-wrap gap-2 mt-2"><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">AI</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">LLM</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">Vue</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">产品设计</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">可发现性</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">工程实践</span></div></header><div class="prose-custom"><h2>这一步在做什么</h2>
+<p>这一步把前面已经存在的：</p>
+<ul>
+<li><code>/coach</code> 路由</li>
+<li><code>AICoach</code> 页面 shell</li>
+<li><code>aiCoach</code> store</li>
+</ul>
+<p>真正暴露到用户面前。</p>
+<p>也就是说，它解决的不是&quot;AI 教练页存不存在&quot;，而是：</p>
+<p><strong>用户能不能发现这个功能。</strong></p>
+<p>最终主要涉及：</p>
+<ul>
+<li><code>src/views/Home.vue</code></li>
+<li><code>src/App.vue</code></li>
+<li><code>tests/ai-home-entry.test.js</code></li>
+</ul>
+<h2>为什么这一步重要</h2>
+<p>很多项目做 AI 功能时，会先把页面和接口做完，但入口没有设计好。</p>
+<p>结果就是：</p>
+<ul>
+<li>功能 technically 存在</li>
+<li>用户却根本不会用到</li>
+</ul>
+<p>所以 Task 6 的目标很直接：</p>
+<ol>
+<li>首页要有 AI 教练入口</li>
+<li>全局导航要有 AI 教练入口</li>
+<li>未登录用户也要知道怎么进去</li>
+</ol>
+<h2>一开始做了什么</h2>
+<p>第一版提交是：</p>
+<ul>
+<li><code>adfd0cbc</code> <code>feat: expose ai coach entry in home and navigation</code></li>
+</ul>
+<p>最初新增了两部分能力：</p>
+<h3>1. 首页入口</h3>
+<p>在 <code>src/views/Home.vue</code> 里加了：</p>
+<ul>
+<li>&quot;AI 学习教练&quot;入口卡片</li>
+<li>&quot;今日 AI 计划摘要&quot;区域</li>
+</ul>
+<p>这让首页开始承担一个新的角色：</p>
+<ul>
+<li>不只是普通词典入口</li>
+<li>也是 AI 工作流入口页</li>
+</ul>
+<h3>2. 全局导航入口</h3>
+<p>在 <code>src/App.vue</code> 里加了 <code>/coach</code>：</p>
+<ul>
+<li>桌面导航</li>
+<li>移动端导航</li>
+</ul>
+<p>这一步很基础，但很必要，因为：</p>
+<ul>
+<li>首页入口负责引导第一次使用</li>
+<li>导航入口负责持续回访</li>
+</ul>
+<h2>第一轮实现为什么不够</h2>
+<p>review 指出了两个核心问题。</p>
+<h3>问题 1：测试太弱</h3>
+<p>最初测试只断言：</p>
+<pre><code class="language-js">assert.match(home, /to=&quot;\/coach&quot;/)
+assert.match(app, /to=&quot;\/coach&quot;/)
+</code></pre>
+<p>这只能证明：</p>
+<ul>
+<li>某个地方出现了 <code>/coach</code></li>
+</ul>
+<p>但并不能证明：</p>
+<ul>
+<li>首页是不是区分了登录和未登录用户</li>
+<li>导航是不是桌面端和移动端都接了</li>
+<li>首页是不是有&quot;今日 AI 计划摘要&quot;</li>
+</ul>
+<p>这类测试会带来一个风险：</p>
+<ul>
+<li>代码表面看有入口</li>
+<li>实际入口行为已经退化了</li>
+<li>测试仍然会通过</li>
+</ul>
+<h3>问题 2：首页摘要把 <code>dailyPlan</code> 当成了普通字符串</h3>
+<p>这一步是更有代表性的工程问题。</p>
+<p>当前 AI 计划并不是一个简单字符串，而是逐渐在向结构化对象收敛。</p>
+<p>例如后面计划会包含：</p>
+<ul>
+<li><code>sessionTitle</code></li>
+<li><code>goals</code></li>
+<li><code>tasks</code></li>
+<li><code>recommendedWords</code></li>
+</ul>
+<p>如果首页摘要直接假设：</p>
+<ul>
+<li><code>dailyPlan</code> 就是一段文字</li>
+</ul>
+<p>那当真实结构化数据接进来时，首页就会显示错误内容，或者干脆显示 <code>[object Object]</code> 这种异常结果。</p>
+<p>这说明：</p>
+<p><strong>入口页也必须尊重真实数据契约。</strong></p>
+<h2>修正后做了什么</h2>
+<p>修正后的提交是：</p>
+<ul>
+<li><code>1a55e94d</code> <code>fix: tighten ai coach entry coverage</code></li>
+</ul>
+<h3>1. 首页摘要逻辑变得更稳</h3>
+<p>在 <code>src/views/Home.vue</code> 里，摘要逻辑不再把 <code>dailyPlan</code> 当成普通字符串，而是按优先级取可展示字段：</p>
+<ul>
+<li><code>sessionTitle</code></li>
+<li><code>focus</code></li>
+<li><code>summary</code></li>
+<li><code>goals[0]</code></li>
+</ul>
+<p>如果这些都没有，再回退到中性占位文案。</p>
+<p>这一步很值得学习，因为它体现了一个很重要的设计原则：</p>
+<p><strong>展示层要适配真实数据契约，而不是自己偷懒发明一个假契约。</strong></p>
+<h3>2. 测试开始覆盖更真实的入口行为</h3>
+<p>修正后的 <code>tests/ai-home-entry.test.js</code> 会检查：</p>
+<ul>
+<li>首页已登录 <code>/coach</code> 入口</li>
+<li>首页匿名 <code>/auth?redirect=/coach</code> 入口</li>
+<li>&quot;今日 AI 计划摘要&quot;区域存在</li>
+<li><code>App.vue</code> 桌面导航有 coach</li>
+<li><code>App.vue</code> 移动导航也有 coach</li>
+</ul>
+<p>虽然它仍是源码级断言，不是运行级断言，但已经比&quot;只看有没有 <code>/coach</code>&quot;强很多。</p>
+<h2>这一步真正学到什么</h2>
+<h3>1. 功能存在不等于功能可达</h3>
+<p>页面、路由、API 都做完了，如果入口没暴露，用户还是用不到。</p>
+<p>所以在产品层面，Task 6 实际上是在做：</p>
+<p><strong>discoverability</strong></p>
+<p>也就是&quot;可发现性&quot;。</p>
+<h3>2. 首页入口和全局导航是两种不同职责</h3>
+<p>首页入口负责：</p>
+<ul>
+<li>首次引导</li>
+<li>明确表达新能力</li>
+</ul>
+<p>全局导航负责：</p>
+<ul>
+<li>高频回访</li>
+<li>形成稳定使用路径</li>
+</ul>
+<p>两者不能互相替代。</p>
+<h3>3. 未登录路径要明确</h3>
+<p>如果一个功能需要登录，入口设计就不能只考虑：</p>
+<ul>
+<li>登录用户点进去怎么样</li>
+</ul>
+<p>还要考虑：</p>
+<ul>
+<li>未登录用户点进去会发生什么</li>
+</ul>
+<p>这一步的做法是：</p>
+<ul>
+<li>首页直接给匿名用户 <code>/auth?redirect=/coach</code></li>
+</ul>
+<p>这样用户路径更清晰。</p>
+<h3>4. 入口页也要遵守数据契约</h3>
+<p>首页摘要虽然只是&quot;展示一点点状态&quot;，但仍然需要尊重：</p>
+<ul>
+<li>AI 计划的真实结构</li>
+</ul>
+<p>这意味着&quot;入口页&quot;不是可以随便硬编码的地方。</p>
+<h2>这一步最终做成了什么</h2>
+<h3>首页层</h3>
+<p>首页现在有：</p>
+<ul>
+<li>一个 AI 教练入口卡片</li>
+<li>一个今日 AI 计划摘要区</li>
+<li>登录用户和未登录用户不同入口路径</li>
+</ul>
+<h3>全局导航层</h3>
+<p><code>App.vue</code> 现在有：</p>
+<ul>
+<li>桌面端 <code>/coach</code></li>
+<li>移动端 <code>/coach</code></li>
+</ul>
+<h3>测试层</h3>
+<p>测试现在开始真正覆盖：</p>
+<ul>
+<li>首页入口</li>
+<li>匿名重定向路径</li>
+<li>双导航入口</li>
+<li>摘要区存在性</li>
+</ul>
+<h2>你可以自己复现什么</h2>
+<h3>跑这一步的测试</h3>
+<pre><code class="language-bash">node --test tests/ai-home-entry.test.js -v
+</code></pre>
+<h3>跑全部测试</h3>
+<pre><code class="language-bash">node --test tests/*.test.js
+</code></pre>
+<h3>跑构建</h3>
+<pre><code class="language-bash">npm run build
+</code></pre>
+<h3>看这一步的提交演进</h3>
+<pre><code class="language-bash">git log --oneline -3
+</code></pre>
+<p>你会看到：</p>
+<ul>
+<li><code>adfd0cbc</code> 初始入口接入</li>
+<li><code>1a55e94d</code> 修摘要契约和入口测试覆盖</li>
+</ul>
+<h2>这一步你应该学会什么</h2>
+<ul>
+<li>为什么功能入口设计和功能实现本身一样重要</li>
+<li>为什么首页入口和导航入口要同时存在</li>
+<li>为什么匿名用户路径必须单独设计</li>
+<li>为什么展示层不能偷懒破坏数据契约</li>
+<li>为什么入口测试不能只看&quot;有没有这个链接&quot;</li>
+</ul>
+<h2>下一步会做什么</h2>
+<p>下一步是 <code>Task 7</code>：</p>
+<ul>
+<li>把 AI 计划接入学习页</li>
+<li>让 <code>AICoach</code> 真正开始影响学习流</li>
+<li>开始把&quot;AI 计划&quot;从页面壳子推进成真实用户流程的一部分</li>
+</ul>
+<p>也就是说，接下来你会从：</p>
+<p><code>用户能看到 AI 教练</code></p>
+<p>进入到：</p>
+<p><code>用户的学习流程真的开始被 AI 计划驱动</code></p></div></div></article><!--$--><!--/$--></main><footer class="border-t border-glass-border bg-bg-deep"><div class="max-w-7xl mx-auto px-6 py-12"><div class="font-mono text-sm space-y-1 mb-8"><p><span class="text-term-green font-bold">$ </span><span class="text-text-secondary">git remote -v</span></p><p><span class="text-term-yellow">origin</span><span class="text-text-muted">    <!-- -->https://github.com/goodniceqingwa<!-- --> <!-- -->(fetch)</span></p><p><span class="text-term-yellow">qingwa</span><span class="text-text-muted">    <!-- -->https://qingwaaa.top<!-- --> <!-- -->(site)</span></p></div><div class="flex flex-col md:flex-row items-center justify-between gap-6"><div class="flex gap-6"><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/blog">博客</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/works">项目</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/about">关于</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/contact">联系</a></div><div class="flex gap-4"><a href="https://github.com/goodniceqingwa" target="_blank" rel="noopener noreferrer" class="w-10 h-10 glass rounded-full flex items-center justify-center text-text-muted hover:text-accent-purple hover:glow-purple transition-all" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg></a></div></div><div class="mt-8 pt-6 border-t border-glass-border text-center text-text-muted text-xs font-mono"><p>© <!-- -->2026<!-- --> QingWaaa. All rights reserved.</p></div></div></footer><script src="/_next/static/chunks/0e5ec002b973a262.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[5622,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"ThemeProvider\"]\n3:I[79030,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"SmoothScrollProvider\"]\n4:I[96901,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"CustomCursor\"]\n5:I[7988,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"Navbar\"]\n6:I[39756,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n7:I[37457,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n8:I[87392,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"Footer\"]\na:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"OutletBoundary\"]\nb:\"$Sreact.suspense\"\nd:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"ViewportBoundary\"]\nf:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"MetadataBoundary\"]\n11:I[68027,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n:HL[\"/_next/static/chunks/e5d3f102d41f5630.css\",\"style\"]\n:HL[\"/_next/static/chunks/a2acf40391e8e49b.css\",\"style\"]\n:HL[\"/_next/static/chunks/80fc4d7125e06aa5.css\",\"style\"]\n:HL[\"/_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/feb57b2dc8f29018-s.p.2539f70a.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"55PjQke4HDJH9pG4Mn6YL\",\"c\":[\"\",\"blog\",\"llm-workflow-06-coach-entry-points\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"blog\",{\"children\":[[\"slug\",\"llm-workflow-06-coach-entry-points\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/e5d3f102d41f5630.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"link\",\"1\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/a2acf40391e8e49b.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"link\",\"2\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/80fc4d7125e06aa5.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/95166580d1eed87b.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-1\",{\"src\":\"/_next/static/chunks/139e2097087bfffa.js\",\"async\":true,\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"suppressHydrationWarning\":true,\"className\":\"space_grotesk_e6988195-module__RNs2Mq__variable inter_c15e96cb-module__0bjUvq__variable jetbrains_mono_7ea1d0f9-module__6GV5LG__variable noto_sans_sc_c25b8282-module__pnEi6G__variable\",\"children\":[\"$\",\"body\",null,{\"className\":\"font-body\",\"children\":[\"$\",\"$L2\",null,{\"children\":[\"$\",\"$L3\",null,{\"children\":[[\"$\",\"$L4\",null,{}],[\"$\",\"$L5\",null,{}],[\"$\",\"main\",null,{\"className\":\"pt-16\",\"children\":[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}],[\"$\",\"$L8\",null,{}]]}]}]}]}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L9\",null,[\"$\",\"$La\",null,{\"children\":[\"$\",\"$b\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@c\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$Ld\",null,{\"children\":\"$Le\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lf\",null,{\"children\":[\"$\",\"$b\",null,{\"name\":\"Next.Metadata\",\"children\":\"$L10\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$11\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"12:I[22016,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"\"]\n"])</script><script>self.__next_f.push([1,"9:[\"$\",\"article\",null,{\"className\":\"min-h-screen py-24 px-6\",\"children\":[\"$\",\"div\",null,{\"className\":\"max-w-3xl mx-auto\",\"children\":[[\"$\",\"$L12\",null,{\"href\":\"/blog\",\"className\":\"text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block font-mono text-sm\",\"children\":[[\"$\",\"span\",null,{\"className\":\"text-term-green\",\"children\":\"$$ \"}],\"cd ../blog\"]}],[\"$\",\"header\",null,{\"className\":\"mb-12\",\"children\":[[\"$\",\"div\",null,{\"className\":\"font-mono text-xs text-text-muted mb-4 break-all\",\"children\":[[\"$\",\"span\",null,{\"className\":\"text-term-green\",\"children\":\"$$ \"}],\"cat ~/blog/\",\"AI 应用开发\",\"/\",\"llm-workflow-06-coach-entry-points\",\".mdx\"]}],[\"$\",\"h1\",null,{\"className\":\"text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4\",\"children\":\"LLM 学习工作流（六）：AI 教练入口暴露\"}],[\"$\",\"div\",null,{\"className\":\"flex items-center gap-4 text-text-muted text-sm font-mono\",\"children\":[[\"$\",\"span\",null,{\"children\":\"2026年4月21日\"}],[\"$\",\"span\",null,{\"children\":\"·\"}],[\"$\",\"span\",null,{\"children\":\"8 min read\"}]]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-4\",\"children\":[[\"$\",\"span\",\"AI 应用开发\",{\"className\":\"code-tag\",\"children\":[\"\u003c\",\"AI 应用开发\",\" /\u003e\"]}]]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-2\",\"children\":[[\"$\",\"span\",\"AI\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"AI\"}],[\"$\",\"span\",\"LLM\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"LLM\"}],[\"$\",\"span\",\"Vue\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"Vue\"}],[\"$\",\"span\",\"产品设计\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"产品设计\"}],[\"$\",\"span\",\"可发现性\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"可发现性\"}],[\"$\",\"span\",\"工程实践\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"工程实践\"}]]}]]}],[\"$\",\"div\",null,{\"className\":\"prose-custom\",\"children\":\"$L13\"}]]}]}]\n"])</script><script>self.__next_f.push([1,"13:[[\"$\",\"h2\",null,{\"children\":\"这一步在做什么\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步把前面已经存在的：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"/coach\"}],\" 路由\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"AICoach\"}],\" 页面 shell\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"aiCoach\"}],\" store\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"真正暴露到用户面前。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"也就是说，它解决的不是\\\"AI 教练页存不存在\\\"，而是：\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"用户能不能发现这个功能。\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最终主要涉及：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/views/Home.vue\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/App.vue\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"tests/ai-home-entry.test.js\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"为什么这一步重要\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"很多项目做 AI 功能时，会先把页面和接口做完，但入口没有设计好。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"结果就是：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"功能 technically 存在\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"用户却根本不会用到\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"所以 Task 6 的目标很直接：\"}],\"\\n\",[\"$\",\"ol\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"首页要有 AI 教练入口\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"全局导航要有 AI 教练入口\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"未登录用户也要知道怎么进去\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"一开始做了什么\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"第一版提交是：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"adfd0cbc\"}],\" \",[\"$\",\"code\",null,{\"children\":\"feat: expose ai coach entry in home and navigation\"}]]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最初新增了两部分能力：\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"1. 首页入口\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\"src/views/Home.vue\"}],\" 里加了：\"]}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"\\\"AI 学习教练\\\"入口卡片\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"\\\"今日 AI 计划摘要\\\"区域\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这让首页开始承担一个新的角色：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"不只是普通词典入口\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"也是 AI 工作流入口页\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"2. 全局导航入口\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\"src/App.vue\"}],\" 里加了 \",[\"$\",\"code\",null,{\"children\":\"/coach\"}],\"：\"]}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"桌面导航\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"移动端导航\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步很基础，但很必要，因为：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"首页入口负责引导第一次使用\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"导航入口负责持续回访\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"第一轮实现为什么不够\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"review 指出了两个核心问题。\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"问题 1：测试太弱\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最初测试只断言：\"}],\"\\n\",[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"assert.match(home, /to=\\\"\\\\/coach\\\"/)\\nassert.match(app, /to=\\\"\\\\/coach\\\"/)\\n\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这只能证明：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"某个地方出现了 \",[\"$\",\"code\",null,{\"children\":\"/coach\"}]]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"但并不能证明：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"首页是不是区分了登录和未登录用户\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"导航是不是桌面端和移动端都接了\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"首页是不是有\\\"今日 AI 计划摘要\\\"\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这类测试会带来一个风险：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"代码表面看有入口\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"实际入口行为已经退化了\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"测试仍然会通过\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h3\",null,{\"children\":[\"问题 2：首页摘要把 \",[\"$\",\"code\",null,{\"children\":\"dailyPlan\"}],\" 当成了普通字符串\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步是更有代表性的工程问题。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"当前 AI 计划并不是一个简单字符串，而是逐渐在向结构化对象收敛。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"例如后面计划会包含：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"sessionTitle\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"goals\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"tasks\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"recommendedWords\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"如果首页摘要直接假设：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"dailyPlan\"}],\" 就是一段文字\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"那当真实结构化数据接进来时，首页就会显示错误内容，或者干脆显示 \",[\"$\",\"code\",null,{\"children\":\"[object Object]\"}],\" 这种异常结果。\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这说明：\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"入口页也必须尊重真实数据契约。\"}]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"修正后做了什么\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"修正后的提交是：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"1a55e94d\"}],\" \",[\"$\",\"code\",null,{\"children\":\"fix: tighten ai coach entry coverage\"}]]}],\"\\n\"]}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"1. 首页摘要逻辑变得更稳\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\"src/views/Home.vue\"}],\" 里，摘要逻辑不再把 \",[\"$\",\"code\",null,{\"children\":\"dailyPlan\"}],\" 当成普通字符串，而是按优先级取可展示字段：\"]}],\"\\n\",\"$L14\",\"\\n\",\"$L15\",\"\\n\",\"$L16\",\"\\n\",\"$L17\",\"\\n\",\"$L18\",\"\\n\",\"$L19\",\"\\n\",\"$L1a\",\"\\n\",\"$L1b\",\"\\n\",\"$L1c\",\"\\n\",\"$L1d\",\"\\n\",\"$L1e\",\"\\n\",\"$L1f\",\"\\n\",\"$L20\",\"\\n\",\"$L21\",\"\\n\",\"$L22\",\"\\n\",\"$L23\",\"\\n\",\"$L24\",\"\\n\",\"$L25\",\"\\n\",\"$L26\",\"\\n\",\"$L27\",\"\\n\",\"$L28\",\"\\n\",\"$L29\",\"\\n\",\"$L2a\",\"\\n\",\"$L2b\",\"\\n\",\"$L2c\",\"\\n\",\"$L2d\",\"\\n\",\"$L2e\",\"\\n\",\"$L2f\",\"\\n\",\"$L30\",\"\\n\",\"$L31\",\"\\n\",\"$L32\",\"\\n\",\"$L33\",\"\\n\",\"$L34\",\"\\n\",\"$L35\",\"\\n\",\"$L36\",\"\\n\",\"$L37\",\"\\n\",\"$L38\",\"\\n\",\"$L39\",\"\\n\",\"$L3a\",\"\\n\",\"$L3b\",\"\\n\",\"$L3c\",\"\\n\",\"$L3d\",\"\\n\",\"$L3e\",\"\\n\",\"$L3f\",\"\\n\",\"$L40\",\"\\n\",\"$L41\",\"\\n\",\"$L42\",\"\\n\",\"$L43\",\"\\n\",\"$L44\",\"\\n\",\"$L45\",\"\\n\",\"$L46\",\"\\n\",\"$L47\",\"\\n\",\"$L48\",\"\\n\",\"$L49\",\"\\n\",\"$L4a\",\"\\n\",\"$L4b\",\"\\n\",\"$L4c\",\"\\n\",\"$L4d\",\"\\n\",\"$L4e\",\"\\n\",\"$L4f\",\"\\n\",\"$L50\",\"\\n\",\"$L51\"]\n"])</script><script>self.__next_f.push([1,"14:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"sessionTitle\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"focus\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"summary\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"goals[0]\"}]}],\"\\n\"]}]\n15:[\"$\",\"p\",null,{\"children\":\"如果这些都没有，再回退到中性占位文案。\"}]\n16:[\"$\",\"p\",null,{\"children\":\"这一步很值得学习，因为它体现了一个很重要的设计原则：\"}]\n17:[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"展示层要适配真实数据契约，而不是自己偷懒发明一个假契约。\"}]}]\n18:[\"$\",\"h3\",null,{\"children\":\"2. 测试开始覆盖更真实的入口行为\"}]\n19:[\"$\",\"p\",null,{\"children\":[\"修正后的 \",[\"$\",\"code\",null,{\"children\":\"tests/ai-home-entry.test.js\"}],\" 会检查：\"]}]\n1a:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"首页已登录 \",[\"$\",\"code\",null,{\"children\":\"/coach\"}],\" 入口\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"首页匿名 \",[\"$\",\"code\",null,{\"children\":\"/auth?redirect=/coach\"}],\" 入口\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"\\\"今日 AI 计划摘要\\\"区域存在\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"App.vue\"}],\" 桌面导航有 coach\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"App.vue\"}],\" 移动导航也有 coach\"]}],\"\\n\"]}]\n1b:[\"$\",\"p\",null,{\"children\":[\"虽然它仍是源码级断言，不是运行级断言，但已经比\\\"只看有没有 \",[\"$\",\"code\",null,{\"children\":\"/coach\"}],\"\\\"强很多。\"]}]\n1c:[\"$\",\"h2\",null,{\"children\":\"这一步真正学到什么\"}]\n1d:[\"$\",\"h3\",null,{\"children\":\"1. 功能存在不等于功能可达\"}]\n1e:[\"$\",\"p\",null,{\"children\":\"页面、路由、API 都做完了，如果入口没暴露，用户还是用不到。\"}]\n1f:[\"$\",\"p\",null,{\"children\":\"所以在产品层面，Task 6 实际上是在做：\"}]\n20:[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"discoverability\"}]}]\n21:[\"$\",\"p\",null,{\"children\":\"也就是\\\"可发现性\\\"。\"}]\n22:[\"$\",\"h3\",null,{\"children\":\"2. 首页入口和全局导航是两种不同职责\"}]\n23:[\"$\",\"p\",null,{\"children\":\"首页入口负责：\"}]\n24:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"首次引导\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"明确表达新能力\"}],\"\\n\"]}]\n25:[\"$\",\"p\",null,{\"children\":\"全局导航负责：\"}]\n26:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"高频回访\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"形成稳定使用路径\"}],\"\\n\"]}]\n27:[\"$\",\"p\",null,{\"children\":\"两者不能互相替代。\"}]\n28:[\"$\",\"h3\",null,{\"children\":\"3. 未登录路径要明确\"}]\n29:[\"$\",\"p\",null,{\"children\":\"如果一个功能需要登录，入口设计就不能只考虑：\"}]\n2a:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"登录用户点进去怎么样\"}],\"\\n\"]}]\n2b:[\"$\",\"p\",null,{\"children\":\"还要考虑：\"}]\n2c:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"未登录用户点进去会发生什么\"}],\"\\n\"]}]\n2d:[\"$\",\"p\",null,{\"children\":\"这一步的做法是：\"}]\n2e:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"首页直接给匿名用户 \",[\"$\",\"code\",null,{\"children\":\"/auth?redirect=/coach\"}]]}],\"\\n\"]}]\n2f:[\"$\",\"p\",null,{\"children\":\"这样用户路径更清晰。\"}]\n30:[\"$\",\"h3\",null,{\"children\":\"4. 入口页也要遵守数据契约\"}]\n31:[\"$\",\"p\",null,{\"children\":\"首页摘要虽然只是\\\"展示一点点状态\\\"，但仍然需要尊重：\"}]\n32:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 计划的真实结构\"}],\"\\n\"]}]\n33:[\"$\",\"p\",null,{\"children\":\"这意味着\\\"入口页\\\"不是可以随便硬编码的地方。\"}]\n34:[\"$\",\"h2\",null,{\"children\":\"这一步最终做成了什么\"}]\n35:[\"$\",\"h3\",null,{\"children\":\"首页层\"}]\n36:[\"$\",\"p\",null,{\"children\":\"首页现在有：\"}]\n37:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"一个 AI 教练入口卡片\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"一个今日 AI 计划摘要区\"}],\"\\n\",[\"$\",\"li\",nu"])</script><script>self.__next_f.push([1,"ll,{\"children\":\"登录用户和未登录用户不同入口路径\"}],\"\\n\"]}]\n38:[\"$\",\"h3\",null,{\"children\":\"全局导航层\"}]\n39:[\"$\",\"p\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"App.vue\"}],\" 现在有：\"]}]\n3a:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"桌面端 \",[\"$\",\"code\",null,{\"children\":\"/coach\"}]]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"移动端 \",[\"$\",\"code\",null,{\"children\":\"/coach\"}]]}],\"\\n\"]}]\n3b:[\"$\",\"h3\",null,{\"children\":\"测试层\"}]\n3c:[\"$\",\"p\",null,{\"children\":\"测试现在开始真正覆盖：\"}]\n3d:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"首页入口\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"匿名重定向路径\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"双导航入口\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"摘要区存在性\"}],\"\\n\"]}]\n3e:[\"$\",\"h2\",null,{\"children\":\"你可以自己复现什么\"}]\n3f:[\"$\",\"h3\",null,{\"children\":\"跑这一步的测试\"}]\n40:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"node --test tests/ai-home-entry.test.js -v\\n\"}]}]\n41:[\"$\",\"h3\",null,{\"children\":\"跑全部测试\"}]\n42:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"node --test tests/*.test.js\\n\"}]}]\n43:[\"$\",\"h3\",null,{\"children\":\"跑构建\"}]\n44:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"npm run build\\n\"}]}]\n45:[\"$\",\"h3\",null,{\"children\":\"看这一步的提交演进\"}]\n46:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"git log --oneline -3\\n\"}]}]\n47:[\"$\",\"p\",null,{\"children\":\"你会看到：\"}]\n48:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"adfd0cbc\"}],\" 初始入口接入\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"1a55e94d\"}],\" 修摘要契约和入口测试覆盖\"]}],\"\\n\"]}]\n49:[\"$\",\"h2\",null,{\"children\":\"这一步你应该学会什么\"}]\n4a:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么功能入口设计和功能实现本身一样重要\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么首页入口和导航入口要同时存在\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么匿名用户路径必须单独设计\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么展示层不能偷懒破坏数据契约\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么入口测试不能只看\\\"有没有这个链接\\\"\"}],\"\\n\"]}]\n4b:[\"$\",\"h2\",null,{\"children\":\"下一步会做什么\"}]\n4c:[\"$\",\"p\",null,{\"children\":[\"下一步是 \",[\"$\",\"code\",null,{\"children\":\"Task 7\"}],\"：\"]}]\n4d:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"把 AI 计划接入学习页\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"让 \",[\"$\",\"code\",null,{\"children\":\"AICoach\"}],\" 真正开始影响学习流\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"开始把\\\"AI 计划\\\"从页面壳子推进成真实用户流程的一部分\"}],\"\\n\"]}]\n4e:[\"$\",\"p\",null,{\"children\":\"也就是说，接下来你会从：\"}]\n4f:[\"$\",\"p\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"用户能看到 AI 教练\"}]}]\n50:[\"$\",\"p\",null,{\"children\":\"进入到：\"}]\n51:[\"$\",\"p\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"用户的学习流程真的开始被 AI 计划驱动\"}]}]\n"])</script><script>self.__next_f.push([1,"e:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"c:null\n10:[[\"$\",\"title\",\"0\",{\"children\":\"LLM 学习工作流（六）：AI 教练入口暴露 | QingWaaa\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"把 /coach 路由、AICoach 页面 shell、aiCoach store 真正暴露到用户面前：首页入口卡片 + 全局导航 + 匿名路径设计。功能存在不等于可达，入口页也要尊重数据契约。\"}],[\"$\",\"meta\",\"2\",{\"name\":\"keywords\",\"content\":\"developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js\"}]]\n"])</script></body></html>

@@ -3,6 +3,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatDate } from "@/lib/utils";
+import { CodeTag } from "@/components/ui/CodeTag";
 
 export function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -36,25 +37,37 @@ export default async function BlogPostPage({
       <div className="max-w-3xl mx-auto">
         <Link
           href="/blog"
-          className="text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block"
+          className="text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block font-mono text-sm"
         >
-          ← 返回博客
+          <span className="text-term-green">$ </span>
+          cd ../blog
         </Link>
 
         <header className="mb-12">
+          {/* Breadcrumb */}
+          <div className="font-mono text-xs text-text-muted mb-4 break-all">
+            <span className="text-term-green">$ </span>
+            cat ~/blog/{post.categories[0] ?? "uncategorized"}/{post.slug}.mdx
+          </div>
+
           <h1 className="text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4">
             {post.title}
           </h1>
-          <div className="flex items-center gap-4 text-text-muted text-sm">
+          <div className="flex items-center gap-4 text-text-muted text-sm font-mono">
             <span>{formatDate(post.date)}</span>
             <span>·</span>
             <span>{post.readingTime}</span>
           </div>
           <div className="flex flex-wrap gap-2 mt-4">
+            {post.categories.map((cat) => (
+              <CodeTag key={cat}>{cat}</CodeTag>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2 mt-2">
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs px-3 py-1 rounded-full bg-accent-purple/10 text-accent-purple"
+                className="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono"
               >
                 {tag}
               </span>

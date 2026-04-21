@@ -35,9 +35,10 @@ export function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-heading text-xl font-bold text-text-primary hover:text-accent-purple transition-colors"
+            className="font-mono text-xl font-bold text-text-primary hover:text-accent-purple transition-colors"
           >
-            QingWaaa
+            <span className="text-term-green">$ </span>
+            qingwa@blog:~
           </Link>
 
           {/* Desktop Nav */}
@@ -46,8 +47,11 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative text-sm text-text-muted hover:text-text-primary transition-colors py-2"
+                className="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2"
               >
+                {pathname === link.href && (
+                  <span className="text-term-green mr-1">&gt;</span>
+                )}
                 {link.label}
                 {pathname === link.href && (
                   <motion.div

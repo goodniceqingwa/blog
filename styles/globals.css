@@ -18,6 +18,9 @@
   --accent-silver: #c0c0c0;
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
+  --term-green: #7ee787;
+  --term-yellow: #d2a8ff;
+  --term-red: #ff7b72;
 }
 
 .light {
@@ -33,6 +36,9 @@
   --accent-silver: #888888;
   --glass-bg: rgba(0, 0, 0, 0.03);
   --glass-border: rgba(0, 0, 0, 0.08);
+  --term-green: #2ea043;
+  --term-yellow: #8957e5;
+  --term-red: #cf222e;
 }
 
 /* --- Tailwind v4 Theme Tokens --- */
@@ -50,6 +56,9 @@
   --color-accent-silver: var(--accent-silver);
   --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
+  --color-term-green: var(--term-green);
+  --color-term-yellow: var(--term-yellow);
+  --color-term-red: var(--term-red);
 
   /* Fonts */
   --font-heading: var(--font-space-grotesk), var(--font-noto-sans-sc), ui-sans-serif, system-ui, sans-serif;
@@ -60,6 +69,7 @@
   --animate-bounce-slow: bounce 2s infinite;
   --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
   --animate-float: float 3s ease-in-out infinite;
+  --animate-caret-blink: caret-blink 1s step-end infinite;
 }
 
 @keyframes pulse-glow {
@@ -70,6 +80,11 @@
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
+}
+
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* --- Base Styles --- */
@@ -131,6 +146,36 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+@utility terminal-prompt {
+  &::before {
+    content: "$ ";
+    color: var(--term-green);
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+  font-family: var(--font-mono);
+}
+
+@utility line-number {
+  border-left: 4px solid #30363d;
+  padding-left: 1rem;
+}
+
+@utility code-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid var(--accent-purple);
+  border-radius: 0.25rem;
+  color: var(--accent-purple);
+  background: rgba(160, 32, 240, 0.08);
+}
+
+@utility caret-blink {
+  animation: caret-blink 1s step-end infinite;
 }
 
 /* --- Prose (Blog MDX) --- */

@@ -2,21 +2,31 @@
 
 import { motion } from "framer-motion";
 import { ScrollReveal } from "@/components/effects/ScrollReveal";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { CodeTag } from "@/components/ui/CodeTag";
 import { timeline, skills } from "@/data/about";
 
 export default function AboutPage() {
+  const langs = skills.filter((s) => s.category === "language");
+  const frameworks = skills.filter((s) => s.category === "framework");
+  const tools = skills.filter((s) => s.category === "tools");
+
   return (
     <section className="min-h-screen py-24 px-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <ScrollReveal>
+          <div className="font-mono text-xs text-text-muted mb-4 text-center">
+            <span className="text-term-green">$ </span>
+            cat ~/about.md
+          </div>
           <h1 className="text-5xl md:text-6xl font-heading font-bold text-text-primary text-center mb-16">
             关于我
           </h1>
         </ScrollReveal>
 
-        {/* Bio */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-24">
+        {/* Bio as code object */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-24">
           <ScrollReveal direction="left">
             <div className="relative mx-auto w-64 h-64">
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-purple to-accent-cyan animate-pulse-glow" />
@@ -28,87 +38,121 @@ export default function AboutPage() {
           </ScrollReveal>
 
           <ScrollReveal direction="right">
-            <h2 className="text-3xl font-heading font-bold text-text-primary mb-4">
-              QingWaaa
-            </h2>
-            <p className="text-text-secondary leading-relaxed mb-4">
-              我是一名数字艺术爱好者，热衷于为我喜欢的动画和影视作品创作同人艺术。
-            </p>
-            <p className="text-text-muted leading-relaxed">
-              从 Invader Zim 的外星入侵到 South Park 的荒诞幽默，再到 Stranger
-              Things
-              的暗黑奇幻，每部作品都激发了我独特的创作灵感。
+            <GlassCard fileTag="profile.ts" hover={false}>
+              <pre className="font-mono text-sm text-text-muted overflow-x-auto">
+                <code>
+                  <span className="text-term-red">const</span>{" "}
+                  <span className="text-accent-cyan">profile</span>{" "}
+                  <span className="text-text-muted">= {"{"}</span>
+                  {"\n  "}
+                  <span className="text-text-muted">name:</span>{" "}
+                  <span className="text-term-yellow">&quot;QingWaaa&quot;</span>,
+                  {"\n  "}
+                  <span className="text-text-muted">role:</span>{" "}
+                  <span className="text-term-yellow">&quot;Developer&quot;</span>,
+                  {"\n  "}
+                  <span className="text-text-muted">focus:</span> [
+                  {"\n    "}
+                  <span className="text-term-yellow">&quot;Robotics / ROS2&quot;</span>,
+                  {"\n    "}
+                  <span className="text-term-yellow">&quot;AI / LLM&quot;</span>,
+                  {"\n    "}
+                  <span className="text-term-yellow">&quot;Full-stack Web&quot;</span>,
+                  {"\n  "}
+                  ],
+                  {"\n  "}
+                  <span className="text-text-muted">motto:</span>{" "}
+                  <span className="text-term-yellow">
+                    &quot;Build things that matter.&quot;
+                  </span>
+                  ,
+                  {"\n"}
+                  <span className="text-text-muted">{"}"};</span>
+                </code>
+              </pre>
+            </GlassCard>
+            <p className="text-text-muted mt-6 leading-relaxed text-sm">
+              热爱探索的开发者。关注机器人、AI
+              与全栈开发的交叉领域，喜欢用技术解决真实工程问题，并把学习过程记录成文章沉淀下来。
             </p>
           </ScrollReveal>
         </div>
 
-        {/* Timeline */}
+        {/* Timeline as git log */}
         <ScrollReveal>
+          <div className="font-mono text-xs text-text-muted mb-6 text-center">
+            <span className="text-term-green">$ </span>
+            git log --oneline --all
+          </div>
           <h2 className="text-3xl font-heading font-bold text-text-primary text-center mb-12">
-            创作历程
+            历程
           </h2>
         </ScrollReveal>
 
-        <div className="relative max-w-2xl mx-auto mb-24">
-          {/* Vertical line */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-accent-purple/20 -translate-x-1/2" />
-
+        <div className="max-w-2xl mx-auto mb-24 space-y-4">
           {timeline.map((item, i) => (
-            <ScrollReveal key={item.year} delay={i * 0.15}>
-              <div
-                className={`relative flex items-start gap-8 mb-12 ${
-                  i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                }`}
-              >
-                {/* Dot */}
-                <div className="absolute left-6 md:left-1/2 w-3 h-3 rounded-full bg-accent-purple -translate-x-1/2 mt-2 glow-purple" />
-
-                {/* Content */}
-                <div
-                  className={`ml-16 md:ml-0 md:w-1/2 ${
-                    i % 2 === 0
-                      ? "md:pr-12 md:text-right"
-                      : "md:pl-12"
-                  }`}
-                >
-                  <span className="text-accent-purple font-mono text-sm">
-                    {item.year}
-                  </span>
-                  <h3 className="text-xl font-heading font-bold text-text-primary mt-1">
-                    {item.title}
-                  </h3>
-                  <p className="text-text-muted mt-2">{item.description}</p>
+            <ScrollReveal key={item.year} delay={i * 0.12}>
+              <GlassCard lineNumber hover={false}>
+                <div className="font-mono text-xs text-term-yellow mb-2">
+                  commit {item.year}
                 </div>
-              </div>
+                <div className="font-mono text-xs text-text-muted mb-1">
+                  <span className="text-term-green">Author:</span> QingWaaa{" "}
+                  <span className="text-text-muted">&lt;dev@qingwaaa.top&gt;</span>
+                </div>
+                <div className="font-mono text-xs text-text-muted mb-3">
+                  <span className="text-term-green">Date:</span> {item.year}
+                </div>
+                <h3 className="text-lg font-heading font-bold text-text-primary mb-1">
+                  {item.title}
+                </h3>
+                <p className="text-text-muted text-sm leading-relaxed">
+                  {item.description}
+                </p>
+              </GlassCard>
             </ScrollReveal>
           ))}
         </div>
 
-        {/* Skills */}
+        {/* Skills grouped */}
         <ScrollReveal>
-          <h2 className="text-3xl font-heading font-bold text-text-primary text-center mb-8">
-            技能 & 兴趣
+          <div className="font-mono text-xs text-text-muted mb-6 text-center">
+            <span className="text-term-green">$ </span>
+            ls -la ~/skills/
+          </div>
+          <h2 className="text-3xl font-heading font-bold text-text-primary text-center mb-12">
+            技能栈
           </h2>
         </ScrollReveal>
 
-        <div className="flex flex-wrap gap-3 justify-center max-w-3xl mx-auto">
-          {skills.map((skill, i) => (
-            <ScrollReveal key={skill.name} delay={i * 0.05}>
-              <motion.span
-                whileHover={{
-                  scale: 1.1,
-                  boxShadow: "0 0 20px rgba(160, 32, 240, 0.4)",
-                }}
-                className={`px-5 py-2 rounded-full text-sm cursor-default transition-colors ${
-                  skill.category === "language"
-                    ? "bg-accent-purple/20 text-accent-purple border border-accent-purple/30"
-                    : skill.category === "framework"
-                    ? "bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/20"
-                    : "glass text-text-secondary border border-glass-border"
-                }`}
-              >
-                {skill.name}
-              </motion.span>
+        <div className="max-w-3xl mx-auto space-y-6">
+          {[
+            { title: "language", color: "text-term-red", items: langs },
+            { title: "framework", color: "text-accent-cyan", items: frameworks },
+            { title: "tools", color: "text-term-yellow", items: tools },
+          ].map(({ title, color, items }, groupIdx) => (
+            <ScrollReveal key={title} delay={groupIdx * 0.1}>
+              <div className="flex flex-wrap items-center gap-3">
+                <span
+                  className={`font-mono text-sm ${color} shrink-0 w-28`}
+                >
+                  <span className="text-term-green">&gt; </span>
+                  {title}:
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {items.map((skill) => (
+                    <motion.div
+                      key={skill.name}
+                      whileHover={{
+                        scale: 1.08,
+                        boxShadow: "0 0 16px rgba(160, 32, 240, 0.4)",
+                      }}
+                    >
+                      <CodeTag>{skill.name}</CodeTag>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
             </ScrollReveal>
           ))}
         </div>

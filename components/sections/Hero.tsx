@@ -31,14 +31,36 @@ export function Hero() {
           staggerDelay={0.05}
         />
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
-          className="text-xl md:text-2xl text-text-muted font-body mb-10"
+          className="mb-10 flex justify-center"
         >
-          Developer | AI Explorer
-        </motion.p>
+          <pre className="font-mono text-sm md:text-base text-text-muted text-left inline-block bg-bg-deep/50 rounded-lg px-6 py-4 border border-glass-border">
+            <code>
+              <span className="text-term-red">const</span>{" "}
+              <span className="text-accent-cyan">qingwa</span>{" "}
+              <span className="text-text-muted">= {"{"}</span>
+              {"\n"}
+              {"  "}
+              <span className="text-text-muted">role:</span>{" "}
+              <span className="text-term-yellow">&quot;Developer&quot;</span>,{"\n"}
+              {"  "}
+              <span className="text-text-muted">focus:</span>{" "}
+              <span className="text-text-muted">[</span>
+              <span className="text-term-yellow">&quot;AI&quot;</span>,{" "}
+              <span className="text-term-yellow">&quot;Robotics&quot;</span>,{" "}
+              <span className="text-term-yellow">&quot;Full-stack&quot;</span>
+              <span className="text-text-muted">]</span>,{"\n"}
+              {"  "}
+              <span className="text-text-muted">typing:</span>{" "}
+              <span className="text-term-yellow">&quot;_&quot;</span>
+              <span className="caret-blink text-term-green">█</span>,{"\n"}
+              <span className="text-text-muted">{"}"};</span>
+            </code>
+          </pre>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}

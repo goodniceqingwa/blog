@@ -58,3 +58,15 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
   const posts = getAllPosts();
   return posts.find((p) => p.slug === slug);
 }
+
+export function getAllCategories(): { name: string; count: number }[] {
+  const posts = getAllPosts();
+  const counter = new Map<string, number>();
+  for (const p of posts) {
+    for (const c of p.categories) {
+      counter.set(c, (counter.get(c) ?? 0) + 1);
+    }
+  }
+  return Array.from(counter, ([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+}

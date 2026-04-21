@@ -1,0 +1,265 @@
+---
+title: "LLM 学习工作流（一）：状态机与 TDD 最小实现"
+date: 2026-04-20
+tags: ["AI", "LLM", "TDD", "状态机", "工程实践"]
+categories: ["AI 应用开发"]
+summary: "实现 LLM 学习工作流的第一块基础设施：用纯函数工具模块描述学习流程的状态推进规则。从 TDD 最小实现，到两轮代码评审修正，沉淀出状态机的三条核心经验。"
+---
+
+## 这一步在做什么
+
+这一步实现了 LLM 学习工作流的第一块基础设施：一个纯函数工具模块，用来描述学习流程的状态推进规则。
+
+最终产物在：
+
+- `src/utils/learning-workflow.js`
+- `tests/learning-workflow.test.js`
+
+## 为什么先做这一步
+
+后面要做的 `/coach`、AI 学习计划、AI 测验、复盘总结，都会依赖"当前工作流在哪个阶段"这个判断。
+
+如果一开始就把状态逻辑写进页面或 store，后续会很难维护。所以先抽成纯函数，有三个好处：
+
+- 不依赖 Vue，容易测试
+- 状态转换规则集中，后续不容易写乱
+- 出问题时更容易定位是"状态机错了"还是"页面接错了"
+
+## 这一步做了什么
+
+实现了三个函数：
+
+### `createWorkflowRun()`
+
+生成初始工作流对象：
+
+```js
+{
+  status: 'idle',
+  currentStage: 'idle',
+}
+```
+
+### `nextWorkflowStage(stage)`
+
+根据当前阶段返回下一个阶段。
+
+当前阶段顺序是：
+
+```js
+[
+  'idle',
+  'profile_ready',
+  'plan_ready',
+  'studying',
+  'quiz_ready',
+  'reflecting',
+  'completed',
+]
+```
+
+最终约定：
+
+- 合法阶段会正常推进
+- `completed` 保持不变
+- 非法阶段返回 `null`
+
+### `canStartAiQuiz(input)`
+
+判断是否可以开始 AI 测验。
+
+最终约定：
+
+- `learnedWords` 必须是数组
+- 数组长度必须大于等于 `minimum`
+- 传入 `null` 或错误结构时返回 `false`
+
+## 先写了什么测试
+
+这一步严格按 TDD 做，先写测试，再实现。
+
+第一轮先写了 3 个基础测试：
+
+```js
+test('createWorkflowRun starts in idle stage', ...)
+test('plan_ready can advance to studying', ...)
+test('canStartAiQuiz only returns true after enough learned words', ...)
+```
+
+然后先跑：
+
+```bash
+node --test tests/learning-workflow.test.js -v
+```
+
+第一次失败是对的，因为此时 `src/utils/learning-workflow.js` 还不存在。
+
+这一步的目的不是"看报错难不难看"，而是确认：
+
+- 测试真的能抓到"功能不存在"
+- 测试文件路径是对的
+- 测试不是误通过
+
+## 第一版实现
+
+第一版只做了最小实现，对应提交：
+
+- `5d1a79fb` `feat: add learning workflow state helpers`
+
+这一版已经满足了原始计划里的最小要求，但后面的代码质量评审发现它还不够安全。
+
+## 评审后修了什么
+
+### 第一次质量问题
+
+问题：
+
+- `nextWorkflowStage('planredy')` 这种非法状态会被静默原样返回
+
+这会带来一个很隐蔽的问题：如果后面某个 store 或页面把状态写错了，系统不会报错，只会卡死在错误状态里。
+
+因此做了第一轮修正，对应提交：
+
+- `7041a4c0` `fix: reject invalid learning workflow states`
+
+新增测试：
+
+```js
+test('completed stays at completed', ...)
+test('invalid workflow stage returns null', ...)
+test('canStartAiQuiz rejects malformed learnedWords values', ...)
+```
+
+修正后约定变成：
+
+- 终态 `completed` 保持不变
+- 非法状态明确返回 `null`
+
+### 第二次质量问题
+
+问题：
+
+- `canStartAiQuiz(null)` 仍然会抛异常
+
+原因不是业务逻辑错，而是函数参数在解构前没有先验证顶层输入。
+
+因此做了第二轮修正，对应提交：
+
+- `092c6110` `fix: guard ai quiz workflow input`
+
+新增测试：
+
+```js
+test('canStartAiQuiz rejects null input', ...)
+```
+
+修正后，这个 helper 对错误输入就更稳了。
+
+## 最终代码学到了什么
+
+这个任务很小，但很适合作为 AI 项目的第一步，因为你能学到三个关键点。
+
+### 1. 状态机不要"默默容错"
+
+很多初学者会觉得"非法状态就原样返回"比较宽容，但这其实是在隐藏 bug。
+
+在工作流系统里，非法状态更适合：
+
+- 返回 `null`
+- 抛错
+- 或明确记录异常
+
+至少不能悄悄吞掉。
+
+### 2. 基础 helper 要先防御错误输入
+
+越底层的工具函数，越要对输入做边界保护。
+
+因为它以后会被很多地方复用。一旦底层 helper 因为 `null` 这种数据崩掉，排查成本会很高。
+
+### 3. TDD 不只是"先写测试"
+
+这一步真正重要的不是形式，而是这条收敛链路：
+
+1. 先写一个会失败的测试
+2. 只写够让它通过的最小代码
+3. 让评审来找你自己没想到的边界问题
+4. 再用测试把这些边界固定住
+
+这就是为什么最后会有 3 个提交，而不是一开始就"自以为写完了"。
+
+## 最终接口约定
+
+### `createWorkflowRun()`
+
+```js
+createWorkflowRun()
+// => { status: 'idle', currentStage: 'idle' }
+```
+
+### `nextWorkflowStage()`
+
+```js
+nextWorkflowStage('plan_ready')
+// => 'studying'
+
+nextWorkflowStage('completed')
+// => 'completed'
+
+nextWorkflowStage('invalid-state')
+// => null
+```
+
+### `canStartAiQuiz()`
+
+```js
+canStartAiQuiz({ learnedWords: ['api', 'cache'], minimum: 3 })
+// => false
+
+canStartAiQuiz({ learnedWords: ['api', 'cache', 'queue'], minimum: 3 })
+// => true
+
+canStartAiQuiz({ learnedWords: 'abc', minimum: 3 })
+// => false
+
+canStartAiQuiz(null)
+// => false
+```
+
+## 你可以自己复现的命令
+
+### 运行单测
+
+```bash
+node --test tests/learning-workflow.test.js -v
+```
+
+### 看这一步的提交演进
+
+```bash
+git log --oneline -3
+```
+
+你会看到这三个提交：
+
+- `5d1a79fb` 初始最小实现
+- `7041a4c0` 修非法状态问题
+- `092c6110` 修空输入问题
+
+## 这一步你应该学会什么
+
+- 为什么 AI 项目也要先抽"纯逻辑层"
+- 如何用 TDD 做最小实现
+- 为什么代码评审能帮助你发现状态机边界问题
+- 为什么底层 helper 的输入防御很重要
+- 一个小功能是怎么从"能跑"收敛到"更可靠"的
+
+## 下一步会做什么
+
+下一步是 `Task 2`：
+
+- 给 Supabase 增加 AI 画像与工作流相关数据表
+- 在 `src/utils/supabase.js` 增加访问封装
+- 先写测试，再改 SQL 和客户端方法
+
+这一步会让你开始接触 AI 项目里非常关键的另一层：**状态持久化**。

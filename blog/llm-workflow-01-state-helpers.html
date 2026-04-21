@@ -1,0 +1,189 @@
+<!DOCTYPE html><!--n7iXlPKy8ZIhgjjH1975H--><html lang="zh-CN" class="space_grotesk_e6988195-module__RNs2Mq__variable inter_c15e96cb-module__0bjUvq__variable jetbrains_mono_7ea1d0f9-module__6GV5LG__variable noto_sans_sc_c25b8282-module__pnEi6G__variable"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/feb57b2dc8f29018-s.p.2539f70a.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/e5d3f102d41f5630.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/a2acf40391e8e49b.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/80fc4d7125e06aa5.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/0e5ec002b973a262.js"/><script src="/_next/static/chunks/f091501564eb2ea3.js" async=""></script><script src="/_next/static/chunks/0381c808fbaec563.js" async=""></script><script src="/_next/static/chunks/aee6c7720838f8a2.js" async=""></script><script src="/_next/static/chunks/turbopack-4c948ebe0e5cd4e4.js" async=""></script><script src="/_next/static/chunks/95166580d1eed87b.js" async=""></script><script src="/_next/static/chunks/139e2097087bfffa.js" async=""></script><script src="/_next/static/chunks/ff1a16fafef87110.js" async=""></script><script src="/_next/static/chunks/f3e35d9a80465ef3.js" async=""></script><meta name="next-size-adjust" content=""/><title>LLM 学习工作流（一）：状态机与 TDD 最小实现 | QingWaaa</title><meta name="description" content="实现 LLM 学习工作流的第一块基础设施：用纯函数工具模块描述学习流程的状态推进规则。从 TDD 最小实现，到两轮代码评审修正，沉淀出状态机的三条核心经验。"/><meta name="keywords" content="developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="font-body"><div hidden=""><!--$--><!--/$--></div><script>((a,b,c,d,e,f,g,h)=>{let i=document.documentElement,j=["light","dark"];function k(b){var c;(Array.isArray(a)?a:[a]).forEach(a=>{let c="class"===a,d=c&&f?e.map(a=>f[a]||a):e;c?(i.classList.remove(...d),i.classList.add(f&&f[b]?f[b]:b)):i.setAttribute(a,b)}),c=b,h&&j.includes(c)&&(i.style.colorScheme=c)}if(d)k(d);else try{let a=localStorage.getItem(b)||c,d=g&&"system"===a?window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light":a;k(d)}catch(a){}})("class","theme","dark",null,["light","dark"],{"dark":"dark","light":"light"},false,true)</script><div class="fixed top-0 left-0 w-2 h-2 bg-accent-purple rounded-full pointer-events-none z-[9999] mix-blend-difference"></div><div class="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] border border-accent-purple/50"></div><header class="fixed top-0 left-0 right-0 z-50 glass border-b border-glass-border" style="transform:none"><nav class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"><a class="font-mono text-xl font-bold text-text-primary hover:text-accent-purple transition-colors" href="/"><span class="text-term-green">$ </span>qingwa@blog:~</a><div class="hidden md:flex items-center gap-8"><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/">首页</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/works">作品集</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/blog">博客</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/about">关于</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/contact">联系</a></div><button class="md:hidden relative w-10 h-10 flex items-center justify-center" aria-label="Toggle menu"><div class="flex flex-col gap-1.5"><span class="w-6 h-0.5 bg-text-primary block"></span><span class="w-6 h-0.5 bg-text-primary block"></span><span class="w-6 h-0.5 bg-text-primary block"></span></div></button></nav></header><main class="pt-16"><article class="min-h-screen py-24 px-6"><div class="max-w-3xl mx-auto"><a class="text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block font-mono text-sm" href="/blog"><span class="text-term-green">$ </span>cd ../blog</a><header class="mb-12"><div class="font-mono text-xs text-text-muted mb-4 break-all"><span class="text-term-green">$ </span>cat ~/blog/<!-- -->AI 应用开发<!-- -->/<!-- -->llm-workflow-01-state-helpers<!-- -->.mdx</div><h1 class="text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4">LLM 学习工作流（一）：状态机与 TDD 最小实现</h1><div class="flex items-center gap-4 text-text-muted text-sm font-mono"><span>2026年4月20日</span><span>·</span><span>7 min read</span></div><div class="flex flex-wrap gap-2 mt-4"><span class="code-tag">&lt;<!-- -->AI 应用开发<!-- --> /&gt;</span></div><div class="flex flex-wrap gap-2 mt-2"><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">AI</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">LLM</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">TDD</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">状态机</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">工程实践</span></div></header><div class="prose-custom"><h2>这一步在做什么</h2>
+<p>这一步实现了 LLM 学习工作流的第一块基础设施：一个纯函数工具模块，用来描述学习流程的状态推进规则。</p>
+<p>最终产物在：</p>
+<ul>
+<li><code>src/utils/learning-workflow.js</code></li>
+<li><code>tests/learning-workflow.test.js</code></li>
+</ul>
+<h2>为什么先做这一步</h2>
+<p>后面要做的 <code>/coach</code>、AI 学习计划、AI 测验、复盘总结，都会依赖&quot;当前工作流在哪个阶段&quot;这个判断。</p>
+<p>如果一开始就把状态逻辑写进页面或 store，后续会很难维护。所以先抽成纯函数，有三个好处：</p>
+<ul>
+<li>不依赖 Vue，容易测试</li>
+<li>状态转换规则集中，后续不容易写乱</li>
+<li>出问题时更容易定位是&quot;状态机错了&quot;还是&quot;页面接错了&quot;</li>
+</ul>
+<h2>这一步做了什么</h2>
+<p>实现了三个函数：</p>
+<h3><code>createWorkflowRun()</code></h3>
+<p>生成初始工作流对象：</p>
+<pre><code class="language-js">{
+  status: &#x27;idle&#x27;,
+  currentStage: &#x27;idle&#x27;,
+}
+</code></pre>
+<h3><code>nextWorkflowStage(stage)</code></h3>
+<p>根据当前阶段返回下一个阶段。</p>
+<p>当前阶段顺序是：</p>
+<pre><code class="language-js">[
+  &#x27;idle&#x27;,
+  &#x27;profile_ready&#x27;,
+  &#x27;plan_ready&#x27;,
+  &#x27;studying&#x27;,
+  &#x27;quiz_ready&#x27;,
+  &#x27;reflecting&#x27;,
+  &#x27;completed&#x27;,
+]
+</code></pre>
+<p>最终约定：</p>
+<ul>
+<li>合法阶段会正常推进</li>
+<li><code>completed</code> 保持不变</li>
+<li>非法阶段返回 <code>null</code></li>
+</ul>
+<h3><code>canStartAiQuiz(input)</code></h3>
+<p>判断是否可以开始 AI 测验。</p>
+<p>最终约定：</p>
+<ul>
+<li><code>learnedWords</code> 必须是数组</li>
+<li>数组长度必须大于等于 <code>minimum</code></li>
+<li>传入 <code>null</code> 或错误结构时返回 <code>false</code></li>
+</ul>
+<h2>先写了什么测试</h2>
+<p>这一步严格按 TDD 做，先写测试，再实现。</p>
+<p>第一轮先写了 3 个基础测试：</p>
+<pre><code class="language-js">test(&#x27;createWorkflowRun starts in idle stage&#x27;, ...)
+test(&#x27;plan_ready can advance to studying&#x27;, ...)
+test(&#x27;canStartAiQuiz only returns true after enough learned words&#x27;, ...)
+</code></pre>
+<p>然后先跑：</p>
+<pre><code class="language-bash">node --test tests/learning-workflow.test.js -v
+</code></pre>
+<p>第一次失败是对的，因为此时 <code>src/utils/learning-workflow.js</code> 还不存在。</p>
+<p>这一步的目的不是&quot;看报错难不难看&quot;，而是确认：</p>
+<ul>
+<li>测试真的能抓到&quot;功能不存在&quot;</li>
+<li>测试文件路径是对的</li>
+<li>测试不是误通过</li>
+</ul>
+<h2>第一版实现</h2>
+<p>第一版只做了最小实现，对应提交：</p>
+<ul>
+<li><code>5d1a79fb</code> <code>feat: add learning workflow state helpers</code></li>
+</ul>
+<p>这一版已经满足了原始计划里的最小要求，但后面的代码质量评审发现它还不够安全。</p>
+<h2>评审后修了什么</h2>
+<h3>第一次质量问题</h3>
+<p>问题：</p>
+<ul>
+<li><code>nextWorkflowStage(&#x27;planredy&#x27;)</code> 这种非法状态会被静默原样返回</li>
+</ul>
+<p>这会带来一个很隐蔽的问题：如果后面某个 store 或页面把状态写错了，系统不会报错，只会卡死在错误状态里。</p>
+<p>因此做了第一轮修正，对应提交：</p>
+<ul>
+<li><code>7041a4c0</code> <code>fix: reject invalid learning workflow states</code></li>
+</ul>
+<p>新增测试：</p>
+<pre><code class="language-js">test(&#x27;completed stays at completed&#x27;, ...)
+test(&#x27;invalid workflow stage returns null&#x27;, ...)
+test(&#x27;canStartAiQuiz rejects malformed learnedWords values&#x27;, ...)
+</code></pre>
+<p>修正后约定变成：</p>
+<ul>
+<li>终态 <code>completed</code> 保持不变</li>
+<li>非法状态明确返回 <code>null</code></li>
+</ul>
+<h3>第二次质量问题</h3>
+<p>问题：</p>
+<ul>
+<li><code>canStartAiQuiz(null)</code> 仍然会抛异常</li>
+</ul>
+<p>原因不是业务逻辑错，而是函数参数在解构前没有先验证顶层输入。</p>
+<p>因此做了第二轮修正，对应提交：</p>
+<ul>
+<li><code>092c6110</code> <code>fix: guard ai quiz workflow input</code></li>
+</ul>
+<p>新增测试：</p>
+<pre><code class="language-js">test(&#x27;canStartAiQuiz rejects null input&#x27;, ...)
+</code></pre>
+<p>修正后，这个 helper 对错误输入就更稳了。</p>
+<h2>最终代码学到了什么</h2>
+<p>这个任务很小，但很适合作为 AI 项目的第一步，因为你能学到三个关键点。</p>
+<h3>1. 状态机不要&quot;默默容错&quot;</h3>
+<p>很多初学者会觉得&quot;非法状态就原样返回&quot;比较宽容，但这其实是在隐藏 bug。</p>
+<p>在工作流系统里，非法状态更适合：</p>
+<ul>
+<li>返回 <code>null</code></li>
+<li>抛错</li>
+<li>或明确记录异常</li>
+</ul>
+<p>至少不能悄悄吞掉。</p>
+<h3>2. 基础 helper 要先防御错误输入</h3>
+<p>越底层的工具函数，越要对输入做边界保护。</p>
+<p>因为它以后会被很多地方复用。一旦底层 helper 因为 <code>null</code> 这种数据崩掉，排查成本会很高。</p>
+<h3>3. TDD 不只是&quot;先写测试&quot;</h3>
+<p>这一步真正重要的不是形式，而是这条收敛链路：</p>
+<ol>
+<li>先写一个会失败的测试</li>
+<li>只写够让它通过的最小代码</li>
+<li>让评审来找你自己没想到的边界问题</li>
+<li>再用测试把这些边界固定住</li>
+</ol>
+<p>这就是为什么最后会有 3 个提交，而不是一开始就&quot;自以为写完了&quot;。</p>
+<h2>最终接口约定</h2>
+<h3><code>createWorkflowRun()</code></h3>
+<pre><code class="language-js">createWorkflowRun()
+// =&gt; { status: &#x27;idle&#x27;, currentStage: &#x27;idle&#x27; }
+</code></pre>
+<h3><code>nextWorkflowStage()</code></h3>
+<pre><code class="language-js">nextWorkflowStage(&#x27;plan_ready&#x27;)
+// =&gt; &#x27;studying&#x27;
+
+nextWorkflowStage(&#x27;completed&#x27;)
+// =&gt; &#x27;completed&#x27;
+
+nextWorkflowStage(&#x27;invalid-state&#x27;)
+// =&gt; null
+</code></pre>
+<h3><code>canStartAiQuiz()</code></h3>
+<pre><code class="language-js">canStartAiQuiz({ learnedWords: [&#x27;api&#x27;, &#x27;cache&#x27;], minimum: 3 })
+// =&gt; false
+
+canStartAiQuiz({ learnedWords: [&#x27;api&#x27;, &#x27;cache&#x27;, &#x27;queue&#x27;], minimum: 3 })
+// =&gt; true
+
+canStartAiQuiz({ learnedWords: &#x27;abc&#x27;, minimum: 3 })
+// =&gt; false
+
+canStartAiQuiz(null)
+// =&gt; false
+</code></pre>
+<h2>你可以自己复现的命令</h2>
+<h3>运行单测</h3>
+<pre><code class="language-bash">node --test tests/learning-workflow.test.js -v
+</code></pre>
+<h3>看这一步的提交演进</h3>
+<pre><code class="language-bash">git log --oneline -3
+</code></pre>
+<p>你会看到这三个提交：</p>
+<ul>
+<li><code>5d1a79fb</code> 初始最小实现</li>
+<li><code>7041a4c0</code> 修非法状态问题</li>
+<li><code>092c6110</code> 修空输入问题</li>
+</ul>
+<h2>这一步你应该学会什么</h2>
+<ul>
+<li>为什么 AI 项目也要先抽&quot;纯逻辑层&quot;</li>
+<li>如何用 TDD 做最小实现</li>
+<li>为什么代码评审能帮助你发现状态机边界问题</li>
+<li>为什么底层 helper 的输入防御很重要</li>
+<li>一个小功能是怎么从&quot;能跑&quot;收敛到&quot;更可靠&quot;的</li>
+</ul>
+<h2>下一步会做什么</h2>
+<p>下一步是 <code>Task 2</code>：</p>
+<ul>
+<li>给 Supabase 增加 AI 画像与工作流相关数据表</li>
+<li>在 <code>src/utils/supabase.js</code> 增加访问封装</li>
+<li>先写测试，再改 SQL 和客户端方法</li>
+</ul>
+<p>这一步会让你开始接触 AI 项目里非常关键的另一层：<strong>状态持久化</strong>。</p></div></div></article><!--$--><!--/$--></main><footer class="border-t border-glass-border bg-bg-deep"><div class="max-w-7xl mx-auto px-6 py-12"><div class="font-mono text-sm space-y-1 mb-8"><p><span class="text-term-green font-bold">$ </span><span class="text-text-secondary">git remote -v</span></p><p><span class="text-term-yellow">origin</span><span class="text-text-muted">    <!-- -->https://github.com/goodniceqingwa<!-- --> <!-- -->(fetch)</span></p><p><span class="text-term-yellow">qingwa</span><span class="text-text-muted">    <!-- -->https://qingwaaa.top<!-- --> <!-- -->(site)</span></p></div><div class="flex flex-col md:flex-row items-center justify-between gap-6"><div class="flex gap-6"><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/blog">博客</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/works">项目</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/about">关于</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/contact">联系</a></div><div class="flex gap-4"><a href="https://github.com/goodniceqingwa" target="_blank" rel="noopener noreferrer" class="w-10 h-10 glass rounded-full flex items-center justify-center text-text-muted hover:text-accent-purple hover:glow-purple transition-all" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg></a></div></div><div class="mt-8 pt-6 border-t border-glass-border text-center text-text-muted text-xs font-mono"><p>© <!-- -->2026<!-- --> QingWaaa. All rights reserved.</p></div></div></footer><script src="/_next/static/chunks/0e5ec002b973a262.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[5622,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"ThemeProvider\"]\n3:I[79030,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"SmoothScrollProvider\"]\n4:I[96901,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"CustomCursor\"]\n5:I[7988,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"Navbar\"]\n6:I[39756,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n7:I[37457,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n8:I[87392,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"Footer\"]\na:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"OutletBoundary\"]\nb:\"$Sreact.suspense\"\nd:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"ViewportBoundary\"]\nf:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"MetadataBoundary\"]\n11:I[68027,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n:HL[\"/_next/static/chunks/e5d3f102d41f5630.css\",\"style\"]\n:HL[\"/_next/static/chunks/a2acf40391e8e49b.css\",\"style\"]\n:HL[\"/_next/static/chunks/80fc4d7125e06aa5.css\",\"style\"]\n:HL[\"/_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/feb57b2dc8f29018-s.p.2539f70a.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"n7iXlPKy8ZIhgjjH1975H\",\"c\":[\"\",\"blog\",\"llm-workflow-01-state-helpers\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"blog\",{\"children\":[[\"slug\",\"llm-workflow-01-state-helpers\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/e5d3f102d41f5630.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"link\",\"1\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/a2acf40391e8e49b.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"link\",\"2\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/80fc4d7125e06aa5.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/95166580d1eed87b.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-1\",{\"src\":\"/_next/static/chunks/139e2097087bfffa.js\",\"async\":true,\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"suppressHydrationWarning\":true,\"className\":\"space_grotesk_e6988195-module__RNs2Mq__variable inter_c15e96cb-module__0bjUvq__variable jetbrains_mono_7ea1d0f9-module__6GV5LG__variable noto_sans_sc_c25b8282-module__pnEi6G__variable\",\"children\":[\"$\",\"body\",null,{\"className\":\"font-body\",\"children\":[\"$\",\"$L2\",null,{\"children\":[\"$\",\"$L3\",null,{\"children\":[[\"$\",\"$L4\",null,{}],[\"$\",\"$L5\",null,{}],[\"$\",\"main\",null,{\"className\":\"pt-16\",\"children\":[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}],[\"$\",\"$L8\",null,{}]]}]}]}]}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L9\",null,[\"$\",\"$La\",null,{\"children\":[\"$\",\"$b\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@c\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$Ld\",null,{\"children\":\"$Le\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lf\",null,{\"children\":[\"$\",\"$b\",null,{\"name\":\"Next.Metadata\",\"children\":\"$L10\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$11\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"12:I[22016,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"\"]\n"])</script><script>self.__next_f.push([1,"9:[\"$\",\"article\",null,{\"className\":\"min-h-screen py-24 px-6\",\"children\":[\"$\",\"div\",null,{\"className\":\"max-w-3xl mx-auto\",\"children\":[[\"$\",\"$L12\",null,{\"href\":\"/blog\",\"className\":\"text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block font-mono text-sm\",\"children\":[[\"$\",\"span\",null,{\"className\":\"text-term-green\",\"children\":\"$$ \"}],\"cd ../blog\"]}],[\"$\",\"header\",null,{\"className\":\"mb-12\",\"children\":[[\"$\",\"div\",null,{\"className\":\"font-mono text-xs text-text-muted mb-4 break-all\",\"children\":[[\"$\",\"span\",null,{\"className\":\"text-term-green\",\"children\":\"$$ \"}],\"cat ~/blog/\",\"AI 应用开发\",\"/\",\"llm-workflow-01-state-helpers\",\".mdx\"]}],[\"$\",\"h1\",null,{\"className\":\"text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4\",\"children\":\"LLM 学习工作流（一）：状态机与 TDD 最小实现\"}],[\"$\",\"div\",null,{\"className\":\"flex items-center gap-4 text-text-muted text-sm font-mono\",\"children\":[[\"$\",\"span\",null,{\"children\":\"2026年4月20日\"}],[\"$\",\"span\",null,{\"children\":\"·\"}],[\"$\",\"span\",null,{\"children\":\"7 min read\"}]]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-4\",\"children\":[[\"$\",\"span\",\"AI 应用开发\",{\"className\":\"code-tag\",\"children\":[\"\u003c\",\"AI 应用开发\",\" /\u003e\"]}]]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-2\",\"children\":[[\"$\",\"span\",\"AI\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"AI\"}],[\"$\",\"span\",\"LLM\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"LLM\"}],[\"$\",\"span\",\"TDD\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"TDD\"}],[\"$\",\"span\",\"状态机\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"状态机\"}],[\"$\",\"span\",\"工程实践\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"工程实践\"}]]}]]}],[\"$\",\"div\",null,{\"className\":\"prose-custom\",\"children\":\"$L13\"}]]}]}]\n"])</script><script>self.__next_f.push([1,"13:[[\"$\",\"h2\",null,{\"children\":\"这一步在做什么\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步实现了 LLM 学习工作流的第一块基础设施：一个纯函数工具模块，用来描述学习流程的状态推进规则。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最终产物在：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/utils/learning-workflow.js\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"tests/learning-workflow.test.js\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"为什么先做这一步\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"后面要做的 \",[\"$\",\"code\",null,{\"children\":\"/coach\"}],\"、AI 学习计划、AI 测验、复盘总结，都会依赖\\\"当前工作流在哪个阶段\\\"这个判断。\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"如果一开始就把状态逻辑写进页面或 store，后续会很难维护。所以先抽成纯函数，有三个好处：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"不依赖 Vue，容易测试\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"状态转换规则集中，后续不容易写乱\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"出问题时更容易定位是\\\"状态机错了\\\"还是\\\"页面接错了\\\"\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"这一步做了什么\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"实现了三个函数：\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"createWorkflowRun()\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"生成初始工作流对象：\"}],\"\\n\",[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"{\\n  status: 'idle',\\n  currentStage: 'idle',\\n}\\n\"}]}],\"\\n\",[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"nextWorkflowStage(stage)\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"根据当前阶段返回下一个阶段。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"当前阶段顺序是：\"}],\"\\n\",[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"[\\n  'idle',\\n  'profile_ready',\\n  'plan_ready',\\n  'studying',\\n  'quiz_ready',\\n  'reflecting',\\n  'completed',\\n]\\n\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最终约定：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"合法阶段会正常推进\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"completed\"}],\" 保持不变\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"非法阶段返回 \",[\"$\",\"code\",null,{\"children\":\"null\"}]]}],\"\\n\"]}],\"\\n\",[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"canStartAiQuiz(input)\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"判断是否可以开始 AI 测验。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最终约定：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"learnedWords\"}],\" 必须是数组\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"数组长度必须大于等于 \",[\"$\",\"code\",null,{\"children\":\"minimum\"}]]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"传入 \",[\"$\",\"code\",null,{\"children\":\"null\"}],\" 或错误结构时返回 \",[\"$\",\"code\",null,{\"children\":\"false\"}]]}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"先写了什么测试\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步严格按 TDD 做，先写测试，再实现。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"第一轮先写了 3 个基础测试：\"}],\"\\n\",[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"test('createWorkflowRun starts in idle stage', ...)\\ntest('plan_ready can advance to studying', ...)\\ntest('canStartAiQuiz only returns true after enough learned words', ...)\\n\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"然后先跑：\"}],\"\\n\",[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"node --test tests/learning-workflow.test.js -v\\n\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"第一次失败是对的，因为此时 \",[\"$\",\"code\",null,{\"children\":\"src/utils/learning-workflow.js\"}],\" 还不存在。\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步的目的不是\\\"看报错难不难看\\\"，而是确认：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"测试真的能抓到\\\"功能不存在\\\"\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"测试文件路径是对的\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"测试不是误通过\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"第一版实现\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"第一版只做了最小实现，对应提交：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"5d1a79fb\"}],\" \",[\"$\",\"code\",null,{\"children\":\"feat: add learning workflow state helpers\"}]]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一版已经满足了原始计划里的最小要求，但后面的代码质量评审发现它还不够安全。\"}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"评审后修了什么\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"第一次质量问题\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"问题：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"nextWorkflowStage('planredy')\"}],\" 这种非法状态会被静默原样返回\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这会带来一个很隐蔽的问题：如果后面某个 store 或页面把状态写错了，系统不会报错，只会卡死在错误状态里。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"因此做了第一轮修正，对应提交：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"7041a4c0\"}],\" \",[\"$\",\"code\",null,{\"children\":\"fix: reject invalid learning workflow states\"}]]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"新增测试：\"}],\"\\n\",[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"test('completed stays at completed', ...)\\ntest('invalid workflow stage returns null', ...)\\ntest('canStartAiQuiz rejects malformed learnedWords values', ...)\\n\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"修正后约定变成：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"终态 \",[\"$\",\"code\",null,{\"children\":\"completed\"}],\" 保持不变\"]}],\"\\n\",\"$L14\",\"\\n\"]}],\"\\n\",\"$L15\",\"\\n\",\"$L16\",\"\\n\",\"$L17\",\"\\n\",\"$L18\",\"\\n\",\"$L19\",\"\\n\",\"$L1a\",\"\\n\",\"$L1b\",\"\\n\",\"$L1c\",\"\\n\",\"$L1d\",\"\\n\",\"$L1e\",\"\\n\",\"$L1f\",\"\\n\",\"$L20\",\"\\n\",\"$L21\",\"\\n\",\"$L22\",\"\\n\",\"$L23\",\"\\n\",\"$L24\",\"\\n\",\"$L25\",\"\\n\",\"$L26\",\"\\n\",\"$L27\",\"\\n\",\"$L28\",\"\\n\",\"$L29\",\"\\n\",\"$L2a\",\"\\n\",\"$L2b\",\"\\n\",\"$L2c\",\"\\n\",\"$L2d\",\"\\n\",\"$L2e\",\"\\n\",\"$L2f\",\"\\n\",\"$L30\",\"\\n\",\"$L31\",\"\\n\",\"$L32\",\"\\n\",\"$L33\",\"\\n\",\"$L34\",\"\\n\",\"$L35\",\"\\n\",\"$L36\",\"\\n\",\"$L37\",\"\\n\",\"$L38\",\"\\n\",\"$L39\",\"\\n\",\"$L3a\",\"\\n\",\"$L3b\",\"\\n\",\"$L3c\",\"\\n\",\"$L3d\",\"\\n\",\"$L3e\",\"\\n\",\"$L3f\"]\n"])</script><script>self.__next_f.push([1,"14:[\"$\",\"li\",null,{\"children\":[\"非法状态明确返回 \",[\"$\",\"code\",null,{\"children\":\"null\"}]]}]\n15:[\"$\",\"h3\",null,{\"children\":\"第二次质量问题\"}]\n16:[\"$\",\"p\",null,{\"children\":\"问题：\"}]\n17:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"canStartAiQuiz(null)\"}],\" 仍然会抛异常\"]}],\"\\n\"]}]\n18:[\"$\",\"p\",null,{\"children\":\"原因不是业务逻辑错，而是函数参数在解构前没有先验证顶层输入。\"}]\n19:[\"$\",\"p\",null,{\"children\":\"因此做了第二轮修正，对应提交：\"}]\n1a:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"092c6110\"}],\" \",[\"$\",\"code\",null,{\"children\":\"fix: guard ai quiz workflow input\"}]]}],\"\\n\"]}]\n1b:[\"$\",\"p\",null,{\"children\":\"新增测试：\"}]\n1c:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"test('canStartAiQuiz rejects null input', ...)\\n\"}]}]\n1d:[\"$\",\"p\",null,{\"children\":\"修正后，这个 helper 对错误输入就更稳了。\"}]\n1e:[\"$\",\"h2\",null,{\"children\":\"最终代码学到了什么\"}]\n1f:[\"$\",\"p\",null,{\"children\":\"这个任务很小，但很适合作为 AI 项目的第一步，因为你能学到三个关键点。\"}]\n20:[\"$\",\"h3\",null,{\"children\":\"1. 状态机不要\\\"默默容错\\\"\"}]\n21:[\"$\",\"p\",null,{\"children\":\"很多初学者会觉得\\\"非法状态就原样返回\\\"比较宽容，但这其实是在隐藏 bug。\"}]\n22:[\"$\",\"p\",null,{\"children\":\"在工作流系统里，非法状态更适合：\"}]\n23:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"返回 \",[\"$\",\"code\",null,{\"children\":\"null\"}]]}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"抛错\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"或明确记录异常\"}],\"\\n\"]}]\n24:[\"$\",\"p\",null,{\"children\":\"至少不能悄悄吞掉。\"}]\n25:[\"$\",\"h3\",null,{\"children\":\"2. 基础 helper 要先防御错误输入\"}]\n26:[\"$\",\"p\",null,{\"children\":\"越底层的工具函数，越要对输入做边界保护。\"}]\n27:[\"$\",\"p\",null,{\"children\":[\"因为它以后会被很多地方复用。一旦底层 helper 因为 \",[\"$\",\"code\",null,{\"children\":\"null\"}],\" 这种数据崩掉，排查成本会很高。\"]}]\n28:[\"$\",\"h3\",null,{\"children\":\"3. TDD 不只是\\\"先写测试\\\"\"}]\n29:[\"$\",\"p\",null,{\"children\":\"这一步真正重要的不是形式，而是这条收敛链路：\"}]\n2a:[\"$\",\"ol\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"先写一个会失败的测试\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"只写够让它通过的最小代码\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"让评审来找你自己没想到的边界问题\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"再用测试把这些边界固定住\"}],\"\\n\"]}]\n2b:[\"$\",\"p\",null,{\"children\":\"这就是为什么最后会有 3 个提交，而不是一开始就\\\"自以为写完了\\\"。\"}]\n2c:[\"$\",\"h2\",null,{\"children\":\"最终接口约定\"}]\n2d:[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"createWorkflowRun()\"}]}]\n2e:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"createWorkflowRun()\\n// =\u003e { status: 'idle', currentStage: 'idle' }\\n\"}]}]\n2f:[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"nextWorkflowStage()\"}]}]\n30:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"nextWorkflowStage('plan_ready')\\n// =\u003e 'studying'\\n\\nnextWorkflowStage('completed')\\n// =\u003e 'completed'\\n\\nnextWorkflowStage('invalid-state')\\n// =\u003e null\\n\"}]}]\n31:[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"canStartAiQuiz()\"}]}]\n32:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"canStartAiQuiz({ learnedWords: ['api', 'cache'], minimum: 3 })\\n// =\u003e false\\n\\ncanStartAiQuiz({ learnedWords: ['api', 'cache', 'queue'], minimum: 3 })\\n// =\u003e true\\n\\ncanStartAiQuiz({ learnedWords: 'abc', minimum: 3 })\\n// =\u003e false\\n\\ncanStartAiQuiz(null)\\n// =\u003e false\\n\"}]}]\n33:[\"$\",\"h2\",null,{\"children\":\"你可以自己复现的命令\"}]\n34:[\"$\",\"h3\",null,{\"children\":\"运行单测\"}]\n35:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"node --test tests/learning-workflow.test"])</script><script>self.__next_f.push([1,".js -v\\n\"}]}]\n36:[\"$\",\"h3\",null,{\"children\":\"看这一步的提交演进\"}]\n37:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"git log --oneline -3\\n\"}]}]\n38:[\"$\",\"p\",null,{\"children\":\"你会看到这三个提交：\"}]\n39:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"5d1a79fb\"}],\" 初始最小实现\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"7041a4c0\"}],\" 修非法状态问题\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"092c6110\"}],\" 修空输入问题\"]}],\"\\n\"]}]\n3a:[\"$\",\"h2\",null,{\"children\":\"这一步你应该学会什么\"}]\n3b:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么 AI 项目也要先抽\\\"纯逻辑层\\\"\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"如何用 TDD 做最小实现\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么代码评审能帮助你发现状态机边界问题\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么底层 helper 的输入防御很重要\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"一个小功能是怎么从\\\"能跑\\\"收敛到\\\"更可靠\\\"的\"}],\"\\n\"]}]\n3c:[\"$\",\"h2\",null,{\"children\":\"下一步会做什么\"}]\n3d:[\"$\",\"p\",null,{\"children\":[\"下一步是 \",[\"$\",\"code\",null,{\"children\":\"Task 2\"}],\"：\"]}]\n3e:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"给 Supabase 增加 AI 画像与工作流相关数据表\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\"src/utils/supabase.js\"}],\" 增加访问封装\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"先写测试，再改 SQL 和客户端方法\"}],\"\\n\"]}]\n3f:[\"$\",\"p\",null,{\"children\":[\"这一步会让你开始接触 AI 项目里非常关键的另一层：\",[\"$\",\"strong\",null,{\"children\":\"状态持久化\"}],\"。\"]}]\n"])</script><script>self.__next_f.push([1,"e:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"c:null\n10:[[\"$\",\"title\",\"0\",{\"children\":\"LLM 学习工作流（一）：状态机与 TDD 最小实现 | QingWaaa\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"实现 LLM 学习工作流的第一块基础设施：用纯函数工具模块描述学习流程的状态推进规则。从 TDD 最小实现，到两轮代码评审修正，沉淀出状态机的三条核心经验。\"}],[\"$\",\"meta\",\"2\",{\"name\":\"keywords\",\"content\":\"developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js\"}]]\n"])</script></body></html>

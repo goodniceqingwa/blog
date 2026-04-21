@@ -1,0 +1,401 @@
+---
+title: "LLM 学习工作流（四）：AI 输出 Schema 与 Edge Function 骨架"
+date: 2026-04-21
+tags: ["AI", "LLM", "Supabase", "Edge Function", "Structured Outputs", "工程实践"]
+categories: ["AI 应用开发"]
+summary: "把项目从前端先把 payload 准备好推进到服务端真的有一个 AI 工作流入口：结构化输出 schema、action->schema 映射、Edge Function scaffold、认证依赖平台能力、OpenAI 失败语义显式建模。"
+---
+
+## 这一步在做什么
+
+这一步把项目从"前端先把 payload 准备好"推进到了"服务端真的有一个 AI 工作流入口"。
+
+最终涉及的主要文件是：
+
+- `src/utils/ai-response-shapes.js`
+- `tests/ai-response-shapes.test.js`
+- `supabase/config.toml`
+- `supabase/functions/_shared/cors.ts`
+- `supabase/functions/_shared/openai.ts`
+- `supabase/functions/learning-workflow/index.ts`
+
+## 为什么这一步关键
+
+到 Task 3 为止，我们已经有了：
+
+- 前端工作流状态
+- 数据库边界
+- 发给 AI 的标准 payload
+
+但还没有真正的服务端 AI 编排入口。
+
+这一层必须解决三个核心问题：
+
+1. 前端传来的请求该走哪个 AI 工作流动作
+2. 模型输出必须长成什么结构
+3. 服务端遇到拒答、非完整输出、认证失败时该怎么回
+
+所以 Task 4 表面是"搭 scaffold"，本质是在定义：
+
+`前端协议 -> 服务端编排 -> 模型输出协议`
+
+## 一开始做了什么
+
+第一版对应提交：
+
+- `f948ce02` `feat: add learning workflow edge function scaffold`
+
+最初做了这些事情：
+
+### 1. 定义结构化输出 schema
+
+在 `src/utils/ai-response-shapes.js` 里定义了：
+
+- `dailyPlanShape`
+- `reflectionShape`
+
+这很重要，因为它决定模型输出不能再是随便一段文字，而是必须符合前端能消费的 JSON 结构。
+
+### 2. 建立 action -> schema 的映射
+
+也就是：
+
+- `generateDailyPlan` 对应日计划 schema
+- `summarizeReflection` 对应复盘 schema
+
+这一步让服务端开始具备"工作流分发器"的雏形。
+
+### 3. 搭一个 Edge Function 入口
+
+在 `supabase/functions/learning-workflow/index.ts` 里先把这些基础骨架搭起来：
+
+- 校验 HTTP 方法
+- 校验 action
+- 提取请求上下文
+- 调用 OpenAI wrapper
+- 返回结构化 JSON
+
+### 4. 搭 OpenAI Responses API 包装层
+
+在 `supabase/functions/_shared/openai.ts` 里做了一个 fetch-based wrapper。
+
+这里的关键不是"有没有请求成功"，而是开始把上游 API 行为统一收口。
+
+## 先写了什么测试
+
+第一轮测试非常克制，只先盯 schema：
+
+```js
+test('dailyPlanShape contains required top-level keys', ...)
+test('reflectionShape contains summary and nextActions', ...)
+```
+
+然后先跑：
+
+```bash
+node --test tests/ai-response-shapes.test.js -v
+```
+
+第一次失败是对的，因为这时 `src/utils/ai-response-shapes.js` 还不存在。
+
+## 为什么第一版不够
+
+第一版虽然把 scaffold 搭起来了，但 review 很快指出两个核心风险：
+
+### 风险 1：认证只是"看起来像认证"
+
+最初的做法是：
+
+- 从请求头里拿 bearer token
+- 自己 base64 解 JWT payload
+- 直接取 `sub`
+
+这有两个问题：
+
+1. 这不是当前 Supabase 官方推荐方式
+2. 这更像"读 token 内容"，不是"验证 token 合法性"
+
+也就是说，它看起来做了认证，实际上并不可靠。
+
+### 风险 2：Structured Outputs 的失败态没有被显式处理
+
+最初的 OpenAI wrapper 默认假设：
+
+- 只要请求成功
+- 就一定能拿到 JSON
+- 然后直接 `JSON.parse`
+
+但当前 OpenAI 官方文档明确提到至少要考虑：
+
+- `incomplete`
+- `refusal`
+
+如果不处理，正常的模型行为也会变成模糊的 500。
+
+## 第一轮修正做了什么
+
+最终的加固提交是：
+
+- `61dc94c8` `fix: harden learning workflow auth and responses`
+
+这一步其实比看起来重要得多。
+
+### 1. 认证改成了当前 Supabase 推荐模式
+
+在 `supabase/config.toml` 里：
+
+```toml
+verify_jwt = false
+```
+
+然后在函数里改成：
+
+- `createClient(...)`
+- `supabase.auth.getClaims(token)`
+
+这背后的思路是：
+
+- 不再自己假装验证 JWT
+- 交给 Supabase Auth 来做 claims 验证
+
+这就是一个非常典型的 AI 服务端工程原则：
+
+**能交给平台安全边界做的事，不要自己手写半套。**
+
+### 2. OpenAI wrapper 开始显式表达失败语义
+
+这一步引入了 `OpenAIResponseError`，把几类上游状态显式分开：
+
+- `openai_incomplete`
+- `openai_refusal`
+- `openai_invalid_json`
+- `openai_missing_output`
+- `openai_http_error`
+
+也就是说，从这一步开始：
+
+- 不是所有失败都叫 500
+- 不是所有错误都应该混成一个字符串
+
+这是 AI 项目和普通 CRUD 项目很不一样的地方：
+
+**模型失败有很多"预期内失败态"，必须单独建模。**
+
+### 3. 服务端错误开始有层级
+
+在 `supabase/functions/learning-workflow/index.ts` 里，现在至少区分了：
+
+- `HttpError`
+- `OpenAIResponseError`
+- 其他未知错误
+
+这意味着后面前端可以更容易做：
+
+- 认证失败提示
+- AI 拒答提示
+- 上游暂时不可用提示
+
+## 这一步还修了什么边界问题
+
+### Bearer 解析变成大小写不敏感
+
+这是一个细节，但很工程。
+
+HTTP 里的 auth scheme 是大小写不敏感的，所以：
+
+- `Bearer`
+- `bearer`
+
+都应该接受。
+
+这类问题如果不在边界层修，后面很容易变成"明明 token 对，为什么偶发 401"。
+
+### 上游错误不再直接把原始文本回给客户端
+
+最初的实现会把 OpenAI 原始错误文本拼进对外错误消息。
+
+这不理想，因为：
+
+- 可能泄露上游细节
+- 对前端并没有更高价值
+- 也不利于稳定错误协议
+
+所以现在改成：
+
+- 对客户端返回稳定错误码和稳定错误消息
+- 详细原始错误走服务端日志
+
+这就是很典型的"内部错误信息"和"外部错误协议"分离。
+
+## 测试策略为什么还是偏轻
+
+这一步的一个现实限制是：
+
+- 当前环境没有 `supabase` CLI
+- 当前环境也没有 `deno`
+
+所以没法真的把 Edge Function 跑起来做本地 smoke test。
+
+因此这一轮测试采用的是"源代码结构断言"：
+
+- 检查 `config.toml` 是否还依赖老式 `verify_jwt = true`
+- 检查 `index.ts` 是否用了 `createClient` + `getClaims`
+- 检查 `openai.ts` 是否显式处理了 `incomplete/refusal`
+- 检查错误处理是否不再统一掉进 500
+
+这不是最理想的测试方式，但在当前环境限制下，它依然比"完全不测"强得多。
+
+你要学到的是：
+
+**测试策略要根据环境约束分层，不要因为做不到完美测试就不做任何测试。**
+
+## 最终做成了什么
+
+### 输入侧
+
+Edge Function 现在已经能接：
+
+- action
+- 标准请求体
+- bearer token
+
+### 编排侧
+
+服务端现在已经有：
+
+- action allowlist
+- prompt/schema 选择
+- 请求上下文提取
+
+### 输出侧
+
+模型输出现在开始有明确 schema：
+
+- 日计划
+- 学习复盘
+
+### 错误侧
+
+服务端已经开始区分：
+
+- 认证错误
+- 请求体错误
+- 模型拒答
+- 模型输出不完整
+- 模型 JSON 不合法
+- 上游 HTTP 错误
+
+## 这一步真正学到什么
+
+### 1. AI 服务端最重要的是"边界语义"
+
+很多人会把服务端 AI 编排理解成：
+
+- 收请求
+- 调模型
+- 把结果扔回来
+
+这太浅了。
+
+真正重要的是：
+
+- 哪些 action 合法
+- 哪些输入是无效请求
+- 哪些失败是模型拒答
+- 哪些失败是平台问题
+
+这就是服务端边界语义。
+
+### 2. 结构化输出不是"让模型输出 JSON"这么简单
+
+真正的问题不只是：
+
+- schema 长什么样
+
+还包括：
+
+- incomplete 怎么处理
+- refusal 怎么处理
+- JSON parse 失败怎么办
+
+也就是说，Structured Outputs 的关键不只是 schema，而是完整生命周期。
+
+### 3. 安全校验要尽量依赖平台能力
+
+JWT 这种事情最怕"自己觉得差不多"。
+
+这一步最值得学的是：
+
+- 与其自己手解 token
+- 不如走当前平台推荐的 claims 校验路径
+
+### 4. scaffold 不是随便搭
+
+一个好的 scaffold 不是"先放那，后面再说"，而是要保证：
+
+- 扩展方向是对的
+- 错误语义不会完全错
+- 下一步接功能时不会马上推倒重来
+
+这就是为什么 Task 4 会经过不止一轮 review。
+
+## 你可以自己复现什么
+
+### 跑当前所有 node 测试
+
+```bash
+node --test tests/*.test.js
+```
+
+### 跑构建
+
+```bash
+npm run build
+```
+
+### 看 Task 4 的提交演进
+
+```bash
+git log --oneline -3
+```
+
+你会看到：
+
+- `f948ce02` 初始 scaffold
+- `61dc94c8` 认证和 OpenAI 错误语义加固
+
+## 当前还留着什么风险
+
+这一步已经足够继续往下做，但仍有几个已知限制：
+
+- 本地没有 `supabase functions serve`
+- 没法在当前环境里真正跑 Deno/Supabase runtime
+- 现在的测试更多是在守"结构"和"分支存在性"
+
+所以后面一旦有 CLI 或 Deno 环境，应该优先补：
+
+- token 缺失/过期/非法
+- Supabase claims 校验失败
+- OpenAI refusal
+- OpenAI incomplete
+- 无效 JSON
+
+## 这一步你应该学会什么
+
+- 为什么 AI 服务端不能只做"转发器"
+- 为什么认证方式要跟平台官方模式走
+- 为什么模型失败态要显式建模
+- 为什么边界层要先定义错误语义
+- 为什么在环境受限时也要做分层测试
+
+## 下一步会做什么
+
+下一步是 `Task 5`：
+
+- 新增 AI 教练 store
+- 新增 `/coach` 路由和页面骨架
+- 开始把前面做好的状态、payload、schema、服务端入口接到 UI 上
+
+也就是说，下一步你会开始看到：
+
+`前端页面 -> store -> payload -> edge function -> structured response`

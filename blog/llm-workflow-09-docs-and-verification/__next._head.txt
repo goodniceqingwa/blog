@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/f3e35d9a80465ef3.js"],"ViewportBoundary"]
+3:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/f3e35d9a80465ef3.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"OwlZKtRWYmTS5iFl_68n1","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"LLM 学习工作流（九）：文档、环境变量与最终验证 | QingWaaa"}],["$","meta","1",{"name":"description","content":"把 1-8 步的 AI 工作流改造整理成可交付、可运行、可复现的项目闭环：前端与服务端环境变量边界、统一测试命令、README 补齐能力与验证状态。代码写完≠工程完成，阻塞也属于验证结果。"}],["$","meta","2",{"name":"keywords","content":"developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js"}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}

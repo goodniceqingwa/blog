@@ -1,0 +1,213 @@
+<!DOCTYPE html><!--OwlZKtRWYmTS5iFl_68n1--><html lang="zh-CN" class="space_grotesk_e6988195-module__RNs2Mq__variable inter_c15e96cb-module__0bjUvq__variable jetbrains_mono_7ea1d0f9-module__6GV5LG__variable noto_sans_sc_c25b8282-module__pnEi6G__variable"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/feb57b2dc8f29018-s.p.2539f70a.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/e5d3f102d41f5630.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/a2acf40391e8e49b.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/80fc4d7125e06aa5.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/0e5ec002b973a262.js"/><script src="/_next/static/chunks/f091501564eb2ea3.js" async=""></script><script src="/_next/static/chunks/0381c808fbaec563.js" async=""></script><script src="/_next/static/chunks/aee6c7720838f8a2.js" async=""></script><script src="/_next/static/chunks/turbopack-4c948ebe0e5cd4e4.js" async=""></script><script src="/_next/static/chunks/95166580d1eed87b.js" async=""></script><script src="/_next/static/chunks/139e2097087bfffa.js" async=""></script><script src="/_next/static/chunks/ff1a16fafef87110.js" async=""></script><script src="/_next/static/chunks/f3e35d9a80465ef3.js" async=""></script><meta name="next-size-adjust" content=""/><title>LLM 学习工作流（九）：文档、环境变量与最终验证 | QingWaaa</title><meta name="description" content="把 1-8 步的 AI 工作流改造整理成可交付、可运行、可复现的项目闭环：前端与服务端环境变量边界、统一测试命令、README 补齐能力与验证状态。代码写完≠工程完成，阻塞也属于验证结果。"/><meta name="keywords" content="developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="font-body"><div hidden=""><!--$--><!--/$--></div><script>((a,b,c,d,e,f,g,h)=>{let i=document.documentElement,j=["light","dark"];function k(b){var c;(Array.isArray(a)?a:[a]).forEach(a=>{let c="class"===a,d=c&&f?e.map(a=>f[a]||a):e;c?(i.classList.remove(...d),i.classList.add(f&&f[b]?f[b]:b)):i.setAttribute(a,b)}),c=b,h&&j.includes(c)&&(i.style.colorScheme=c)}if(d)k(d);else try{let a=localStorage.getItem(b)||c,d=g&&"system"===a?window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light":a;k(d)}catch(a){}})("class","theme","dark",null,["light","dark"],{"dark":"dark","light":"light"},false,true)</script><div class="fixed top-0 left-0 w-2 h-2 bg-accent-purple rounded-full pointer-events-none z-[9999] mix-blend-difference"></div><div class="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] border border-accent-purple/50"></div><header class="fixed top-0 left-0 right-0 z-50 glass border-b border-glass-border" style="transform:none"><nav class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"><a class="font-mono text-xl font-bold text-text-primary hover:text-accent-purple transition-colors" href="/"><span class="text-term-green">$ </span>qingwa@blog:~</a><div class="hidden md:flex items-center gap-8"><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/">首页</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/works">作品集</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/blog">博客</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/about">关于</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/contact">联系</a></div><button class="md:hidden relative w-10 h-10 flex items-center justify-center" aria-label="Toggle menu"><div class="flex flex-col gap-1.5"><span class="w-6 h-0.5 bg-text-primary block"></span><span class="w-6 h-0.5 bg-text-primary block"></span><span class="w-6 h-0.5 bg-text-primary block"></span></div></button></nav></header><main class="pt-16"><article class="min-h-screen py-24 px-6"><div class="max-w-3xl mx-auto"><a class="text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block font-mono text-sm" href="/blog"><span class="text-term-green">$ </span>cd ../blog</a><header class="mb-12"><div class="font-mono text-xs text-text-muted mb-4 break-all"><span class="text-term-green">$ </span>cat ~/blog/<!-- -->AI 应用开发<!-- -->/<!-- -->llm-workflow-09-docs-and-verification<!-- -->.mdx</div><h1 class="text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4">LLM 学习工作流（九）：文档、环境变量与最终验证</h1><div class="flex items-center gap-4 text-text-muted text-sm font-mono"><span>2026年4月21日</span><span>·</span><span>7 min read</span></div><div class="flex flex-wrap gap-2 mt-4"><span class="code-tag">&lt;<!-- -->AI 应用开发<!-- --> /&gt;</span></div><div class="flex flex-wrap gap-2 mt-2"><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">AI</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">LLM</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">工程交付</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">文档</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">环境变量</span></div></header><div class="prose-custom"><h2>这一步在做什么</h2>
+<p>前面 1 到 8 步，主要是在做代码层改造：</p>
+<ul>
+<li>状态机</li>
+<li>数据表</li>
+<li>payload</li>
+<li>Edge Function scaffold</li>
+<li>coach 页面</li>
+<li>学习流接入</li>
+<li>测验与复盘闭环</li>
+</ul>
+<p>Task 9 做的是另一件非常关键的事：</p>
+<p><strong>把这条改造链整理成别人能看懂、能运行、能验证的工程成果。</strong></p>
+<p>最终涉及的文件主要是：</p>
+<ul>
+<li><code>README.md</code></li>
+<li><code>.env.example</code></li>
+<li><code>package.json</code></li>
+</ul>
+<h2>为什么这一步重要</h2>
+<p>很多人做项目时，代码改完就觉得&quot;完成了&quot;。</p>
+<p>但真正的工程完成通常还包括：</p>
+<ol>
+<li>别人能不能知道怎么启动</li>
+<li>别人能不能知道需要哪些环境变量</li>
+<li>别人能不能知道哪些能力已经接上、哪些还只是 scaffold</li>
+<li>最终验证到底哪些通过了，哪些因为环境缺失还没法做</li>
+</ol>
+<p>尤其是 AI 项目，比普通前端项目更需要这些说明，因为它通常同时依赖：</p>
+<ul>
+<li>前端环境变量</li>
+<li>后端 secrets</li>
+<li>平台 CLI</li>
+<li>模型能力</li>
+</ul>
+<h2>这一步具体补了什么</h2>
+<h3>1. <code>.env.example</code></h3>
+<p>在 <code>.env.example</code> 里补了：</p>
+<ul>
+<li><code>VITE_AI_FEATURE_ENABLED=true</code></li>
+<li>服务端 secrets 的说明注释</li>
+</ul>
+<p>这一步的意义是把：</p>
+<ul>
+<li>前端需要什么</li>
+<li>服务端需要什么</li>
+</ul>
+<p>明确分开。</p>
+<p>这对 AI 项目特别重要，因为：</p>
+<ul>
+<li>前端环境变量会进浏览器</li>
+<li>服务端 secrets 绝不能进浏览器</li>
+</ul>
+<h3>2. <code>package.json</code></h3>
+<p>在 <code>package.json</code> 里补了：</p>
+<pre><code class="language-json">&quot;test&quot;: &quot;node --test tests/*.test.js&quot;
+</code></pre>
+<p>这一步很小，但作用很大。</p>
+<p>它把之前&quot;我们知道怎么跑测试&quot;变成了：</p>
+<ul>
+<li>项目自己告诉别人怎么跑测试</li>
+</ul>
+<p>这就是工程可用性的一部分。</p>
+<h3>3. <code>README.md</code></h3>
+<p>README 现在新增了几类内容：</p>
+<h4>AI 学习教练能力说明</h4>
+<p>明确说明当前已经打通的内容：</p>
+<ul>
+<li>AI 教练入口</li>
+<li>学习画像</li>
+<li>AI 计划驱动学习</li>
+<li>AI 测验与复盘</li>
+<li>Edge Function scaffold</li>
+</ul>
+<h4>AI 本地开发步骤</h4>
+<p>补充：</p>
+<ul>
+<li>安装依赖</li>
+<li>配置 <code>.env</code></li>
+<li>启动前端</li>
+<li>跑测试</li>
+<li>跑构建</li>
+</ul>
+<h4>Edge Functions 说明</h4>
+<p>明确了：</p>
+<ul>
+<li><code>supabase/functions/learning-workflow</code> 的职责</li>
+<li>需要的服务端 secrets</li>
+<li>本地 <code>supabase functions serve</code> 的计划命令</li>
+</ul>
+<h4>当前验证状态</h4>
+<p>这部分非常关键：</p>
+<ul>
+<li>哪些验证已通过</li>
+<li>哪些验证因为缺 CLI 还没法做</li>
+</ul>
+<h2>为什么&quot;验证状态&quot;要写进 README</h2>
+<p>这一步是 Task 9 里最值得学的地方之一。</p>
+<p>很多项目的文档会写：</p>
+<ul>
+<li>&quot;运行这个命令&quot;</li>
+</ul>
+<p>但不会写：</p>
+<ul>
+<li>&quot;我实际上跑过没有&quot;</li>
+</ul>
+<p>这会导致文档看起来像真的，但其实没人确认过。</p>
+<p>这次我们明确把验证结果分成两类：</p>
+<h3>已验证通过</h3>
+<pre><code class="language-bash">npm run test
+npm run build
+</code></pre>
+<h3>计划中的完整验证，但当前环境缺工具</h3>
+<pre><code class="language-bash">supabase db push
+supabase functions serve learning-workflow --env-file supabase/.env.local
+</code></pre>
+<p>而且当前阻塞原因也明确记录了：</p>
+<ul>
+<li>本机没有 <code>supabase</code> CLI</li>
+</ul>
+<p>这说明一件事：</p>
+<p><strong>真正的验证报告不只是报喜，也要报阻塞。</strong></p>
+<h2>这一步学到了什么</h2>
+<h3>1. 工程交付不等于代码写完</h3>
+<p>代码完成只是其中一部分。</p>
+<p>真正的交付还要包括：</p>
+<ul>
+<li>启动说明</li>
+<li>环境变量说明</li>
+<li>服务端配置说明</li>
+<li>验证结果说明</li>
+</ul>
+<h3>2. AI 项目比普通项目更需要前后端边界说明</h3>
+<p>因为它通常会同时出现：</p>
+<ul>
+<li>浏览器变量</li>
+<li>服务端 secrets</li>
+<li>第三方模型 key</li>
+<li>平台运行时</li>
+</ul>
+<p>如果不在文档里说清楚，后面几乎一定会有人配错。</p>
+<h3>3. &quot;能跑&quot;和&quot;我已经验证过能跑&quot;是两回事</h3>
+<p>这一步把&quot;理论上可以执行&quot;分成了：</p>
+<ul>
+<li>已执行成功</li>
+<li>当前环境无法执行</li>
+</ul>
+<p>这是很成熟的工程习惯。</p>
+<h3>4. 阻塞也属于验证结果</h3>
+<p><code>supabase db push</code> 和 <code>supabase functions serve</code> 没跑起来，不代表这个阶段没完成。</p>
+<p>关键是：</p>
+<ul>
+<li>你知道为什么没跑起来</li>
+<li>你把原因明确记录下来</li>
+</ul>
+<p>这比假装&quot;应该没问题&quot;更专业。</p>
+<h2>这一步最终做成了什么</h2>
+<h3>环境变量层</h3>
+<p>现在项目已经明确区分：</p>
+<ul>
+<li>前端变量</li>
+<li>服务端 secrets</li>
+</ul>
+<h3>脚本层</h3>
+<p>现在项目已经有统一测试命令：</p>
+<pre><code class="language-bash">npm run test
+</code></pre>
+<h3>文档层</h3>
+<p>README 已经能说明：</p>
+<ul>
+<li>AI 学习教练功能是什么</li>
+<li>本地开发怎么跑</li>
+<li>Edge Function 怎么理解</li>
+<li>当前验证做到哪一步</li>
+</ul>
+<h2>这一步你可以自己复现什么</h2>
+<h3>跑测试</h3>
+<pre><code class="language-bash">npm run test
+</code></pre>
+<h3>跑构建</h3>
+<pre><code class="language-bash">npm run build
+</code></pre>
+<h3>检查 CLI 阻塞</h3>
+<pre><code class="language-bash">supabase db push
+supabase functions serve learning-workflow --env-file supabase/.env.local
+</code></pre>
+<p>如果当前机器没装 <code>supabase</code> CLI，就会得到：</p>
+<pre><code class="language-bash">supabase: command not found
+</code></pre>
+<p>这正是现在需要在文档里记录下来的真实状态。</p>
+<h2>这一步你应该学会什么</h2>
+<ul>
+<li>为什么最终交付要包含文档和验证</li>
+<li>为什么 AI 项目更需要环境变量边界说明</li>
+<li>为什么验证结果必须区分&quot;已通过&quot;和&quot;被环境阻塞&quot;</li>
+<li>为什么 README 不只是介绍项目，还要承担交付说明角色</li>
+</ul>
+<h2>到这里你已经完成了什么</h2>
+<p>到 Task 9 为止，这个项目已经从一个原始词典/背词应用，逐步完成了：</p>
+<ul>
+<li>AI 工作流状态</li>
+<li>AI 数据持久化</li>
+<li>AI 请求协议</li>
+<li>AI 服务端骨架</li>
+<li>AI 教练页面</li>
+<li>AI 学习入口</li>
+<li>AI 驱动学习流</li>
+<li>AI 测验与复盘闭环</li>
+<li>文档、环境和验证整理</li>
+</ul>
+<p>这意味着你现在已经走完了一条很完整的：</p>
+<p><code>传统前端项目 -&gt; AI 工作流项目</code></p>
+<p>的改造路径。</p></div></div></article><!--$--><!--/$--></main><footer class="border-t border-glass-border bg-bg-deep"><div class="max-w-7xl mx-auto px-6 py-12"><div class="font-mono text-sm space-y-1 mb-8"><p><span class="text-term-green font-bold">$ </span><span class="text-text-secondary">git remote -v</span></p><p><span class="text-term-yellow">origin</span><span class="text-text-muted">    <!-- -->https://github.com/goodniceqingwa<!-- --> <!-- -->(fetch)</span></p><p><span class="text-term-yellow">qingwa</span><span class="text-text-muted">    <!-- -->https://qingwaaa.top<!-- --> <!-- -->(site)</span></p></div><div class="flex flex-col md:flex-row items-center justify-between gap-6"><div class="flex gap-6"><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/blog">博客</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/works">项目</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/about">关于</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/contact">联系</a></div><div class="flex gap-4"><a href="https://github.com/goodniceqingwa" target="_blank" rel="noopener noreferrer" class="w-10 h-10 glass rounded-full flex items-center justify-center text-text-muted hover:text-accent-purple hover:glow-purple transition-all" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg></a></div></div><div class="mt-8 pt-6 border-t border-glass-border text-center text-text-muted text-xs font-mono"><p>© <!-- -->2026<!-- --> QingWaaa. All rights reserved.</p></div></div></footer><script src="/_next/static/chunks/0e5ec002b973a262.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[5622,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"ThemeProvider\"]\n3:I[79030,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"SmoothScrollProvider\"]\n4:I[96901,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"CustomCursor\"]\n5:I[7988,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"Navbar\"]\n6:I[39756,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n7:I[37457,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n8:I[87392,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"Footer\"]\na:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"OutletBoundary\"]\nb:\"$Sreact.suspense\"\nd:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"ViewportBoundary\"]\nf:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"MetadataBoundary\"]\n11:I[68027,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n:HL[\"/_next/static/chunks/e5d3f102d41f5630.css\",\"style\"]\n:HL[\"/_next/static/chunks/a2acf40391e8e49b.css\",\"style\"]\n:HL[\"/_next/static/chunks/80fc4d7125e06aa5.css\",\"style\"]\n:HL[\"/_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/feb57b2dc8f29018-s.p.2539f70a.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"OwlZKtRWYmTS5iFl_68n1\",\"c\":[\"\",\"blog\",\"llm-workflow-09-docs-and-verification\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"blog\",{\"children\":[[\"slug\",\"llm-workflow-09-docs-and-verification\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/e5d3f102d41f5630.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"link\",\"1\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/a2acf40391e8e49b.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"link\",\"2\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/80fc4d7125e06aa5.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/95166580d1eed87b.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-1\",{\"src\":\"/_next/static/chunks/139e2097087bfffa.js\",\"async\":true,\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"suppressHydrationWarning\":true,\"className\":\"space_grotesk_e6988195-module__RNs2Mq__variable inter_c15e96cb-module__0bjUvq__variable jetbrains_mono_7ea1d0f9-module__6GV5LG__variable noto_sans_sc_c25b8282-module__pnEi6G__variable\",\"children\":[\"$\",\"body\",null,{\"className\":\"font-body\",\"children\":[\"$\",\"$L2\",null,{\"children\":[\"$\",\"$L3\",null,{\"children\":[[\"$\",\"$L4\",null,{}],[\"$\",\"$L5\",null,{}],[\"$\",\"main\",null,{\"className\":\"pt-16\",\"children\":[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}],[\"$\",\"$L8\",null,{}]]}]}]}]}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L9\",null,[\"$\",\"$La\",null,{\"children\":[\"$\",\"$b\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@c\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$Ld\",null,{\"children\":\"$Le\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lf\",null,{\"children\":[\"$\",\"$b\",null,{\"name\":\"Next.Metadata\",\"children\":\"$L10\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$11\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"12:I[22016,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"\"]\n"])</script><script>self.__next_f.push([1,"9:[\"$\",\"article\",null,{\"className\":\"min-h-screen py-24 px-6\",\"children\":[\"$\",\"div\",null,{\"className\":\"max-w-3xl mx-auto\",\"children\":[[\"$\",\"$L12\",null,{\"href\":\"/blog\",\"className\":\"text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block font-mono text-sm\",\"children\":[[\"$\",\"span\",null,{\"className\":\"text-term-green\",\"children\":\"$$ \"}],\"cd ../blog\"]}],[\"$\",\"header\",null,{\"className\":\"mb-12\",\"children\":[[\"$\",\"div\",null,{\"className\":\"font-mono text-xs text-text-muted mb-4 break-all\",\"children\":[[\"$\",\"span\",null,{\"className\":\"text-term-green\",\"children\":\"$$ \"}],\"cat ~/blog/\",\"AI 应用开发\",\"/\",\"llm-workflow-09-docs-and-verification\",\".mdx\"]}],[\"$\",\"h1\",null,{\"className\":\"text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4\",\"children\":\"LLM 学习工作流（九）：文档、环境变量与最终验证\"}],[\"$\",\"div\",null,{\"className\":\"flex items-center gap-4 text-text-muted text-sm font-mono\",\"children\":[[\"$\",\"span\",null,{\"children\":\"2026年4月21日\"}],[\"$\",\"span\",null,{\"children\":\"·\"}],[\"$\",\"span\",null,{\"children\":\"7 min read\"}]]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-4\",\"children\":[[\"$\",\"span\",\"AI 应用开发\",{\"className\":\"code-tag\",\"children\":[\"\u003c\",\"AI 应用开发\",\" /\u003e\"]}]]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-2\",\"children\":[[\"$\",\"span\",\"AI\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"AI\"}],[\"$\",\"span\",\"LLM\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"LLM\"}],[\"$\",\"span\",\"工程交付\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"工程交付\"}],[\"$\",\"span\",\"文档\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"文档\"}],[\"$\",\"span\",\"环境变量\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"环境变量\"}]]}]]}],[\"$\",\"div\",null,{\"className\":\"prose-custom\",\"children\":\"$L13\"}]]}]}]\n"])</script><script>self.__next_f.push([1,"13:[[\"$\",\"h2\",null,{\"children\":\"这一步在做什么\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"前面 1 到 8 步，主要是在做代码层改造：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"状态机\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"数据表\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"payload\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"Edge Function scaffold\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"coach 页面\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"学习流接入\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"测验与复盘闭环\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"Task 9 做的是另一件非常关键的事：\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"把这条改造链整理成别人能看懂、能运行、能验证的工程成果。\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最终涉及的文件主要是：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"README.md\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\".env.example\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"package.json\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"为什么这一步重要\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"很多人做项目时，代码改完就觉得\\\"完成了\\\"。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"但真正的工程完成通常还包括：\"}],\"\\n\",[\"$\",\"ol\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"别人能不能知道怎么启动\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"别人能不能知道需要哪些环境变量\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"别人能不能知道哪些能力已经接上、哪些还只是 scaffold\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"最终验证到底哪些通过了，哪些因为环境缺失还没法做\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"尤其是 AI 项目，比普通前端项目更需要这些说明，因为它通常同时依赖：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"前端环境变量\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"后端 secrets\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"平台 CLI\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"模型能力\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"这一步具体补了什么\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":[\"1. \",[\"$\",\"code\",null,{\"children\":\".env.example\"}]]}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\".env.example\"}],\" 里补了：\"]}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"VITE_AI_FEATURE_ENABLED=true\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"服务端 secrets 的说明注释\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步的意义是把：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"前端需要什么\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"服务端需要什么\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"明确分开。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这对 AI 项目特别重要，因为：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"前端环境变量会进浏览器\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"服务端 secrets 绝不能进浏览器\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h3\",null,{\"children\":[\"2. \",[\"$\",\"code\",null,{\"children\":\"package.json\"}]]}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\"package.json\"}],\" 里补了：\"]}],\"\\n\",[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-json\",\"children\":\"\\\"test\\\": \\\"node --test tests/*.test.js\\\"\\n\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步很小，但作用很大。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"它把之前\\\"我们知道怎么跑测试\\\"变成了：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"项目自己告诉别人怎么跑测试\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这就是工程可用性的一部分。\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":[\"3. \",[\"$\",\"code\",null,{\"children\":\"README.md\"}]]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"README 现在新增了几类内容：\"}],\"\\n\",[\"$\",\"h4\",null,{\"children\":\"AI 学习教练能力说明\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"明确说明当前已经打通的内容：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 教练入口\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"学习画像\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 计划驱动学习\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 测验与复盘\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"Edge Function scaffold\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h4\",null,{\"children\":\"AI 本地开发步骤\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"补充：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"安装依赖\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"配置 \",[\"$\",\"code\",null,{\"children\":\".env\"}]]}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"启动前端\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"跑测试\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"跑构建\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h4\",null,{\"children\":\"Edge Functions 说明\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"明确了：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"supabase/functions/learning-workflow\"}],\" 的职责\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"需要的服务端 secrets\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"本地 \",[\"$\",\"code\",null,{\"children\":\"supabase functions serve\"}],\" 的计划命令\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"h4\",null,{\"children\":\"当前验证状态\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这部分非常关键：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"哪些验证已通过\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"哪些验证因为缺 CLI 还没法做\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"为什么\\\"验证状态\\\"要写进 README\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步是 Task 9 里最值得学的地方之一。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"很多项目的文档会写：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"\\\"运行这个命令\\\"\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"但不会写：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"\\\"我实际上跑过没有\\\"\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这会导致文档看起来像真的，但其实没人确认过。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这次我们明确把验证结果分成两类：\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"已验证通过\"}],\"\\n\",[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"npm run test\\nnpm run build\\n\"}]}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"计划中的完整验证，但当前环境缺工具\"}],\"\\n\",[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"supabase db push\\nsupabase functions serve learning-workflow --env-file supabase/.env.local\\n\"}]}],\"\\n\",\"$L14\",\"\\n\",\"$L15\",\"\\n\",\"$L16\",\"\\n\",\"$L17\",\"\\n\",\"$L18\",\"\\n\",\"$L19\",\"\\n\",\"$L1a\",\"\\n\",\"$L1b\",\"\\n\",\"$L1c\",\"\\n\",\"$L1d\",\"\\n\",\"$L1e\",\"\\n\",\"$L1f\",\"\\n\",\"$L20\",\"\\n\",\"$L21\",\"\\n\",\"$L22\",\"\\n\",\"$L23\",\"\\n\",\"$L24\",\"\\n\",\"$L25\",\"\\n\",\"$L26\",\"\\n\",\"$L27\",\"\\n\",\"$L28\",\"\\n\",\"$L29\",\"\\n\",\"$L2a\",\"\\n\",\"$L2b\",\"\\n\",\"$L2c\",\"\\n\",\"$L2d\",\"\\n\",\"$L2e\",\"\\n\",\"$L2f\",\"\\n\",\"$L30\",\"\\n\",\"$L31\",\"\\n\",\"$L32\",\"\\n\",\"$L33\",\"\\n\",\"$L34\",\"\\n\",\"$L35\",\"\\n\",\"$L36\",\"\\n\",\"$L37\",\"\\n\",\"$L38\",\"\\n\",\"$L39\",\"\\n\",\"$L3a\",\"\\n\",\"$L3b\",\"\\n\",\"$L3c\",\"\\n\",\"$L3d\",\"\\n\",\"$L3e\",\"\\n\",\"$L3f\",\"\\n\",\"$L40\",\"\\n\",\"$L41\",\"\\n\",\"$L42\",\"\\n\",\"$L43\",\"\\n\",\"$L44\",\"\\n\",\"$L45\"]\n"])</script><script>self.__next_f.push([1,"14:[\"$\",\"p\",null,{\"children\":\"而且当前阻塞原因也明确记录了：\"}]\n15:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"本机没有 \",[\"$\",\"code\",null,{\"children\":\"supabase\"}],\" CLI\"]}],\"\\n\"]}]\n16:[\"$\",\"p\",null,{\"children\":\"这说明一件事：\"}]\n17:[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"真正的验证报告不只是报喜，也要报阻塞。\"}]}]\n18:[\"$\",\"h2\",null,{\"children\":\"这一步学到了什么\"}]\n19:[\"$\",\"h3\",null,{\"children\":\"1. 工程交付不等于代码写完\"}]\n1a:[\"$\",\"p\",null,{\"children\":\"代码完成只是其中一部分。\"}]\n1b:[\"$\",\"p\",null,{\"children\":\"真正的交付还要包括：\"}]\n1c:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"启动说明\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"环境变量说明\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"服务端配置说明\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"验证结果说明\"}],\"\\n\"]}]\n1d:[\"$\",\"h3\",null,{\"children\":\"2. AI 项目比普通项目更需要前后端边界说明\"}]\n1e:[\"$\",\"p\",null,{\"children\":\"因为它通常会同时出现：\"}]\n1f:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"浏览器变量\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"服务端 secrets\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"第三方模型 key\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"平台运行时\"}],\"\\n\"]}]\n20:[\"$\",\"p\",null,{\"children\":\"如果不在文档里说清楚，后面几乎一定会有人配错。\"}]\n21:[\"$\",\"h3\",null,{\"children\":\"3. \\\"能跑\\\"和\\\"我已经验证过能跑\\\"是两回事\"}]\n22:[\"$\",\"p\",null,{\"children\":\"这一步把\\\"理论上可以执行\\\"分成了：\"}]\n23:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"已执行成功\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"当前环境无法执行\"}],\"\\n\"]}]\n24:[\"$\",\"p\",null,{\"children\":\"这是很成熟的工程习惯。\"}]\n25:[\"$\",\"h3\",null,{\"children\":\"4. 阻塞也属于验证结果\"}]\n26:[\"$\",\"p\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"supabase db push\"}],\" 和 \",[\"$\",\"code\",null,{\"children\":\"supabase functions serve\"}],\" 没跑起来，不代表这个阶段没完成。\"]}]\n27:[\"$\",\"p\",null,{\"children\":\"关键是：\"}]\n28:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"你知道为什么没跑起来\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"你把原因明确记录下来\"}],\"\\n\"]}]\n29:[\"$\",\"p\",null,{\"children\":\"这比假装\\\"应该没问题\\\"更专业。\"}]\n2a:[\"$\",\"h2\",null,{\"children\":\"这一步最终做成了什么\"}]\n2b:[\"$\",\"h3\",null,{\"children\":\"环境变量层\"}]\n2c:[\"$\",\"p\",null,{\"children\":\"现在项目已经明确区分：\"}]\n2d:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"前端变量\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"服务端 secrets\"}],\"\\n\"]}]\n2e:[\"$\",\"h3\",null,{\"children\":\"脚本层\"}]\n2f:[\"$\",\"p\",null,{\"children\":\"现在项目已经有统一测试命令：\"}]\n30:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"npm run test\\n\"}]}]\n31:[\"$\",\"h3\",null,{\"children\":\"文档层\"}]\n32:[\"$\",\"p\",null,{\"children\":\"README 已经能说明：\"}]\n33:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 学习教练功能是什么\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"本地开发怎么跑\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"Edge Function 怎么理解\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"当前验证做到哪一步\"}],\"\\n\"]}]\n34:[\"$\",\"h2\",null,{\"children\":\"这一步你可以自己复现什么\"}]\n35:[\"$\",\"h3\",null,{\"children\":\"跑测试\"}]\n36:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"npm run test\\n\"}]}]\n37:[\"$\",\"h3\",null,{\"children\":\"跑构建\"}]\n38:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"npm run build\\n\"}]}]\n39:[\"$\",\"h3\",null,{\"children\":\"检查 CLI 阻塞\"}]\n3a:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"supabase db push\\nsupabase functions serve learning-workflow --env-file supabase/.env.local\\n\"}]}]\n3b:[\"$\",\"p\",null,{\"children\":[\"如果当前机器没装 \",[\"$\",\"code\",null,{\"children\":\"supabase\"}],\" CLI，就会得到：\"]}]\n3c:[\"$\",\"pre\",n"])</script><script>self.__next_f.push([1,"ull,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"supabase: command not found\\n\"}]}]\n3d:[\"$\",\"p\",null,{\"children\":\"这正是现在需要在文档里记录下来的真实状态。\"}]\n3e:[\"$\",\"h2\",null,{\"children\":\"这一步你应该学会什么\"}]\n3f:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么最终交付要包含文档和验证\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么 AI 项目更需要环境变量边界说明\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么验证结果必须区分\\\"已通过\\\"和\\\"被环境阻塞\\\"\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么 README 不只是介绍项目，还要承担交付说明角色\"}],\"\\n\"]}]\n40:[\"$\",\"h2\",null,{\"children\":\"到这里你已经完成了什么\"}]\n41:[\"$\",\"p\",null,{\"children\":\"到 Task 9 为止，这个项目已经从一个原始词典/背词应用，逐步完成了：\"}]\n42:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 工作流状态\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 数据持久化\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 请求协议\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 服务端骨架\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 教练页面\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 学习入口\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 驱动学习流\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 测验与复盘闭环\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"文档、环境和验证整理\"}],\"\\n\"]}]\n43:[\"$\",\"p\",null,{\"children\":\"这意味着你现在已经走完了一条很完整的：\"}]\n44:[\"$\",\"p\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"传统前端项目 -\u003e AI 工作流项目\"}]}]\n45:[\"$\",\"p\",null,{\"children\":\"的改造路径。\"}]\n"])</script><script>self.__next_f.push([1,"e:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"c:null\n10:[[\"$\",\"title\",\"0\",{\"children\":\"LLM 学习工作流（九）：文档、环境变量与最终验证 | QingWaaa\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"把 1-8 步的 AI 工作流改造整理成可交付、可运行、可复现的项目闭环：前端与服务端环境变量边界、统一测试命令、README 补齐能力与验证状态。代码写完≠工程完成，阻塞也属于验证结果。\"}],[\"$\",\"meta\",\"2\",{\"name\":\"keywords\",\"content\":\"developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js\"}]]\n"])</script></body></html>

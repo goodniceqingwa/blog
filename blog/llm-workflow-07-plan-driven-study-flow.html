@@ -1,0 +1,300 @@
+<!DOCTYPE html><!--OwlZKtRWYmTS5iFl_68n1--><html lang="zh-CN" class="space_grotesk_e6988195-module__RNs2Mq__variable inter_c15e96cb-module__0bjUvq__variable jetbrains_mono_7ea1d0f9-module__6GV5LG__variable noto_sans_sc_c25b8282-module__pnEi6G__variable"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/feb57b2dc8f29018-s.p.2539f70a.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/e5d3f102d41f5630.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/a2acf40391e8e49b.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/80fc4d7125e06aa5.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/0e5ec002b973a262.js"/><script src="/_next/static/chunks/f091501564eb2ea3.js" async=""></script><script src="/_next/static/chunks/0381c808fbaec563.js" async=""></script><script src="/_next/static/chunks/aee6c7720838f8a2.js" async=""></script><script src="/_next/static/chunks/turbopack-4c948ebe0e5cd4e4.js" async=""></script><script src="/_next/static/chunks/95166580d1eed87b.js" async=""></script><script src="/_next/static/chunks/139e2097087bfffa.js" async=""></script><script src="/_next/static/chunks/ff1a16fafef87110.js" async=""></script><script src="/_next/static/chunks/f3e35d9a80465ef3.js" async=""></script><meta name="next-size-adjust" content=""/><title>LLM 学习工作流（七）：AI 计划驱动学习流 | QingWaaa</title><meta name="description" content="让 AI 计划真正进入主用户流程：推荐词合并、计划词与随机词严格分离、坏数据容忍、工作流 gate 前后一致、登出路径清理 AI 状态。这一步把 AI 教练从独立页面推进成真实驱动学习的状态机。"/><meta name="keywords" content="developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="font-body"><div hidden=""><!--$--><!--/$--></div><script>((a,b,c,d,e,f,g,h)=>{let i=document.documentElement,j=["light","dark"];function k(b){var c;(Array.isArray(a)?a:[a]).forEach(a=>{let c="class"===a,d=c&&f?e.map(a=>f[a]||a):e;c?(i.classList.remove(...d),i.classList.add(f&&f[b]?f[b]:b)):i.setAttribute(a,b)}),c=b,h&&j.includes(c)&&(i.style.colorScheme=c)}if(d)k(d);else try{let a=localStorage.getItem(b)||c,d=g&&"system"===a?window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light":a;k(d)}catch(a){}})("class","theme","dark",null,["light","dark"],{"dark":"dark","light":"light"},false,true)</script><div class="fixed top-0 left-0 w-2 h-2 bg-accent-purple rounded-full pointer-events-none z-[9999] mix-blend-difference"></div><div class="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] border border-accent-purple/50"></div><header class="fixed top-0 left-0 right-0 z-50 glass border-b border-glass-border" style="transform:none"><nav class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"><a class="font-mono text-xl font-bold text-text-primary hover:text-accent-purple transition-colors" href="/"><span class="text-term-green">$ </span>qingwa@blog:~</a><div class="hidden md:flex items-center gap-8"><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/">首页</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/works">作品集</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/blog">博客</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/about">关于</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/contact">联系</a></div><button class="md:hidden relative w-10 h-10 flex items-center justify-center" aria-label="Toggle menu"><div class="flex flex-col gap-1.5"><span class="w-6 h-0.5 bg-text-primary block"></span><span class="w-6 h-0.5 bg-text-primary block"></span><span class="w-6 h-0.5 bg-text-primary block"></span></div></button></nav></header><main class="pt-16"><article class="min-h-screen py-24 px-6"><div class="max-w-3xl mx-auto"><a class="text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block font-mono text-sm" href="/blog"><span class="text-term-green">$ </span>cd ../blog</a><header class="mb-12"><div class="font-mono text-xs text-text-muted mb-4 break-all"><span class="text-term-green">$ </span>cat ~/blog/<!-- -->AI 应用开发<!-- -->/<!-- -->llm-workflow-07-plan-driven-study-flow<!-- -->.mdx</div><h1 class="text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4">LLM 学习工作流（七）：AI 计划驱动学习流</h1><div class="flex items-center gap-4 text-text-muted text-sm font-mono"><span>2026年4月21日</span><span>·</span><span>11 min read</span></div><div class="flex flex-wrap gap-2 mt-4"><span class="code-tag">&lt;<!-- -->AI 应用开发<!-- --> /&gt;</span></div><div class="flex flex-wrap gap-2 mt-2"><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">AI</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">LLM</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">状态管理</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">工作流</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">工程实践</span></div></header><div class="prose-custom"><h2>这一步在做什么</h2>
+<p>这一步是前面所有 AI 改造里第一个真正开始&quot;进入主流程&quot;的阶段。</p>
+<p>在 Task 6 之前，AI 教练更多还是：</p>
+<ul>
+<li>有入口</li>
+<li>有页面</li>
+<li>有协议</li>
+<li>有服务端骨架</li>
+</ul>
+<p>但并没有真的影响用户的学习过程。</p>
+<p>Task 7 做的事情是：</p>
+<p><strong>让 AI 计划开始驱动学习页。</strong></p>
+<p>最终主要改动在：</p>
+<ul>
+<li><code>src/utils/learning-workflow.js</code></li>
+<li><code>src/stores/aiCoach.js</code></li>
+<li><code>src/stores/learning.js</code></li>
+<li><code>src/views/Study.vue</code></li>
+<li><code>src/views/StudyQuiz.vue</code></li>
+<li><code>src/App.vue</code></li>
+<li><code>tests/ai-study-session.test.js</code></li>
+</ul>
+<h2>为什么这一步很关键</h2>
+<p>AI 项目要避免停留在&quot;页面有个 AI 按钮&quot;的层面。</p>
+<p>真正有价值的阶段，是 AI 开始改变主用户流程。</p>
+<p>这个任务完成后，AI 不再只是一个独立页面，而是开始参与：</p>
+<ul>
+<li>学什么词</li>
+<li>先学哪些词</li>
+<li>学到什么时候可以进入测验</li>
+<li>何时进入下一阶段</li>
+</ul>
+<p>也就是说，这一步开始把：</p>
+<p><code>AI 教练</code></p>
+<p>变成：</p>
+<p><code>AI 驱动的学习流程</code></p>
+<h2>一开始做了什么</h2>
+<p>最初实现对应提交：</p>
+<ul>
+<li><code>7fed2874</code> <code>feat: connect ai plan to study session</code></li>
+</ul>
+<p>最开始做的事情大方向是对的：</p>
+<h3>1. 新增计划词合并逻辑</h3>
+<p>在 <code>src/utils/learning-workflow.js</code> 增加了：</p>
+<pre><code class="language-js">mergeRecommendedWords(primary, fallback)
+</code></pre>
+<p>这让页面有能力把 AI 推荐词和其他词源合并处理。</p>
+<h3>2. 学习页开始优先用 AI 推荐词</h3>
+<p>在 <code>src/views/Study.vue</code> 里：</p>
+<ul>
+<li>优先加载 <code>dailyPlan.recommendedWords</code></li>
+<li>只有没有推荐词时才退回随机词</li>
+</ul>
+<h3>3. 页面顶部开始显示 AI 学习目标</h3>
+<p>学习页开始出现：</p>
+<ul>
+<li><code>AI 学习目标</code></li>
+</ul>
+<p>这意味着用户在学习时，已经不再只是&quot;随机刷词&quot;，而是知道：</p>
+<ul>
+<li>这一轮 AI 想让你重点学什么</li>
+</ul>
+<h2>第一轮问题：测试太弱</h2>
+<p>最开始的 Task 7 测试虽然通过了，但 review 很快指出：</p>
+<ul>
+<li>它主要还是在查源码字符串</li>
+<li>不能真正证明行为</li>
+</ul>
+<p>这一步教你的第一个重点是：</p>
+<p><strong>当功能开始进入主流程时，字符串断言就不够了。</strong></p>
+<p>于是测试开始升级：</p>
+<h3>1. 直接测纯函数行为</h3>
+<p>例如：</p>
+<ul>
+<li><code>mergeRecommendedWords</code></li>
+<li><code>getLearnedRecommendedWords</code></li>
+<li><code>getNextRecommendedWord</code></li>
+<li><code>canStartPlannedQuiz</code></li>
+</ul>
+<h3>2. 直接跑 store 行为</h3>
+<p>例如：</p>
+<ul>
+<li><code>startPlannedStudy()</code></li>
+<li><code>markPlanTaskDone()</code></li>
+<li><code>resetCoachState()</code></li>
+</ul>
+<p>这样测试就不再只是看&quot;有没有这行代码&quot;，而是看：</p>
+<ul>
+<li>状态是不是会真的变</li>
+</ul>
+<h2>第二轮问题：随机 fallback 词被错误算进 AI 计划进度</h2>
+<p>这是 Task 7 里最重要的业务问题之一。</p>
+<p>最初逻辑里，学习页会把：</p>
+<ul>
+<li><code>dailyPlan.recommendedWords</code></li>
+<li><code>learningStore.sessionQueue</code></li>
+</ul>
+<p>混在一起用于判定&quot;是否达到 quiz_ready&quot;。</p>
+<p>问题是：</p>
+<ul>
+<li>sessionQueue 里有 fallback 随机词</li>
+<li>这些词本来不属于 AI 计划</li>
+</ul>
+<p>结果就变成：</p>
+<ul>
+<li>用户随便学了几个随机词</li>
+<li>系统也可能误以为&quot;AI 计划学够了&quot;</li>
+</ul>
+<p>这个问题告诉你：</p>
+<h3>AI 计划词和普通学习词必须是两套概念</h3>
+<p>不能因为它们都出现在学习会话里，就把它们混成一个集合。</p>
+<p>修正后新增了纯函数：</p>
+<h3><code>getLearnedRecommendedWords()</code></h3>
+<p>只统计：</p>
+<ul>
+<li>属于计划推荐词</li>
+<li>同时又已经学过的词</li>
+</ul>
+<h3><code>canStartPlannedQuiz()</code></h3>
+<p>只根据：</p>
+<ul>
+<li>计划推荐词</li>
+<li>已学推荐词</li>
+</ul>
+<p>来决定是否能进入 <code>quiz_ready</code>。</p>
+<h2>第三轮问题：坏推荐词会把流程卡死</h2>
+<p>这也是非常典型的真实业务问题。</p>
+<p>如果 AI 推荐词里有一个词：</p>
+<ul>
+<li>字典里不存在</li>
+<li>或详情加载失败</li>
+</ul>
+<p>最初逻辑会不断尝试同一个失败词，然后永远卡在这里。</p>
+<p>这类问题很像生产环境里的&quot;脏数据污染流程&quot;。</p>
+<p>修复方式是：</p>
+<h3><code>getNextRecommendedWord()</code></h3>
+<p>它会在推荐词中只找：</p>
+<ul>
+<li>还没学过的</li>
+<li>也没被标记成无效的</li>
+</ul>
+<p>学习页现在会：</p>
+<ol>
+<li>优先找下一条有效推荐词</li>
+<li>如果某个推荐词加载失败，就把它加入&quot;无效推荐词集合&quot;</li>
+<li>继续尝试后面的推荐词</li>
+<li>如果所有推荐词都不可用，才回退到随机词</li>
+</ol>
+<p>这个设计很重要，因为它说明：</p>
+<p><strong>AI 系统接进主流程后，必须能容忍坏数据，而不是一碰到坏数据就卡死。</strong></p>
+<h2>第四轮问题：测验入口必须和同一套计划状态一致</h2>
+<p>如果学习页已经开始按 AI 计划驱动，那测验页也必须跟着这套状态走。</p>
+<p>否则会出现：</p>
+<ul>
+<li>学习页说&quot;还没学够&quot;</li>
+<li>测验页却因为学过任意 1 个词就直接能进</li>
+</ul>
+<p>这会让工作流完全失真。</p>
+<p>所以后面把：</p>
+<ul>
+<li><code>src/views/Study.vue</code></li>
+<li><code>src/views/StudyQuiz.vue</code></li>
+</ul>
+<p>都统一改成依赖：</p>
+<pre><code class="language-js">aiCoachStore.isPlannedStudyActive
+aiCoachStore.activeRun?.currentStage === &#x27;quiz_ready&#x27;
+</code></pre>
+<p>这意味着：</p>
+<ul>
+<li>不是&quot;学了词就能测&quot;</li>
+<li>而是&quot;计划词学够，工作流进入 quiz_ready 才能测&quot;</li>
+</ul>
+<h2>第五轮问题：登出后 AI 计划状态泄漏</h2>
+<p>这是 Task 7 里最典型、也最容易被忽略的状态问题。</p>
+<p>最开始 AI coach 的状态：</p>
+<ul>
+<li><code>dailyPlan</code></li>
+<li><code>activeRun</code></li>
+<li><code>reflection</code></li>
+</ul>
+<p>在登出时没有被清空。</p>
+<p>于是就会出现：</p>
+<ul>
+<li>A 用户登录，生成了 AI 计划</li>
+<li>A 退出</li>
+<li>B 登录</li>
+<li>页面仍然可能带着 A 的 AI 计划状态</li>
+</ul>
+<p>这不只是体验问题，更是状态泄漏问题。</p>
+<p>最后加了：</p>
+<h3><code>resetCoachState()</code></h3>
+<p>在 <code>src/stores/aiCoach.js</code> 中统一清空：</p>
+<ul>
+<li><code>profile</code></li>
+<li><code>activeRun</code></li>
+<li><code>dailyPlan</code></li>
+<li><code>reflection</code></li>
+</ul>
+<p>然后在 <code>src/App.vue</code> 的 <code>SIGNED_OUT</code> 分支里一起调用。</p>
+<p>这一步非常值得记住：</p>
+<p><strong>一旦有新的全局 store，登出清理路径就必须同步更新。</strong></p>
+<h2>这一步最后做成了什么</h2>
+<h3>学习页现在可以：</h3>
+<ul>
+<li>顶部显示 AI 当前学习目标</li>
+<li>优先加载 AI 推荐词</li>
+<li>遇到坏推荐词时自动跳过</li>
+<li>推荐词学够后推动流程到 <code>quiz_ready</code></li>
+</ul>
+<h3>测验页现在可以：</h3>
+<ul>
+<li>在 AI 计划激活时只接受 <code>quiz_ready</code> 状态进入</li>
+<li>不再被普通学习会话轻易绕过</li>
+</ul>
+<h3>Store 现在可以：</h3>
+<ul>
+<li>表达当前计划推荐词</li>
+<li>表达当前学习目标</li>
+<li>启动计划学习</li>
+<li>标记计划任务</li>
+<li>在登出时彻底清空 AI 状态</li>
+</ul>
+<h3>测试现在可以：</h3>
+<ul>
+<li>验证计划词不会和随机词混算</li>
+<li>验证推荐词会按顺序推进</li>
+<li>验证 store 状态会真实推进</li>
+<li>验证登出能清理 AI 状态</li>
+</ul>
+<h2>这一步真正学到什么</h2>
+<h3>1. AI 驱动主流程以后，状态边界必须更严格</h3>
+<p>在普通页面里，少一个字段也许只是 UI 小问题。</p>
+<p>但当 AI 已经驱动：</p>
+<ul>
+<li>学习顺序</li>
+<li>流程推进</li>
+<li>测验解锁</li>
+</ul>
+<p>状态边界就会变成主业务逻辑的一部分。</p>
+<h3>2. &quot;推荐词&quot;和&quot;普通会话词&quot;必须严格区分</h3>
+<p>它们都属于学习内容，但业务含义完全不同：</p>
+<ul>
+<li>推荐词：属于 AI 计划</li>
+<li>普通词：只是 fallback 或自然学习过程的一部分</li>
+</ul>
+<p>如果把它们混在一起，工作流就会失真。</p>
+<h3>3. 脏数据要被隔离，而不是拖死流程</h3>
+<p>坏推荐词不会永远消失，真实系统里几乎一定会出现。</p>
+<p>所以真正可靠的流程必须做到：</p>
+<ul>
+<li>识别它</li>
+<li>跳过它</li>
+<li>继续走</li>
+</ul>
+<p>这类&quot;坏数据容忍能力&quot;是 AI 工作流项目很重要的工程素质。</p>
+<h3>4. 新增全局 store 时，要立刻补登出/重置路径</h3>
+<p>这是很多项目都会漏掉的。</p>
+<p>只要你新增了新的跨页面状态，就必须问自己：</p>
+<ul>
+<li>登出时它怎么清</li>
+<li>用户切换时它怎么清</li>
+<li>重开一轮流程时它怎么重置</li>
+</ul>
+<h2>你可以自己复现什么</h2>
+<h3>跑 Task 7 针对测试</h3>
+<pre><code class="language-bash">node --test tests/ai-study-session.test.js -v
+</code></pre>
+<h3>跑全部测试</h3>
+<pre><code class="language-bash">node --test tests/*.test.js
+</code></pre>
+<h3>跑构建</h3>
+<pre><code class="language-bash">npm run build
+</code></pre>
+<h3>看关键提交演进</h3>
+<pre><code class="language-bash">git log --oneline -5
+</code></pre>
+<p>这一步最终会对应到：</p>
+<ul>
+<li><code>7fed2874</code> 初始接入</li>
+<li><code>674bdf47</code> 收紧推荐词、计划阈值、sign-out reset 等问题</li>
+</ul>
+<h2>这一步你应该学会什么</h2>
+<ul>
+<li>如何让 AI 计划真正进入主业务流程</li>
+<li>为什么&quot;计划词&quot;和&quot;随机词&quot;必须分离</li>
+<li>为什么工作流 gate 必须前后一致</li>
+<li>为什么脏推荐词不能拖死流程</li>
+<li>为什么新增 store 后一定要补登出清理</li>
+</ul>
+<h2>下一步会做什么</h2>
+<p>下一步是 <code>Task 8</code>：</p>
+<ul>
+<li>AI 测验</li>
+<li>AI 批改</li>
+<li>AI 复盘</li>
+</ul>
+<p>也就是说，接下来你会从：</p>
+<p><code>AI 驱动学习</code></p>
+<p>进入到：</p>
+<p><code>AI 驱动学习后的评价与反馈闭环</code></p></div></div></article><!--$--><!--/$--></main><footer class="border-t border-glass-border bg-bg-deep"><div class="max-w-7xl mx-auto px-6 py-12"><div class="font-mono text-sm space-y-1 mb-8"><p><span class="text-term-green font-bold">$ </span><span class="text-text-secondary">git remote -v</span></p><p><span class="text-term-yellow">origin</span><span class="text-text-muted">    <!-- -->https://github.com/goodniceqingwa<!-- --> <!-- -->(fetch)</span></p><p><span class="text-term-yellow">qingwa</span><span class="text-text-muted">    <!-- -->https://qingwaaa.top<!-- --> <!-- -->(site)</span></p></div><div class="flex flex-col md:flex-row items-center justify-between gap-6"><div class="flex gap-6"><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/blog">博客</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/works">项目</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/about">关于</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/contact">联系</a></div><div class="flex gap-4"><a href="https://github.com/goodniceqingwa" target="_blank" rel="noopener noreferrer" class="w-10 h-10 glass rounded-full flex items-center justify-center text-text-muted hover:text-accent-purple hover:glow-purple transition-all" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg></a></div></div><div class="mt-8 pt-6 border-t border-glass-border text-center text-text-muted text-xs font-mono"><p>© <!-- -->2026<!-- --> QingWaaa. All rights reserved.</p></div></div></footer><script src="/_next/static/chunks/0e5ec002b973a262.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[5622,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"ThemeProvider\"]\n3:I[79030,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"SmoothScrollProvider\"]\n4:I[96901,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"CustomCursor\"]\n5:I[7988,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"Navbar\"]\n6:I[39756,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n7:I[37457,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n8:I[87392,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"Footer\"]\na:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"OutletBoundary\"]\nb:\"$Sreact.suspense\"\nd:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"ViewportBoundary\"]\nf:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"MetadataBoundary\"]\n11:I[68027,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n:HL[\"/_next/static/chunks/e5d3f102d41f5630.css\",\"style\"]\n:HL[\"/_next/static/chunks/a2acf40391e8e49b.css\",\"style\"]\n:HL[\"/_next/static/chunks/80fc4d7125e06aa5.css\",\"style\"]\n:HL[\"/_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/feb57b2dc8f29018-s.p.2539f70a.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"OwlZKtRWYmTS5iFl_68n1\",\"c\":[\"\",\"blog\",\"llm-workflow-07-plan-driven-study-flow\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"blog\",{\"children\":[[\"slug\",\"llm-workflow-07-plan-driven-study-flow\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/e5d3f102d41f5630.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"link\",\"1\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/a2acf40391e8e49b.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"link\",\"2\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/80fc4d7125e06aa5.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/95166580d1eed87b.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-1\",{\"src\":\"/_next/static/chunks/139e2097087bfffa.js\",\"async\":true,\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"suppressHydrationWarning\":true,\"className\":\"space_grotesk_e6988195-module__RNs2Mq__variable inter_c15e96cb-module__0bjUvq__variable jetbrains_mono_7ea1d0f9-module__6GV5LG__variable noto_sans_sc_c25b8282-module__pnEi6G__variable\",\"children\":[\"$\",\"body\",null,{\"className\":\"font-body\",\"children\":[\"$\",\"$L2\",null,{\"children\":[\"$\",\"$L3\",null,{\"children\":[[\"$\",\"$L4\",null,{}],[\"$\",\"$L5\",null,{}],[\"$\",\"main\",null,{\"className\":\"pt-16\",\"children\":[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}],[\"$\",\"$L8\",null,{}]]}]}]}]}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L9\",null,[\"$\",\"$La\",null,{\"children\":[\"$\",\"$b\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@c\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$Ld\",null,{\"children\":\"$Le\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lf\",null,{\"children\":[\"$\",\"$b\",null,{\"name\":\"Next.Metadata\",\"children\":\"$L10\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$11\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"12:I[22016,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"\"]\n"])</script><script>self.__next_f.push([1,"9:[\"$\",\"article\",null,{\"className\":\"min-h-screen py-24 px-6\",\"children\":[\"$\",\"div\",null,{\"className\":\"max-w-3xl mx-auto\",\"children\":[[\"$\",\"$L12\",null,{\"href\":\"/blog\",\"className\":\"text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block font-mono text-sm\",\"children\":[[\"$\",\"span\",null,{\"className\":\"text-term-green\",\"children\":\"$$ \"}],\"cd ../blog\"]}],[\"$\",\"header\",null,{\"className\":\"mb-12\",\"children\":[[\"$\",\"div\",null,{\"className\":\"font-mono text-xs text-text-muted mb-4 break-all\",\"children\":[[\"$\",\"span\",null,{\"className\":\"text-term-green\",\"children\":\"$$ \"}],\"cat ~/blog/\",\"AI 应用开发\",\"/\",\"llm-workflow-07-plan-driven-study-flow\",\".mdx\"]}],[\"$\",\"h1\",null,{\"className\":\"text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4\",\"children\":\"LLM 学习工作流（七）：AI 计划驱动学习流\"}],[\"$\",\"div\",null,{\"className\":\"flex items-center gap-4 text-text-muted text-sm font-mono\",\"children\":[[\"$\",\"span\",null,{\"children\":\"2026年4月21日\"}],[\"$\",\"span\",null,{\"children\":\"·\"}],[\"$\",\"span\",null,{\"children\":\"11 min read\"}]]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-4\",\"children\":[[\"$\",\"span\",\"AI 应用开发\",{\"className\":\"code-tag\",\"children\":[\"\u003c\",\"AI 应用开发\",\" /\u003e\"]}]]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-2\",\"children\":[[\"$\",\"span\",\"AI\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"AI\"}],[\"$\",\"span\",\"LLM\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"LLM\"}],[\"$\",\"span\",\"状态管理\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"状态管理\"}],[\"$\",\"span\",\"工作流\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"工作流\"}],[\"$\",\"span\",\"工程实践\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"工程实践\"}]]}]]}],[\"$\",\"div\",null,{\"className\":\"prose-custom\",\"children\":\"$L13\"}]]}]}]\n"])</script><script>self.__next_f.push([1,"13:[[\"$\",\"h2\",null,{\"children\":\"这一步在做什么\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步是前面所有 AI 改造里第一个真正开始\\\"进入主流程\\\"的阶段。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"在 Task 6 之前，AI 教练更多还是：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"有入口\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"有页面\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"有协议\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"有服务端骨架\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"但并没有真的影响用户的学习过程。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"Task 7 做的事情是：\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"让 AI 计划开始驱动学习页。\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最终主要改动在：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/utils/learning-workflow.js\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/stores/aiCoach.js\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/stores/learning.js\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/views/Study.vue\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/views/StudyQuiz.vue\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/App.vue\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"tests/ai-study-session.test.js\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"为什么这一步很关键\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"AI 项目要避免停留在\\\"页面有个 AI 按钮\\\"的层面。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"真正有价值的阶段，是 AI 开始改变主用户流程。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这个任务完成后，AI 不再只是一个独立页面，而是开始参与：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"学什么词\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"先学哪些词\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"学到什么时候可以进入测验\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"何时进入下一阶段\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"也就是说，这一步开始把：\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"AI 教练\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"变成：\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"AI 驱动的学习流程\"}]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"一开始做了什么\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最初实现对应提交：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"7fed2874\"}],\" \",[\"$\",\"code\",null,{\"children\":\"feat: connect ai plan to study session\"}]]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最开始做的事情大方向是对的：\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"1. 新增计划词合并逻辑\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\"src/utils/learning-workflow.js\"}],\" 增加了：\"]}],\"\\n\",[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"mergeRecommendedWords(primary, fallback)\\n\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这让页面有能力把 AI 推荐词和其他词源合并处理。\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"2. 学习页开始优先用 AI 推荐词\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\"src/views/Study.vue\"}],\" 里：\"]}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"优先加载 \",[\"$\",\"code\",null,{\"children\":\"dailyPlan.recommendedWords\"}]]}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"只有没有推荐词时才退回随机词\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"3. 页面顶部开始显示 AI 学习目标\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"学习页开始出现：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"AI 学习目标\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这意味着用户在学习时，已经不再只是\\\"随机刷词\\\"，而是知道：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"这一轮 AI 想让你重点学什么\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"第一轮问题：测试太弱\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最开始的 Task 7 测试虽然通过了，但 review 很快指出：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"它主要还是在查源码字符串\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"不能真正证明行为\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步教你的第一个重点是：\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"当功能开始进入主流程时，字符串断言就不够了。\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"于是测试开始升级：\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"1. 直接测纯函数行为\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"例如：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"mergeRecommendedWords\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"getLearnedRecommendedWords\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"getNextRecommendedWord\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"canStartPlannedQuiz\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"2. 直接跑 store 行为\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"例如：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"startPlannedStudy()\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"markPlanTaskDone()\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"resetCoachState()\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这样测试就不再只是看\\\"有没有这行代码\\\"，而是看：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"状态是不是会真的变\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"第二轮问题：随机 fallback 词被错误算进 AI 计划进度\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这是 Task 7 里最重要的业务问题之一。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最初逻辑里，学习页会把：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"dailyPlan.recommendedWords\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"learningStore.sessionQueue\"}]}],\"\\n\"]}],\"\\n\",\"$L14\",\"\\n\",\"$L15\",\"\\n\",\"$L16\",\"\\n\",\"$L17\",\"\\n\",\"$L18\",\"\\n\",\"$L19\",\"\\n\",\"$L1a\",\"\\n\",\"$L1b\",\"\\n\",\"$L1c\",\"\\n\",\"$L1d\",\"\\n\",\"$L1e\",\"\\n\",\"$L1f\",\"\\n\",\"$L20\",\"\\n\",\"$L21\",\"\\n\",\"$L22\",\"\\n\",\"$L23\",\"\\n\",\"$L24\",\"\\n\",\"$L25\",\"\\n\",\"$L26\",\"\\n\",\"$L27\",\"\\n\",\"$L28\",\"\\n\",\"$L29\",\"\\n\",\"$L2a\",\"\\n\",\"$L2b\",\"\\n\",\"$L2c\",\"\\n\",\"$L2d\",\"\\n\",\"$L2e\",\"\\n\",\"$L2f\",\"\\n\",\"$L30\",\"\\n\",\"$L31\",\"\\n\",\"$L32\",\"\\n\",\"$L33\",\"\\n\",\"$L34\",\"\\n\",\"$L35\",\"\\n\",\"$L36\",\"\\n\",\"$L37\",\"\\n\",\"$L38\",\"\\n\",\"$L39\",\"\\n\",\"$L3a\",\"\\n\",\"$L3b\",\"\\n\",\"$L3c\",\"\\n\",\"$L3d\",\"\\n\",\"$L3e\",\"\\n\",\"$L3f\",\"\\n\",\"$L40\",\"\\n\",\"$L41\",\"\\n\",\"$L42\",\"\\n\",\"$L43\",\"\\n\",\"$L44\",\"\\n\",\"$L45\",\"\\n\",\"$L46\",\"\\n\",\"$L47\",\"\\n\",\"$L48\",\"\\n\",\"$L49\",\"\\n\",\"$L4a\",\"\\n\",\"$L4b\",\"\\n\",\"$L4c\",\"\\n\",\"$L4d\",\"\\n\",\"$L4e\",\"\\n\",\"$L4f\",\"\\n\",\"$L50\",\"\\n\",\"$L51\",\"\\n\",\"$L52\",\"\\n\",\"$L53\",\"\\n\",\"$L54\",\"\\n\",\"$L55\",\"\\n\",\"$L56\",\"\\n\",\"$L57\",\"\\n\",\"$L58\",\"\\n\",\"$L59\",\"\\n\",\"$L5a\",\"\\n\",\"$L5b\",\"\\n\",\"$L5c\",\"\\n\",\"$L5d\",\"\\n\",\"$L5e\",\"\\n\",\"$L5f\",\"\\n\",\"$L60\",\"\\n\",\"$L61\",\"\\n\",\"$L62\",\"\\n\",\"$L63\",\"\\n\",\"$L64\",\"\\n\",\"$L65\",\"\\n\",\"$L66\",\"\\n\",\"$L67\",\"\\n\",\"$L68\",\"\\n\",\"$L69\",\"\\n\",\"$L6a\",\"\\n\",\"$L6b\",\"\\n\",\"$L6c\",\"\\n\",\"$L6d\",\"\\n\",\"$L6e\",\"\\n\",\"$L6f\",\"\\n\",\"$L70\",\"\\n\",\"$L71\",\"\\n\",\"$L72\",\"\\n\",\"$L73\",\"\\n\",\"$L74\",\"\\n\",\"$L75\",\"\\n\",\"$L76\",\"\\n\",\"$L77\",\"\\n\",\"$L78\",\"\\n\",\"$L79\",\"\\n\",\"$L7a\",\"\\n\",\"$L7b\"]\n"])</script><script>self.__next_f.push([1,"14:[\"$\",\"p\",null,{\"children\":\"混在一起用于判定\\\"是否达到 quiz_ready\\\"。\"}]\n15:[\"$\",\"p\",null,{\"children\":\"问题是：\"}]\n16:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"sessionQueue 里有 fallback 随机词\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"这些词本来不属于 AI 计划\"}],\"\\n\"]}]\n17:[\"$\",\"p\",null,{\"children\":\"结果就变成：\"}]\n18:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"用户随便学了几个随机词\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"系统也可能误以为\\\"AI 计划学够了\\\"\"}],\"\\n\"]}]\n19:[\"$\",\"p\",null,{\"children\":\"这个问题告诉你：\"}]\n1a:[\"$\",\"h3\",null,{\"children\":\"AI 计划词和普通学习词必须是两套概念\"}]\n1b:[\"$\",\"p\",null,{\"children\":\"不能因为它们都出现在学习会话里，就把它们混成一个集合。\"}]\n1c:[\"$\",\"p\",null,{\"children\":\"修正后新增了纯函数：\"}]\n1d:[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"getLearnedRecommendedWords()\"}]}]\n1e:[\"$\",\"p\",null,{\"children\":\"只统计：\"}]\n1f:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"属于计划推荐词\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"同时又已经学过的词\"}],\"\\n\"]}]\n20:[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"canStartPlannedQuiz()\"}]}]\n21:[\"$\",\"p\",null,{\"children\":\"只根据：\"}]\n22:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"计划推荐词\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"已学推荐词\"}],\"\\n\"]}]\n23:[\"$\",\"p\",null,{\"children\":[\"来决定是否能进入 \",[\"$\",\"code\",null,{\"children\":\"quiz_ready\"}],\"。\"]}]\n24:[\"$\",\"h2\",null,{\"children\":\"第三轮问题：坏推荐词会把流程卡死\"}]\n25:[\"$\",\"p\",null,{\"children\":\"这也是非常典型的真实业务问题。\"}]\n26:[\"$\",\"p\",null,{\"children\":\"如果 AI 推荐词里有一个词：\"}]\n27:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"字典里不存在\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"或详情加载失败\"}],\"\\n\"]}]\n28:[\"$\",\"p\",null,{\"children\":\"最初逻辑会不断尝试同一个失败词，然后永远卡在这里。\"}]\n29:[\"$\",\"p\",null,{\"children\":\"这类问题很像生产环境里的\\\"脏数据污染流程\\\"。\"}]\n2a:[\"$\",\"p\",null,{\"children\":\"修复方式是：\"}]\n2b:[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"getNextRecommendedWord()\"}]}]\n2c:[\"$\",\"p\",null,{\"children\":\"它会在推荐词中只找：\"}]\n2d:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"还没学过的\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"也没被标记成无效的\"}],\"\\n\"]}]\n2e:[\"$\",\"p\",null,{\"children\":\"学习页现在会：\"}]\n2f:[\"$\",\"ol\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"优先找下一条有效推荐词\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"如果某个推荐词加载失败，就把它加入\\\"无效推荐词集合\\\"\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"继续尝试后面的推荐词\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"如果所有推荐词都不可用，才回退到随机词\"}],\"\\n\"]}]\n30:[\"$\",\"p\",null,{\"children\":\"这个设计很重要，因为它说明：\"}]\n31:[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"AI 系统接进主流程后，必须能容忍坏数据，而不是一碰到坏数据就卡死。\"}]}]\n32:[\"$\",\"h2\",null,{\"children\":\"第四轮问题：测验入口必须和同一套计划状态一致\"}]\n33:[\"$\",\"p\",null,{\"children\":\"如果学习页已经开始按 AI 计划驱动，那测验页也必须跟着这套状态走。\"}]\n34:[\"$\",\"p\",null,{\"children\":\"否则会出现：\"}]\n35:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"学习页说\\\"还没学够\\\"\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"测验页却因为学过任意 1 个词就直接能进\"}],\"\\n\"]}]\n36:[\"$\",\"p\",null,{\"children\":\"这会让工作流完全失真。\"}]\n37:[\"$\",\"p\",null,{\"children\":\"所以后面把：\"}]\n38:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/views/Study.vue\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/views/StudyQuiz.vue\"}]}],\"\\n\"]}]\n39:[\"$\",\"p\",null,{\"children\":\"都统一改成依赖：\"}]\n3a:[\"$\",\"pre\",null,{\"c"])</script><script>self.__next_f.push([1,"hildren\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"aiCoachStore.isPlannedStudyActive\\naiCoachStore.activeRun?.currentStage === 'quiz_ready'\\n\"}]}]\n3b:[\"$\",\"p\",null,{\"children\":\"这意味着：\"}]\n3c:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"不是\\\"学了词就能测\\\"\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"而是\\\"计划词学够，工作流进入 quiz_ready 才能测\\\"\"}],\"\\n\"]}]\n3d:[\"$\",\"h2\",null,{\"children\":\"第五轮问题：登出后 AI 计划状态泄漏\"}]\n3e:[\"$\",\"p\",null,{\"children\":\"这是 Task 7 里最典型、也最容易被忽略的状态问题。\"}]\n3f:[\"$\",\"p\",null,{\"children\":\"最开始 AI coach 的状态：\"}]\n40:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"dailyPlan\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"activeRun\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"reflection\"}]}],\"\\n\"]}]\n41:[\"$\",\"p\",null,{\"children\":\"在登出时没有被清空。\"}]\n42:[\"$\",\"p\",null,{\"children\":\"于是就会出现：\"}]\n43:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"A 用户登录，生成了 AI 计划\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"A 退出\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"B 登录\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"页面仍然可能带着 A 的 AI 计划状态\"}],\"\\n\"]}]\n44:[\"$\",\"p\",null,{\"children\":\"这不只是体验问题，更是状态泄漏问题。\"}]\n45:[\"$\",\"p\",null,{\"children\":\"最后加了：\"}]\n46:[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"resetCoachState()\"}]}]\n47:[\"$\",\"p\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\"src/stores/aiCoach.js\"}],\" 中统一清空：\"]}]\n48:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"profile\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"activeRun\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"dailyPlan\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"reflection\"}]}],\"\\n\"]}]\n49:[\"$\",\"p\",null,{\"children\":[\"然后在 \",[\"$\",\"code\",null,{\"children\":\"src/App.vue\"}],\" 的 \",[\"$\",\"code\",null,{\"children\":\"SIGNED_OUT\"}],\" 分支里一起调用。\"]}]\n4a:[\"$\",\"p\",null,{\"children\":\"这一步非常值得记住：\"}]\n4b:[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"一旦有新的全局 store，登出清理路径就必须同步更新。\"}]}]\n4c:[\"$\",\"h2\",null,{\"children\":\"这一步最后做成了什么\"}]\n4d:[\"$\",\"h3\",null,{\"children\":\"学习页现在可以：\"}]\n4e:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"顶部显示 AI 当前学习目标\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"优先加载 AI 推荐词\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"遇到坏推荐词时自动跳过\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"推荐词学够后推动流程到 \",[\"$\",\"code\",null,{\"children\":\"quiz_ready\"}]]}],\"\\n\"]}]\n4f:[\"$\",\"h3\",null,{\"children\":\"测验页现在可以：\"}]\n50:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"在 AI 计划激活时只接受 \",[\"$\",\"code\",null,{\"children\":\"quiz_ready\"}],\" 状态进入\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"不再被普通学习会话轻易绕过\"}],\"\\n\"]}]\n51:[\"$\",\"h3\",null,{\"children\":\"Store 现在可以：\"}]\n52:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"表达当前计划推荐词\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"表达当前学习目标\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"启动计划学习\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"标记计划任务\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"在登出时彻底清空 AI 状态\"}],\"\\n\"]}]\n53:[\"$\",\"h3\",null,{\"children\":\"测试现在可以：\"}]\n54:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"验证计划词不会和随机词混算\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"验证推荐词会按顺序推进\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"验证 store 状态会真实推进\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"验证登出能清理 AI 状态\"}],\"\\n\"]}]\n55:[\"$\",\"h2\",null,{\"children\":\"这一步真正学到什么\"}]\n56:[\"$\",\"h3\",null,{\"children\":\"1. AI 驱动主流程以后，状态"])</script><script>self.__next_f.push([1,"边界必须更严格\"}]\n57:[\"$\",\"p\",null,{\"children\":\"在普通页面里，少一个字段也许只是 UI 小问题。\"}]\n58:[\"$\",\"p\",null,{\"children\":\"但当 AI 已经驱动：\"}]\n59:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"学习顺序\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"流程推进\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"测验解锁\"}],\"\\n\"]}]\n5a:[\"$\",\"p\",null,{\"children\":\"状态边界就会变成主业务逻辑的一部分。\"}]\n5b:[\"$\",\"h3\",null,{\"children\":\"2. \\\"推荐词\\\"和\\\"普通会话词\\\"必须严格区分\"}]\n5c:[\"$\",\"p\",null,{\"children\":\"它们都属于学习内容，但业务含义完全不同：\"}]\n5d:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"推荐词：属于 AI 计划\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"普通词：只是 fallback 或自然学习过程的一部分\"}],\"\\n\"]}]\n5e:[\"$\",\"p\",null,{\"children\":\"如果把它们混在一起，工作流就会失真。\"}]\n5f:[\"$\",\"h3\",null,{\"children\":\"3. 脏数据要被隔离，而不是拖死流程\"}]\n60:[\"$\",\"p\",null,{\"children\":\"坏推荐词不会永远消失，真实系统里几乎一定会出现。\"}]\n61:[\"$\",\"p\",null,{\"children\":\"所以真正可靠的流程必须做到：\"}]\n62:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"识别它\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"跳过它\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"继续走\"}],\"\\n\"]}]\n63:[\"$\",\"p\",null,{\"children\":\"这类\\\"坏数据容忍能力\\\"是 AI 工作流项目很重要的工程素质。\"}]\n64:[\"$\",\"h3\",null,{\"children\":\"4. 新增全局 store 时，要立刻补登出/重置路径\"}]\n65:[\"$\",\"p\",null,{\"children\":\"这是很多项目都会漏掉的。\"}]\n66:[\"$\",\"p\",null,{\"children\":\"只要你新增了新的跨页面状态，就必须问自己：\"}]\n67:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"登出时它怎么清\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"用户切换时它怎么清\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"重开一轮流程时它怎么重置\"}],\"\\n\"]}]\n68:[\"$\",\"h2\",null,{\"children\":\"你可以自己复现什么\"}]\n69:[\"$\",\"h3\",null,{\"children\":\"跑 Task 7 针对测试\"}]\n6a:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"node --test tests/ai-study-session.test.js -v\\n\"}]}]\n6b:[\"$\",\"h3\",null,{\"children\":\"跑全部测试\"}]\n6c:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"node --test tests/*.test.js\\n\"}]}]\n6d:[\"$\",\"h3\",null,{\"children\":\"跑构建\"}]\n6e:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"npm run build\\n\"}]}]\n6f:[\"$\",\"h3\",null,{\"children\":\"看关键提交演进\"}]\n70:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"git log --oneline -5\\n\"}]}]\n71:[\"$\",\"p\",null,{\"children\":\"这一步最终会对应到：\"}]\n72:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"7fed2874\"}],\" 初始接入\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"674bdf47\"}],\" 收紧推荐词、计划阈值、sign-out reset 等问题\"]}],\"\\n\"]}]\n73:[\"$\",\"h2\",null,{\"children\":\"这一步你应该学会什么\"}]\n74:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"如何让 AI 计划真正进入主业务流程\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么\\\"计划词\\\"和\\\"随机词\\\"必须分离\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么工作流 gate 必须前后一致\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么脏推荐词不能拖死流程\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么新增 store 后一定要补登出清理\"}],\"\\n\"]}]\n75:[\"$\",\"h2\",null,{\"children\":\"下一步会做什么\"}]\n76:[\"$\",\"p\",null,{\"children\":[\"下一步是 \",[\"$\",\"code\",null,{\"children\":\"Task 8\"}],\"：\"]}]\n77:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 测验\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 批改\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 复盘\"}],\"\\n\"]}]\n78:[\"$\",\"p\",null,{\"children\":\"也就是说，接下来你会从：\"}]\n79:[\"$\",\"p\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"AI 驱动学习\"}]}]\n7a:[\"$\",\"p\",null,{\"chi"])</script><script>self.__next_f.push([1,"ldren\":\"进入到：\"}]\n7b:[\"$\",\"p\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"AI 驱动学习后的评价与反馈闭环\"}]}]\n"])</script><script>self.__next_f.push([1,"e:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"c:null\n10:[[\"$\",\"title\",\"0\",{\"children\":\"LLM 学习工作流（七）：AI 计划驱动学习流 | QingWaaa\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"让 AI 计划真正进入主用户流程：推荐词合并、计划词与随机词严格分离、坏数据容忍、工作流 gate 前后一致、登出路径清理 AI 状态。这一步把 AI 教练从独立页面推进成真实驱动学习的状态机。\"}],[\"$\",\"meta\",\"2\",{\"name\":\"keywords\",\"content\":\"developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js\"}]]\n"])</script></body></html>

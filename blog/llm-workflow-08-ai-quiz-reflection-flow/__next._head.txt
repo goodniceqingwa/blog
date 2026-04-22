@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/f3e35d9a80465ef3.js"],"ViewportBoundary"]
+3:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/f3e35d9a80465ef3.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"OwlZKtRWYmTS5iFl_68n1","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"LLM 学习工作流（八）：AI 测验、批改与复盘闭环 | QingWaaa"}],["$","meta","1",{"name":"description","content":"把 AI 能力接到学习完成之后的反馈闭环：buildAiQuizPayload、store 自守阶段边界、contextual quiz 叠加而非替换、run restart 清理衍生状态。AI 反馈是第二层增强，不是替代层。"}],["$","meta","2",{"name":"keywords","content":"developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js"}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}

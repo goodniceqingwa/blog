@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/f3e35d9a80465ef3.js"],"ViewportBoundary"]
+3:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/f3e35d9a80465ef3.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"OwlZKtRWYmTS5iFl_68n1","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"LLM 学习工作流（七）：AI 计划驱动学习流 | QingWaaa"}],["$","meta","1",{"name":"description","content":"让 AI 计划真正进入主用户流程：推荐词合并、计划词与随机词严格分离、坏数据容忍、工作流 gate 前后一致、登出路径清理 AI 状态。这一步把 AI 教练从独立页面推进成真实驱动学习的状态机。"}],["$","meta","2",{"name":"keywords","content":"developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js"}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}

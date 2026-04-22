@@ -1,0 +1,287 @@
+<!DOCTYPE html><!--OwlZKtRWYmTS5iFl_68n1--><html lang="zh-CN" class="space_grotesk_e6988195-module__RNs2Mq__variable inter_c15e96cb-module__0bjUvq__variable jetbrains_mono_7ea1d0f9-module__6GV5LG__variable noto_sans_sc_c25b8282-module__pnEi6G__variable"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/feb57b2dc8f29018-s.p.2539f70a.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/e5d3f102d41f5630.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/a2acf40391e8e49b.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/80fc4d7125e06aa5.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/0e5ec002b973a262.js"/><script src="/_next/static/chunks/f091501564eb2ea3.js" async=""></script><script src="/_next/static/chunks/0381c808fbaec563.js" async=""></script><script src="/_next/static/chunks/aee6c7720838f8a2.js" async=""></script><script src="/_next/static/chunks/turbopack-4c948ebe0e5cd4e4.js" async=""></script><script src="/_next/static/chunks/95166580d1eed87b.js" async=""></script><script src="/_next/static/chunks/139e2097087bfffa.js" async=""></script><script src="/_next/static/chunks/ff1a16fafef87110.js" async=""></script><script src="/_next/static/chunks/f3e35d9a80465ef3.js" async=""></script><meta name="next-size-adjust" content=""/><title>LLM 学习工作流（八）：AI 测验、批改与复盘闭环 | QingWaaa</title><meta name="description" content="把 AI 能力接到学习完成之后的反馈闭环：buildAiQuizPayload、store 自守阶段边界、contextual quiz 叠加而非替换、run restart 清理衍生状态。AI 反馈是第二层增强，不是替代层。"/><meta name="keywords" content="developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="font-body"><div hidden=""><!--$--><!--/$--></div><script>((a,b,c,d,e,f,g,h)=>{let i=document.documentElement,j=["light","dark"];function k(b){var c;(Array.isArray(a)?a:[a]).forEach(a=>{let c="class"===a,d=c&&f?e.map(a=>f[a]||a):e;c?(i.classList.remove(...d),i.classList.add(f&&f[b]?f[b]:b)):i.setAttribute(a,b)}),c=b,h&&j.includes(c)&&(i.style.colorScheme=c)}if(d)k(d);else try{let a=localStorage.getItem(b)||c,d=g&&"system"===a?window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light":a;k(d)}catch(a){}})("class","theme","dark",null,["light","dark"],{"dark":"dark","light":"light"},false,true)</script><div class="fixed top-0 left-0 w-2 h-2 bg-accent-purple rounded-full pointer-events-none z-[9999] mix-blend-difference"></div><div class="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] border border-accent-purple/50"></div><header class="fixed top-0 left-0 right-0 z-50 glass border-b border-glass-border" style="transform:none"><nav class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"><a class="font-mono text-xl font-bold text-text-primary hover:text-accent-purple transition-colors" href="/"><span class="text-term-green">$ </span>qingwa@blog:~</a><div class="hidden md:flex items-center gap-8"><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/">首页</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/works">作品集</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/blog">博客</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/about">关于</a><a class="relative text-sm font-mono text-text-muted hover:text-text-primary transition-colors py-2" href="/contact">联系</a></div><button class="md:hidden relative w-10 h-10 flex items-center justify-center" aria-label="Toggle menu"><div class="flex flex-col gap-1.5"><span class="w-6 h-0.5 bg-text-primary block"></span><span class="w-6 h-0.5 bg-text-primary block"></span><span class="w-6 h-0.5 bg-text-primary block"></span></div></button></nav></header><main class="pt-16"><article class="min-h-screen py-24 px-6"><div class="max-w-3xl mx-auto"><a class="text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block font-mono text-sm" href="/blog"><span class="text-term-green">$ </span>cd ../blog</a><header class="mb-12"><div class="font-mono text-xs text-text-muted mb-4 break-all"><span class="text-term-green">$ </span>cat ~/blog/<!-- -->AI 应用开发<!-- -->/<!-- -->llm-workflow-08-ai-quiz-reflection-flow<!-- -->.mdx</div><h1 class="text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4">LLM 学习工作流（八）：AI 测验、批改与复盘闭环</h1><div class="flex items-center gap-4 text-text-muted text-sm font-mono"><span>2026年4月21日</span><span>·</span><span>10 min read</span></div><div class="flex flex-wrap gap-2 mt-4"><span class="code-tag">&lt;<!-- -->AI 应用开发<!-- --> /&gt;</span></div><div class="flex flex-wrap gap-2 mt-2"><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">AI</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">LLM</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">测验</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">复盘</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">状态机</span><span class="text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono">工程实践</span></div></header><div class="prose-custom"><h2>这一步在做什么</h2>
+<p>这一步开始把 AI 能力真正接到&quot;学习完成之后&quot;的反馈闭环里。</p>
+<p>在 Task 7 之前，我们已经做到：</p>
+<ul>
+<li>AI 计划会影响学习页</li>
+<li>推荐词会优先进入学习流程</li>
+<li>学到一定程度后才能进入下一阶段</li>
+</ul>
+<p>但还没有形成完整闭环：</p>
+<ul>
+<li>学完之后怎么测</li>
+<li>测完之后怎么回看</li>
+<li>错题和下一步建议放在哪里</li>
+</ul>
+<p>Task 8 做的就是：</p>
+<p><strong>把测验结果、复盘摘要和后续建议接起来。</strong></p>
+<p>最终主要涉及：</p>
+<ul>
+<li><code>src/utils/ai-payloads.js</code></li>
+<li><code>src/stores/aiCoach.js</code></li>
+<li><code>src/views/StudyQuiz.vue</code></li>
+<li><code>src/views/AICoach.vue</code></li>
+<li><code>tests/ai-quiz-reflection.test.js</code></li>
+</ul>
+<h2>这一步为什么重要</h2>
+<p>很多 AI 学习产品只做到：</p>
+<ul>
+<li>给你一个计划</li>
+<li>给你一个聊天框</li>
+</ul>
+<p>但真正有价值的系统通常还要有：</p>
+<ul>
+<li>测验</li>
+<li>反馈</li>
+<li>复盘</li>
+<li>下一步建议</li>
+</ul>
+<p>也就是说，AI 不只是帮助你开始学习，还要帮助你收尾、总结和进入下一轮。</p>
+<p>所以 Task 8 的核心不是&quot;多加几个页面文案&quot;，而是：</p>
+<p><strong>把 AI 加进学习后的评价环节。</strong></p>
+<h2>一开始做了什么</h2>
+<p>第一版提交是：</p>
+<ul>
+<li><code>5b94c135</code> <code>feat: add ai quiz reflection flow</code></li>
+</ul>
+<p>这一版已经做了几件正确的事情：</p>
+<h3>1. 新增 <code>buildAiQuizPayload</code></h3>
+<p>在 <code>src/utils/ai-payloads.js</code> 里新增：</p>
+<pre><code class="language-js">buildAiQuizPayload({
+  runId,
+  learnedWords,
+  planTasks,
+})
+</code></pre>
+<p>这个 payload 是后面服务端真正生成 AI 上下文测验时的输入基础。</p>
+<h3>2. <code>aiCoach</code> store 开始保存测验和复盘状态</h3>
+<p>这一步引入了：</p>
+<ul>
+<li><code>quizRequest</code></li>
+<li><code>quizResults</code></li>
+<li><code>reflection</code></li>
+</ul>
+<p>这说明 AI coach 不再只是&quot;计划状态存储&quot;，而是开始承担：</p>
+<ul>
+<li>学习后反馈存储</li>
+<li>复盘状态存储</li>
+</ul>
+<h3>3. StudyQuiz 结束后同步结果给 AI Coach</h3>
+<p>在 <code>src/views/StudyQuiz.vue</code> 里，当用户答完题后，会把：</p>
+<ul>
+<li>正确率</li>
+<li>错题</li>
+<li>用户答案</li>
+<li>正确答案</li>
+</ul>
+<p>同步进 <code>aiCoach</code> store。</p>
+<h3>4. AICoach 页面开始展示复盘内容</h3>
+<p>在 <code>src/views/AICoach.vue</code> 里，开始出现：</p>
+<ul>
+<li>当前测验上下文</li>
+<li>最近一次测验</li>
+<li>AI 复盘摘要</li>
+<li>下一步建议</li>
+</ul>
+<p>这让 <code>/coach</code> 不再只是空壳，而是开始有&quot;学习后结果页&quot;的味道。</p>
+<h2>第一轮核心问题：不要破坏已有基础测验</h2>
+<p>Task 8 最开始最容易犯的错是：</p>
+<ul>
+<li>一接 AI，就把原来的测验入口改坏</li>
+</ul>
+<p>review 当时指出了一个重要问题：</p>
+<ul>
+<li>不能因为 planned study active，就把原有基础测验直接挡掉</li>
+</ul>
+<p>因为本项目原本就已经有一套：</p>
+<ul>
+<li>选择题</li>
+<li>拼写题</li>
+<li>本地评分</li>
+</ul>
+<p>所以正确做法不是：</p>
+<ul>
+<li>用 AI 测验替换掉原测验</li>
+</ul>
+<p>而是：</p>
+<ul>
+<li>保留原测验</li>
+<li>在其上追加 AI/contextual quiz support</li>
+</ul>
+<p>这就是为什么后来改成：</p>
+<h3>基础测验继续存在</h3>
+<p>用户仍然可以基于：</p>
+<ul>
+<li><code>learningStore.learnedWordsInSession</code></li>
+</ul>
+<p>进入基础测验。</p>
+<h3>AI 上下文题作为追加层</h3>
+<p>只有在合适时机，才往已有题目后面追加 contextual questions。</p>
+<p>这一步体现了一个非常重要的工程原则：</p>
+<p><strong>新能力优先叠加，而不是直接替换稳定功能。</strong></p>
+<h2>第二轮核心问题：AI 结果不能在错误阶段写回</h2>
+<p>这是 Task 8 里最关键的工作流边界问题。</p>
+<p>如果用户：</p>
+<ul>
+<li>没到 <code>quiz_ready</code></li>
+<li>甚至没有 active run</li>
+<li>只是直接打开 <code>/study/quiz</code></li>
+</ul>
+<p>那么即使用户答题完成，也不能把结果算进 AI workflow。</p>
+<p>否则就会发生：</p>
+<ul>
+<li>普通测验结果污染 AI Coach</li>
+<li>错误阶段提前进入复盘</li>
+<li>计划流程状态失真</li>
+</ul>
+<p>因此，后来在 <code>src/stores/aiCoach.js</code> 里加了真正的阶段保护：</p>
+<h3><code>saveQuizResults()</code></h3>
+<p>只有当：</p>
+<ul>
+<li><code>activeRun</code> 存在</li>
+<li><code>currentStage === &#x27;quiz_ready&#x27;</code></li>
+</ul>
+<p>时才允许写入。</p>
+<h3><code>summarizeReflection()</code></h3>
+<p>只有当：</p>
+<ul>
+<li><code>activeRun</code> 存在</li>
+<li><code>currentStage === &#x27;reflecting&#x27;</code></li>
+</ul>
+<p>时才允许生成复盘。</p>
+<p>这一步你一定要记住：</p>
+<p><strong>真正的工作流系统不能只靠页面按钮来控制流程，store 自己也必须有防线。</strong></p>
+<h2>第三轮问题：重启新一轮计划时，旧测验状态不能残留</h2>
+<p>这也是一个非常经典的状态泄漏问题。</p>
+<p>如果一轮计划已经 <code>completed</code>，然后又开始新一轮学习，旧的：</p>
+<ul>
+<li><code>quizRequest</code></li>
+<li><code>quizResults</code></li>
+<li><code>reflection</code></li>
+</ul>
+<p>不能继续留在 store 里。</p>
+<p>否则就会出现：</p>
+<ul>
+<li>新 run 已经开始</li>
+<li>页面还显示上一轮的错题和复盘</li>
+</ul>
+<p>这会让 AI coach 的状态完全混乱。</p>
+<p>所以后来在 <code>startPlannedStudy()</code> 里加了：</p>
+<h3>completed run restart cleanup</h3>
+<p>如果检测到当前 run 是 <code>completed</code>，重新开始时会先清掉：</p>
+<ul>
+<li><code>quizRequest</code></li>
+<li><code>quizResults</code></li>
+<li><code>reflection</code></li>
+</ul>
+<p>这说明：</p>
+<p><strong>工作流重启不只是改 stage，还必须清理与上一轮绑定的衍生状态。</strong></p>
+<h2>第四轮问题：contextual quiz 什么时候该出现</h2>
+<p>Task 8 里还有一个微妙问题：</p>
+<p>如果 contextual questions 始终存在，那么：</p>
+<ul>
+<li>在错误阶段打开 quiz</li>
+<li>或重新测一次</li>
+</ul>
+<p>都可能看到不该出现的上下文题。</p>
+<p>所以最后把规则收紧成：</p>
+<ul>
+<li>基础测验一直在</li>
+<li>contextual questions 只在 <code>activeRun.currentStage === &#x27;quiz_ready&#x27;</code> 时追加</li>
+</ul>
+<p>这样就实现了：</p>
+<h3>基础流不受影响</h3>
+<p>普通学习会话仍然能测验。</p>
+<h3>AI 流有额外上下文</h3>
+<p>只有在 AI 工作流正确推进到测验阶段时，才追加计划上下文题。</p>
+<h2>这一步最终做成了什么</h2>
+<h3>Payload 层</h3>
+<p>现在已经有：</p>
+<ul>
+<li><code>buildAiQuizPayload()</code></li>
+<li><code>buildReflectionPayload()</code></li>
+</ul>
+<h3>Store 层</h3>
+<p><code>aiCoach</code> store 现在可以存：</p>
+<ul>
+<li>quiz request</li>
+<li>quiz results</li>
+<li>reflection payload</li>
+<li>blockers</li>
+<li>next actions</li>
+</ul>
+<h3>页面层</h3>
+<p><code>StudyQuiz.vue</code> 现在：</p>
+<ul>
+<li>保留原有本地测验</li>
+<li>在正确阶段追加 contextual questions</li>
+<li>完成后把结果写回 AI coach</li>
+</ul>
+<p><code>AICoach.vue</code> 现在：</p>
+<ul>
+<li>能展示最近测验结果</li>
+<li>能展示错题说明</li>
+<li>能展示 AI 复盘摘要</li>
+<li>能展示下一步建议</li>
+</ul>
+<h3>阶段层</h3>
+<p>现在流程上已经有一个更完整的阶段链：</p>
+<ul>
+<li><code>quiz_ready</code></li>
+<li><code>reflecting</code></li>
+<li><code>completed</code></li>
+</ul>
+<h2>这一步真正学到什么</h2>
+<h3>1. AI 闭环不能污染原有功能</h3>
+<p>如果原系统已经有稳定测验功能，AI 接入应该先叠加，而不是替换。</p>
+<h3>2. Store 自己必须保护工作流边界</h3>
+<p>不能只靠页面&quot;理论上不会乱点&quot;。</p>
+<p>只要一个状态写入会影响 workflow，就要在 store 里做阶段保护。</p>
+<h3>3. 工作流重启时必须清旧状态</h3>
+<p>新一轮流程最容易踩的坑就是：</p>
+<ul>
+<li>旧的衍生状态没清掉</li>
+</ul>
+<p>这类 bug 在 AI 产品里会非常隐蔽，因为看起来像&quot;模型回错了&quot;，实际上是状态污染。</p>
+<h3>4. AI 反馈是第二层，不是替代层</h3>
+<p>Task 8 最重要的产品取舍就是：</p>
+<ul>
+<li>基础测验继续存在</li>
+<li>AI 反馈作为附加增强层</li>
+</ul>
+<p>这能显著降低改造风险。</p>
+<h2>你可以自己复现什么</h2>
+<h3>跑 Task 8 针对测试</h3>
+<pre><code class="language-bash">node --test tests/ai-quiz-reflection.test.js -v
+</code></pre>
+<h3>跑关联测试</h3>
+<pre><code class="language-bash">node --test tests/ai-payloads.test.js tests/ai-study-session.test.js tests/quiz-daily-attempts.test.js tests/ai-quiz-reflection.test.js -v
+</code></pre>
+<h3>跑构建</h3>
+<pre><code class="language-bash">npm run build
+</code></pre>
+<h3>看 Task 8 的关键提交</h3>
+<pre><code class="language-bash">git log --oneline -5
+</code></pre>
+<p>你会看到大致这几类演进：</p>
+<ul>
+<li>初始 AI quiz/reflection 接线</li>
+<li>修基础测验不被阻断</li>
+<li>修错误阶段写回问题</li>
+<li>修 completed run 重启时的状态污染</li>
+</ul>
+<h2>这一步你应该学会什么</h2>
+<ul>
+<li>如何把 AI 能力叠加到已有测验系统上</li>
+<li>为什么 store 必须自己守阶段边界</li>
+<li>为什么 run restart 需要清理旧的派生状态</li>
+<li>为什么 contextual quiz 只能在正确阶段出现</li>
+<li>为什么&quot;自动生成复盘&quot;也要有严格阶段保护</li>
+</ul>
+<h2>下一步会做什么</h2>
+<p>下一步是 <code>Task 9</code>：</p>
+<ul>
+<li>文档</li>
+<li>环境变量</li>
+<li>最终验证</li>
+</ul>
+<p>也就是说，接下来要做的是把前面 1 到 8 步形成的 AI 工作流改造，整理成真正可交付、可运行、可复现的项目闭环。</p></div></div></article><!--$--><!--/$--></main><footer class="border-t border-glass-border bg-bg-deep"><div class="max-w-7xl mx-auto px-6 py-12"><div class="font-mono text-sm space-y-1 mb-8"><p><span class="text-term-green font-bold">$ </span><span class="text-text-secondary">git remote -v</span></p><p><span class="text-term-yellow">origin</span><span class="text-text-muted">    <!-- -->https://github.com/goodniceqingwa<!-- --> <!-- -->(fetch)</span></p><p><span class="text-term-yellow">qingwa</span><span class="text-text-muted">    <!-- -->https://qingwaaa.top<!-- --> <!-- -->(site)</span></p></div><div class="flex flex-col md:flex-row items-center justify-between gap-6"><div class="flex gap-6"><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/blog">博客</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/works">项目</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/about">关于</a><a class="text-text-muted text-sm font-mono hover:text-accent-purple transition-colors" href="/contact">联系</a></div><div class="flex gap-4"><a href="https://github.com/goodniceqingwa" target="_blank" rel="noopener noreferrer" class="w-10 h-10 glass rounded-full flex items-center justify-center text-text-muted hover:text-accent-purple hover:glow-purple transition-all" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg></a></div></div><div class="mt-8 pt-6 border-t border-glass-border text-center text-text-muted text-xs font-mono"><p>© <!-- -->2026<!-- --> QingWaaa. All rights reserved.</p></div></div></footer><script src="/_next/static/chunks/0e5ec002b973a262.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[5622,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"ThemeProvider\"]\n3:I[79030,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"SmoothScrollProvider\"]\n4:I[96901,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"CustomCursor\"]\n5:I[7988,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"Navbar\"]\n6:I[39756,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n7:I[37457,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n8:I[87392,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"Footer\"]\na:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"OutletBoundary\"]\nb:\"$Sreact.suspense\"\nd:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"ViewportBoundary\"]\nf:I[97367,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"MetadataBoundary\"]\n11:I[68027,[\"/_next/static/chunks/ff1a16fafef87110.js\",\"/_next/static/chunks/f3e35d9a80465ef3.js\"],\"default\"]\n:HL[\"/_next/static/chunks/e5d3f102d41f5630.css\",\"style\"]\n:HL[\"/_next/static/chunks/a2acf40391e8e49b.css\",\"style\"]\n:HL[\"/_next/static/chunks/80fc4d7125e06aa5.css\",\"style\"]\n:HL[\"/_next/static/media/0c89a48fa5027cee-s.p.4564287c.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/70bc3e132a0a741e-s.p.15008bfb.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/feb57b2dc8f29018-s.p.2539f70a.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"OwlZKtRWYmTS5iFl_68n1\",\"c\":[\"\",\"blog\",\"llm-workflow-08-ai-quiz-reflection-flow\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"blog\",{\"children\":[[\"slug\",\"llm-workflow-08-ai-quiz-reflection-flow\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/e5d3f102d41f5630.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"link\",\"1\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/a2acf40391e8e49b.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"link\",\"2\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/80fc4d7125e06aa5.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/95166580d1eed87b.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-1\",{\"src\":\"/_next/static/chunks/139e2097087bfffa.js\",\"async\":true,\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"suppressHydrationWarning\":true,\"className\":\"space_grotesk_e6988195-module__RNs2Mq__variable inter_c15e96cb-module__0bjUvq__variable jetbrains_mono_7ea1d0f9-module__6GV5LG__variable noto_sans_sc_c25b8282-module__pnEi6G__variable\",\"children\":[\"$\",\"body\",null,{\"className\":\"font-body\",\"children\":[\"$\",\"$L2\",null,{\"children\":[\"$\",\"$L3\",null,{\"children\":[[\"$\",\"$L4\",null,{}],[\"$\",\"$L5\",null,{}],[\"$\",\"main\",null,{\"className\":\"pt-16\",\"children\":[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}],[\"$\",\"$L8\",null,{}]]}]}]}]}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L6\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L7\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L9\",null,[\"$\",\"$La\",null,{\"children\":[\"$\",\"$b\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@c\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$Ld\",null,{\"children\":\"$Le\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lf\",null,{\"children\":[\"$\",\"$b\",null,{\"name\":\"Next.Metadata\",\"children\":\"$L10\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$11\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"12:I[22016,[\"/_next/static/chunks/95166580d1eed87b.js\",\"/_next/static/chunks/139e2097087bfffa.js\"],\"\"]\n"])</script><script>self.__next_f.push([1,"9:[\"$\",\"article\",null,{\"className\":\"min-h-screen py-24 px-6\",\"children\":[\"$\",\"div\",null,{\"className\":\"max-w-3xl mx-auto\",\"children\":[[\"$\",\"$L12\",null,{\"href\":\"/blog\",\"className\":\"text-text-muted hover:text-accent-purple transition-colors mb-8 inline-block font-mono text-sm\",\"children\":[[\"$\",\"span\",null,{\"className\":\"text-term-green\",\"children\":\"$$ \"}],\"cd ../blog\"]}],[\"$\",\"header\",null,{\"className\":\"mb-12\",\"children\":[[\"$\",\"div\",null,{\"className\":\"font-mono text-xs text-text-muted mb-4 break-all\",\"children\":[[\"$\",\"span\",null,{\"className\":\"text-term-green\",\"children\":\"$$ \"}],\"cat ~/blog/\",\"AI 应用开发\",\"/\",\"llm-workflow-08-ai-quiz-reflection-flow\",\".mdx\"]}],[\"$\",\"h1\",null,{\"className\":\"text-4xl md:text-5xl font-heading font-bold text-text-primary mb-4\",\"children\":\"LLM 学习工作流（八）：AI 测验、批改与复盘闭环\"}],[\"$\",\"div\",null,{\"className\":\"flex items-center gap-4 text-text-muted text-sm font-mono\",\"children\":[[\"$\",\"span\",null,{\"children\":\"2026年4月21日\"}],[\"$\",\"span\",null,{\"children\":\"·\"}],[\"$\",\"span\",null,{\"children\":\"10 min read\"}]]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-4\",\"children\":[[\"$\",\"span\",\"AI 应用开发\",{\"className\":\"code-tag\",\"children\":[\"\u003c\",\"AI 应用开发\",\" /\u003e\"]}]]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-2\",\"children\":[[\"$\",\"span\",\"AI\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"AI\"}],[\"$\",\"span\",\"LLM\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"LLM\"}],[\"$\",\"span\",\"测验\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"测验\"}],[\"$\",\"span\",\"复盘\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"复盘\"}],[\"$\",\"span\",\"状态机\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"状态机\"}],[\"$\",\"span\",\"工程实践\",{\"className\":\"text-xs px-2 py-0.5 rounded-full bg-glass-border text-text-muted font-mono\",\"children\":\"工程实践\"}]]}]]}],[\"$\",\"div\",null,{\"className\":\"prose-custom\",\"children\":\"$L13\"}]]}]}]\n"])</script><script>self.__next_f.push([1,"13:[[\"$\",\"h2\",null,{\"children\":\"这一步在做什么\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步开始把 AI 能力真正接到\\\"学习完成之后\\\"的反馈闭环里。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"在 Task 7 之前，我们已经做到：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 计划会影响学习页\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"推荐词会优先进入学习流程\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"学到一定程度后才能进入下一阶段\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"但还没有形成完整闭环：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"学完之后怎么测\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"测完之后怎么回看\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"错题和下一步建议放在哪里\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"Task 8 做的就是：\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"把测验结果、复盘摘要和后续建议接起来。\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"最终主要涉及：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/utils/ai-payloads.js\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/stores/aiCoach.js\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/views/StudyQuiz.vue\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"src/views/AICoach.vue\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"tests/ai-quiz-reflection.test.js\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"这一步为什么重要\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"很多 AI 学习产品只做到：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"给你一个计划\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"给你一个聊天框\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"但真正有价值的系统通常还要有：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"测验\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"反馈\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"复盘\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"下一步建议\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"也就是说，AI 不只是帮助你开始学习，还要帮助你收尾、总结和进入下一轮。\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"所以 Task 8 的核心不是\\\"多加几个页面文案\\\"，而是：\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"把 AI 加进学习后的评价环节。\"}]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"一开始做了什么\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"第一版提交是：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"5b94c135\"}],\" \",[\"$\",\"code\",null,{\"children\":\"feat: add ai quiz reflection flow\"}]]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一版已经做了几件正确的事情：\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":[\"1. 新增 \",[\"$\",\"code\",null,{\"children\":\"buildAiQuizPayload\"}]]}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\"src/utils/ai-payloads.js\"}],\" 里新增：\"]}],\"\\n\",[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-js\",\"children\":\"buildAiQuizPayload({\\n  runId,\\n  learnedWords,\\n  planTasks,\\n})\\n\"}]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这个 payload 是后面服务端真正生成 AI 上下文测验时的输入基础。\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":[\"2. \",[\"$\",\"code\",null,{\"children\":\"aiCoach\"}],\" store 开始保存测验和复盘状态\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这一步引入了：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"quizRequest\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"quizResults\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"reflection\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这说明 AI coach 不再只是\\\"计划状态存储\\\"，而是开始承担：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"学习后反馈存储\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"复盘状态存储\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"3. StudyQuiz 结束后同步结果给 AI Coach\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\"src/views/StudyQuiz.vue\"}],\" 里，当用户答完题后，会把：\"]}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"正确率\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"错题\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"用户答案\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"正确答案\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"同步进 \",[\"$\",\"code\",null,{\"children\":\"aiCoach\"}],\" store。\"]}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"4. AICoach 页面开始展示复盘内容\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"在 \",[\"$\",\"code\",null,{\"children\":\"src/views/AICoach.vue\"}],\" 里，开始出现：\"]}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"当前测验上下文\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"最近一次测验\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 复盘摘要\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"下一步建议\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":[\"这让 \",[\"$\",\"code\",null,{\"children\":\"/coach\"}],\" 不再只是空壳，而是开始有\\\"学习后结果页\\\"的味道。\"]}],\"\\n\",[\"$\",\"h2\",null,{\"children\":\"第一轮核心问题：不要破坏已有基础测验\"}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"Task 8 最开始最容易犯的错是：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"一接 AI，就把原来的测验入口改坏\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"review 当时指出了一个重要问题：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"不能因为 planned study active，就把原有基础测验直接挡掉\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"因为本项目原本就已经有一套：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"选择题\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"拼写题\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"本地评分\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"所以正确做法不是：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"用 AI 测验替换掉原测验\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"而是：\"}],\"\\n\",[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"保留原测验\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"在其上追加 AI/contextual quiz support\"}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",null,{\"children\":\"这就是为什么后来改成：\"}],\"\\n\",[\"$\",\"h3\",null,{\"children\":\"基础测验继续存在\"}],\"\\n\",\"$L14\",\"\\n\",\"$L15\",\"\\n\",\"$L16\",\"\\n\",\"$L17\",\"\\n\",\"$L18\",\"\\n\",\"$L19\",\"\\n\",\"$L1a\",\"\\n\",\"$L1b\",\"\\n\",\"$L1c\",\"\\n\",\"$L1d\",\"\\n\",\"$L1e\",\"\\n\",\"$L1f\",\"\\n\",\"$L20\",\"\\n\",\"$L21\",\"\\n\",\"$L22\",\"\\n\",\"$L23\",\"\\n\",\"$L24\",\"\\n\",\"$L25\",\"\\n\",\"$L26\",\"\\n\",\"$L27\",\"\\n\",\"$L28\",\"\\n\",\"$L29\",\"\\n\",\"$L2a\",\"\\n\",\"$L2b\",\"\\n\",\"$L2c\",\"\\n\",\"$L2d\",\"\\n\",\"$L2e\",\"\\n\",\"$L2f\",\"\\n\",\"$L30\",\"\\n\",\"$L31\",\"\\n\",\"$L32\",\"\\n\",\"$L33\",\"\\n\",\"$L34\",\"\\n\",\"$L35\",\"\\n\",\"$L36\",\"\\n\",\"$L37\",\"\\n\",\"$L38\",\"\\n\",\"$L39\",\"\\n\",\"$L3a\",\"\\n\",\"$L3b\",\"\\n\",\"$L3c\",\"\\n\",\"$L3d\",\"\\n\",\"$L3e\",\"\\n\",\"$L3f\",\"\\n\",\"$L40\",\"\\n\",\"$L41\",\"\\n\",\"$L42\",\"\\n\",\"$L43\",\"\\n\",\"$L44\",\"\\n\",\"$L45\",\"\\n\",\"$L46\",\"\\n\",\"$L47\",\"\\n\",\"$L48\",\"\\n\",\"$L49\",\"\\n\",\"$L4a\",\"\\n\",\"$L4b\",\"\\n\",\"$L4c\",\"\\n\",\"$L4d\",\"\\n\",\"$L4e\",\"\\n\",\"$L4f\",\"\\n\",\"$L50\",\"\\n\",\"$L51\",\"\\n\",\"$L52\",\"\\n\",\"$L53\",\"\\n\",\"$L54\",\"\\n\",\"$L55\",\"\\n\",\"$L56\",\"\\n\",\"$L57\",\"\\n\",\"$L58\",\"\\n\",\"$L59\",\"\\n\",\"$L5a\",\"\\n\",\"$L5b\",\"\\n\",\"$L5c\",\"\\n\",\"$L5d\",\"\\n\",\"$L5e\",\"\\n\",\"$L5f\",\"\\n\",\"$L60\",\"\\n\",\"$L61\",\"\\n\",\"$L62\",\"\\n\",\"$L63\",\"\\n\",\"$L64\",\"\\n\",\"$L65\",\"\\n\",\"$L66\",\"\\n\",\"$L67\",\"\\n\",\"$L68\",\"\\n\",\"$L69\",\"\\n\",\"$L6a\",\"\\n\",\"$L6b\",\"\\n\",\"$L6c\",\"\\n\",\"$L6d\",\"\\n\",\"$L6e\",\"\\n\",\"$L6f\",\"\\n\",\"$L70\",\"\\n\",\"$L71\",\"\\n\",\"$L72\",\"\\n\",\"$L73\",\"\\n\",\"$L74\"]\n"])</script><script>self.__next_f.push([1,"14:[\"$\",\"p\",null,{\"children\":\"用户仍然可以基于：\"}]\n15:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"learningStore.learnedWordsInSession\"}]}],\"\\n\"]}]\n16:[\"$\",\"p\",null,{\"children\":\"进入基础测验。\"}]\n17:[\"$\",\"h3\",null,{\"children\":\"AI 上下文题作为追加层\"}]\n18:[\"$\",\"p\",null,{\"children\":\"只有在合适时机，才往已有题目后面追加 contextual questions。\"}]\n19:[\"$\",\"p\",null,{\"children\":\"这一步体现了一个非常重要的工程原则：\"}]\n1a:[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"新能力优先叠加，而不是直接替换稳定功能。\"}]}]\n1b:[\"$\",\"h2\",null,{\"children\":\"第二轮核心问题：AI 结果不能在错误阶段写回\"}]\n1c:[\"$\",\"p\",null,{\"children\":\"这是 Task 8 里最关键的工作流边界问题。\"}]\n1d:[\"$\",\"p\",null,{\"children\":\"如果用户：\"}]\n1e:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"没到 \",[\"$\",\"code\",null,{\"children\":\"quiz_ready\"}]]}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"甚至没有 active run\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"只是直接打开 \",[\"$\",\"code\",null,{\"children\":\"/study/quiz\"}]]}],\"\\n\"]}]\n1f:[\"$\",\"p\",null,{\"children\":\"那么即使用户答题完成，也不能把结果算进 AI workflow。\"}]\n20:[\"$\",\"p\",null,{\"children\":\"否则就会发生：\"}]\n21:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"普通测验结果污染 AI Coach\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"错误阶段提前进入复盘\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"计划流程状态失真\"}],\"\\n\"]}]\n22:[\"$\",\"p\",null,{\"children\":[\"因此，后来在 \",[\"$\",\"code\",null,{\"children\":\"src/stores/aiCoach.js\"}],\" 里加了真正的阶段保护：\"]}]\n23:[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"saveQuizResults()\"}]}]\n24:[\"$\",\"p\",null,{\"children\":\"只有当：\"}]\n25:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"activeRun\"}],\" 存在\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"currentStage === 'quiz_ready'\"}]}],\"\\n\"]}]\n26:[\"$\",\"p\",null,{\"children\":\"时才允许写入。\"}]\n27:[\"$\",\"h3\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"summarizeReflection()\"}]}]\n28:[\"$\",\"p\",null,{\"children\":\"只有当：\"}]\n29:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"activeRun\"}],\" 存在\"]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"currentStage === 'reflecting'\"}]}],\"\\n\"]}]\n2a:[\"$\",\"p\",null,{\"children\":\"时才允许生成复盘。\"}]\n2b:[\"$\",\"p\",null,{\"children\":\"这一步你一定要记住：\"}]\n2c:[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"真正的工作流系统不能只靠页面按钮来控制流程，store 自己也必须有防线。\"}]}]\n2d:[\"$\",\"h2\",null,{\"children\":\"第三轮问题：重启新一轮计划时，旧测验状态不能残留\"}]\n2e:[\"$\",\"p\",null,{\"children\":\"这也是一个非常经典的状态泄漏问题。\"}]\n2f:[\"$\",\"p\",null,{\"children\":[\"如果一轮计划已经 \",[\"$\",\"code\",null,{\"children\":\"completed\"}],\"，然后又开始新一轮学习，旧的：\"]}]\n30:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"quizRequest\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"quizResults\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"reflection\"}]}],\"\\n\"]}]\n31:[\"$\",\"p\",null,{\"children\":\"不能继续留在 store 里。\"}]\n32:[\"$\",\"p\",null,{\"children\":\"否则就会出现：\"}]\n33:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"新 run 已经开始\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"页面还显示上一轮的错题和复盘\"}],\"\\n\"]}]\n34:[\"$\",\"p\",null,{\"children\":\"这会让 AI coach 的状态完全混乱。\"}]\n35:[\"$\",\"p\",null,{\"children\":[\"所以后来在 \",[\"$\",\"code\",null,{\"children\":\"startPlannedStudy()\"}],\" 里加了：\"]}]\n36:[\"$\",\"h3\",null,{\"children\":\"completed run restart cleanup\"}]\n37:[\"$\",\"p\",null,{\"children\":[\"如果检测到当前 run 是 \",[\"$\",\"code\",null,{\"children\":\"completed\"}],\"，重新开始时会先清掉：\"]}]"])</script><script>self.__next_f.push([1,"\n38:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"quizRequest\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"quizResults\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"reflection\"}]}],\"\\n\"]}]\n39:[\"$\",\"p\",null,{\"children\":\"这说明：\"}]\n3a:[\"$\",\"p\",null,{\"children\":[\"$\",\"strong\",null,{\"children\":\"工作流重启不只是改 stage，还必须清理与上一轮绑定的衍生状态。\"}]}]\n3b:[\"$\",\"h2\",null,{\"children\":\"第四轮问题：contextual quiz 什么时候该出现\"}]\n3c:[\"$\",\"p\",null,{\"children\":\"Task 8 里还有一个微妙问题：\"}]\n3d:[\"$\",\"p\",null,{\"children\":\"如果 contextual questions 始终存在，那么：\"}]\n3e:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"在错误阶段打开 quiz\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"或重新测一次\"}],\"\\n\"]}]\n3f:[\"$\",\"p\",null,{\"children\":\"都可能看到不该出现的上下文题。\"}]\n40:[\"$\",\"p\",null,{\"children\":\"所以最后把规则收紧成：\"}]\n41:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"基础测验一直在\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"contextual questions 只在 \",[\"$\",\"code\",null,{\"children\":\"activeRun.currentStage === 'quiz_ready'\"}],\" 时追加\"]}],\"\\n\"]}]\n42:[\"$\",\"p\",null,{\"children\":\"这样就实现了：\"}]\n43:[\"$\",\"h3\",null,{\"children\":\"基础流不受影响\"}]\n44:[\"$\",\"p\",null,{\"children\":\"普通学习会话仍然能测验。\"}]\n45:[\"$\",\"h3\",null,{\"children\":\"AI 流有额外上下文\"}]\n46:[\"$\",\"p\",null,{\"children\":\"只有在 AI 工作流正确推进到测验阶段时，才追加计划上下文题。\"}]\n47:[\"$\",\"h2\",null,{\"children\":\"这一步最终做成了什么\"}]\n48:[\"$\",\"h3\",null,{\"children\":\"Payload 层\"}]\n49:[\"$\",\"p\",null,{\"children\":\"现在已经有：\"}]\n4a:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"buildAiQuizPayload()\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"buildReflectionPayload()\"}]}],\"\\n\"]}]\n4b:[\"$\",\"h3\",null,{\"children\":\"Store 层\"}]\n4c:[\"$\",\"p\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"aiCoach\"}],\" store 现在可以存：\"]}]\n4d:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"quiz request\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"quiz results\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"reflection payload\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"blockers\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"next actions\"}],\"\\n\"]}]\n4e:[\"$\",\"h3\",null,{\"children\":\"页面层\"}]\n4f:[\"$\",\"p\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"StudyQuiz.vue\"}],\" 现在：\"]}]\n50:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"保留原有本地测验\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"在正确阶段追加 contextual questions\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"完成后把结果写回 AI coach\"}],\"\\n\"]}]\n51:[\"$\",\"p\",null,{\"children\":[[\"$\",\"code\",null,{\"children\":\"AICoach.vue\"}],\" 现在：\"]}]\n52:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"能展示最近测验结果\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"能展示错题说明\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"能展示 AI 复盘摘要\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"能展示下一步建议\"}],\"\\n\"]}]\n53:[\"$\",\"h3\",null,{\"children\":\"阶段层\"}]\n54:[\"$\",\"p\",null,{\"children\":\"现在流程上已经有一个更完整的阶段链：\"}]\n55:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"quiz_ready\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"reflecting\"}]}],\"\\n\",[\"$\",\"li\",null,{\"children\":[\"$\",\"code\",null,{\"children\":\"completed\"}]}],\"\\n\"]}]\n56:[\"$\",\"h2\",null,{\"children\":\"这一步真正学到什么\"}]\n57:[\"$\",\"h3\",null,{\"children\":\"1. AI 闭环不能污染原有功能\"}]\n58:[\"$\",\"p\",null,{\"children\":\"如果原系统已经有稳定测验功能，AI 接入应该先叠加，而不是替换。\"}]\n59:[\"$\",\"h3\",null,{\"children\":\"2. Store 自己必须保护工作流边界\"}]\n5a:[\"$\",\"p\",null,{\"children\":\"不能只靠页面\\\"理论上不会乱点\\\"。\"}]\n5b:[\"$\",\"p\",null,{\"children\":\"只要一个状态写入会影响 work"])</script><script>self.__next_f.push([1,"flow，就要在 store 里做阶段保护。\"}]\n5c:[\"$\",\"h3\",null,{\"children\":\"3. 工作流重启时必须清旧状态\"}]\n5d:[\"$\",\"p\",null,{\"children\":\"新一轮流程最容易踩的坑就是：\"}]\n5e:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"旧的衍生状态没清掉\"}],\"\\n\"]}]\n5f:[\"$\",\"p\",null,{\"children\":\"这类 bug 在 AI 产品里会非常隐蔽，因为看起来像\\\"模型回错了\\\"，实际上是状态污染。\"}]\n60:[\"$\",\"h3\",null,{\"children\":\"4. AI 反馈是第二层，不是替代层\"}]\n61:[\"$\",\"p\",null,{\"children\":\"Task 8 最重要的产品取舍就是：\"}]\n62:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"基础测验继续存在\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"AI 反馈作为附加增强层\"}],\"\\n\"]}]\n63:[\"$\",\"p\",null,{\"children\":\"这能显著降低改造风险。\"}]\n64:[\"$\",\"h2\",null,{\"children\":\"你可以自己复现什么\"}]\n65:[\"$\",\"h3\",null,{\"children\":\"跑 Task 8 针对测试\"}]\n66:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"node --test tests/ai-quiz-reflection.test.js -v\\n\"}]}]\n67:[\"$\",\"h3\",null,{\"children\":\"跑关联测试\"}]\n68:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"node --test tests/ai-payloads.test.js tests/ai-study-session.test.js tests/quiz-daily-attempts.test.js tests/ai-quiz-reflection.test.js -v\\n\"}]}]\n69:[\"$\",\"h3\",null,{\"children\":\"跑构建\"}]\n6a:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"npm run build\\n\"}]}]\n6b:[\"$\",\"h3\",null,{\"children\":\"看 Task 8 的关键提交\"}]\n6c:[\"$\",\"pre\",null,{\"children\":[\"$\",\"code\",null,{\"className\":\"language-bash\",\"children\":\"git log --oneline -5\\n\"}]}]\n6d:[\"$\",\"p\",null,{\"children\":\"你会看到大致这几类演进：\"}]\n6e:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"初始 AI quiz/reflection 接线\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"修基础测验不被阻断\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"修错误阶段写回问题\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"修 completed run 重启时的状态污染\"}],\"\\n\"]}]\n6f:[\"$\",\"h2\",null,{\"children\":\"这一步你应该学会什么\"}]\n70:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"如何把 AI 能力叠加到已有测验系统上\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么 store 必须自己守阶段边界\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么 run restart 需要清理旧的派生状态\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么 contextual quiz 只能在正确阶段出现\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"为什么\\\"自动生成复盘\\\"也要有严格阶段保护\"}],\"\\n\"]}]\n71:[\"$\",\"h2\",null,{\"children\":\"下一步会做什么\"}]\n72:[\"$\",\"p\",null,{\"children\":[\"下一步是 \",[\"$\",\"code\",null,{\"children\":\"Task 9\"}],\"：\"]}]\n73:[\"$\",\"ul\",null,{\"children\":[\"\\n\",[\"$\",\"li\",null,{\"children\":\"文档\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"环境变量\"}],\"\\n\",[\"$\",\"li\",null,{\"children\":\"最终验证\"}],\"\\n\"]}]\n74:[\"$\",\"p\",null,{\"children\":\"也就是说，接下来要做的是把前面 1 到 8 步形成的 AI 工作流改造，整理成真正可交付、可运行、可复现的项目闭环。\"}]\n"])</script><script>self.__next_f.push([1,"e:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"c:null\n10:[[\"$\",\"title\",\"0\",{\"children\":\"LLM 学习工作流（八）：AI 测验、批改与复盘闭环 | QingWaaa\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"把 AI 能力接到学习完成之后的反馈闭环：buildAiQuizPayload、store 自守阶段边界、contextual quiz 叠加而非替换、run restart 清理衍生状态。AI 反馈是第二层增强，不是替代层。\"}],[\"$\",\"meta\",\"2\",{\"name\":\"keywords\",\"content\":\"developer,AI,LLM,robotics,ROS2,full-stack,Qt,Next.js\"}]]\n"])</script></body></html>

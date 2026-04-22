@@ -1,0 +1,378 @@
+---
+title: "LLM 学习工作流（八）：AI 测验、批改与复盘闭环"
+date: 2026-04-21
+tags: ["AI", "LLM", "测验", "复盘", "状态机", "工程实践"]
+categories: ["AI 应用开发"]
+summary: "把 AI 能力接到学习完成之后的反馈闭环：buildAiQuizPayload、store 自守阶段边界、contextual quiz 叠加而非替换、run restart 清理衍生状态。AI 反馈是第二层增强，不是替代层。"
+---
+
+## 这一步在做什么
+
+这一步开始把 AI 能力真正接到"学习完成之后"的反馈闭环里。
+
+在 Task 7 之前，我们已经做到：
+
+- AI 计划会影响学习页
+- 推荐词会优先进入学习流程
+- 学到一定程度后才能进入下一阶段
+
+但还没有形成完整闭环：
+
+- 学完之后怎么测
+- 测完之后怎么回看
+- 错题和下一步建议放在哪里
+
+Task 8 做的就是：
+
+**把测验结果、复盘摘要和后续建议接起来。**
+
+最终主要涉及：
+
+- `src/utils/ai-payloads.js`
+- `src/stores/aiCoach.js`
+- `src/views/StudyQuiz.vue`
+- `src/views/AICoach.vue`
+- `tests/ai-quiz-reflection.test.js`
+
+## 这一步为什么重要
+
+很多 AI 学习产品只做到：
+
+- 给你一个计划
+- 给你一个聊天框
+
+但真正有价值的系统通常还要有：
+
+- 测验
+- 反馈
+- 复盘
+- 下一步建议
+
+也就是说，AI 不只是帮助你开始学习，还要帮助你收尾、总结和进入下一轮。
+
+所以 Task 8 的核心不是"多加几个页面文案"，而是：
+
+**把 AI 加进学习后的评价环节。**
+
+## 一开始做了什么
+
+第一版提交是：
+
+- `5b94c135` `feat: add ai quiz reflection flow`
+
+这一版已经做了几件正确的事情：
+
+### 1. 新增 `buildAiQuizPayload`
+
+在 `src/utils/ai-payloads.js` 里新增：
+
+```js
+buildAiQuizPayload({
+  runId,
+  learnedWords,
+  planTasks,
+})
+```
+
+这个 payload 是后面服务端真正生成 AI 上下文测验时的输入基础。
+
+### 2. `aiCoach` store 开始保存测验和复盘状态
+
+这一步引入了：
+
+- `quizRequest`
+- `quizResults`
+- `reflection`
+
+这说明 AI coach 不再只是"计划状态存储"，而是开始承担：
+
+- 学习后反馈存储
+- 复盘状态存储
+
+### 3. StudyQuiz 结束后同步结果给 AI Coach
+
+在 `src/views/StudyQuiz.vue` 里，当用户答完题后，会把：
+
+- 正确率
+- 错题
+- 用户答案
+- 正确答案
+
+同步进 `aiCoach` store。
+
+### 4. AICoach 页面开始展示复盘内容
+
+在 `src/views/AICoach.vue` 里，开始出现：
+
+- 当前测验上下文
+- 最近一次测验
+- AI 复盘摘要
+- 下一步建议
+
+这让 `/coach` 不再只是空壳，而是开始有"学习后结果页"的味道。
+
+## 第一轮核心问题：不要破坏已有基础测验
+
+Task 8 最开始最容易犯的错是：
+
+- 一接 AI，就把原来的测验入口改坏
+
+review 当时指出了一个重要问题：
+
+- 不能因为 planned study active，就把原有基础测验直接挡掉
+
+因为本项目原本就已经有一套：
+
+- 选择题
+- 拼写题
+- 本地评分
+
+所以正确做法不是：
+
+- 用 AI 测验替换掉原测验
+
+而是：
+
+- 保留原测验
+- 在其上追加 AI/contextual quiz support
+
+这就是为什么后来改成：
+
+### 基础测验继续存在
+
+用户仍然可以基于：
+
+- `learningStore.learnedWordsInSession`
+
+进入基础测验。
+
+### AI 上下文题作为追加层
+
+只有在合适时机，才往已有题目后面追加 contextual questions。
+
+这一步体现了一个非常重要的工程原则：
+
+**新能力优先叠加，而不是直接替换稳定功能。**
+
+## 第二轮核心问题：AI 结果不能在错误阶段写回
+
+这是 Task 8 里最关键的工作流边界问题。
+
+如果用户：
+
+- 没到 `quiz_ready`
+- 甚至没有 active run
+- 只是直接打开 `/study/quiz`
+
+那么即使用户答题完成，也不能把结果算进 AI workflow。
+
+否则就会发生：
+
+- 普通测验结果污染 AI Coach
+- 错误阶段提前进入复盘
+- 计划流程状态失真
+
+因此，后来在 `src/stores/aiCoach.js` 里加了真正的阶段保护：
+
+### `saveQuizResults()`
+
+只有当：
+
+- `activeRun` 存在
+- `currentStage === 'quiz_ready'`
+
+时才允许写入。
+
+### `summarizeReflection()`
+
+只有当：
+
+- `activeRun` 存在
+- `currentStage === 'reflecting'`
+
+时才允许生成复盘。
+
+这一步你一定要记住：
+
+**真正的工作流系统不能只靠页面按钮来控制流程，store 自己也必须有防线。**
+
+## 第三轮问题：重启新一轮计划时，旧测验状态不能残留
+
+这也是一个非常经典的状态泄漏问题。
+
+如果一轮计划已经 `completed`，然后又开始新一轮学习，旧的：
+
+- `quizRequest`
+- `quizResults`
+- `reflection`
+
+不能继续留在 store 里。
+
+否则就会出现：
+
+- 新 run 已经开始
+- 页面还显示上一轮的错题和复盘
+
+这会让 AI coach 的状态完全混乱。
+
+所以后来在 `startPlannedStudy()` 里加了：
+
+### completed run restart cleanup
+
+如果检测到当前 run 是 `completed`，重新开始时会先清掉：
+
+- `quizRequest`
+- `quizResults`
+- `reflection`
+
+这说明：
+
+**工作流重启不只是改 stage，还必须清理与上一轮绑定的衍生状态。**
+
+## 第四轮问题：contextual quiz 什么时候该出现
+
+Task 8 里还有一个微妙问题：
+
+如果 contextual questions 始终存在，那么：
+
+- 在错误阶段打开 quiz
+- 或重新测一次
+
+都可能看到不该出现的上下文题。
+
+所以最后把规则收紧成：
+
+- 基础测验一直在
+- contextual questions 只在 `activeRun.currentStage === 'quiz_ready'` 时追加
+
+这样就实现了：
+
+### 基础流不受影响
+
+普通学习会话仍然能测验。
+
+### AI 流有额外上下文
+
+只有在 AI 工作流正确推进到测验阶段时，才追加计划上下文题。
+
+## 这一步最终做成了什么
+
+### Payload 层
+
+现在已经有：
+
+- `buildAiQuizPayload()`
+- `buildReflectionPayload()`
+
+### Store 层
+
+`aiCoach` store 现在可以存：
+
+- quiz request
+- quiz results
+- reflection payload
+- blockers
+- next actions
+
+### 页面层
+
+`StudyQuiz.vue` 现在：
+
+- 保留原有本地测验
+- 在正确阶段追加 contextual questions
+- 完成后把结果写回 AI coach
+
+`AICoach.vue` 现在：
+
+- 能展示最近测验结果
+- 能展示错题说明
+- 能展示 AI 复盘摘要
+- 能展示下一步建议
+
+### 阶段层
+
+现在流程上已经有一个更完整的阶段链：
+
+- `quiz_ready`
+- `reflecting`
+- `completed`
+
+## 这一步真正学到什么
+
+### 1. AI 闭环不能污染原有功能
+
+如果原系统已经有稳定测验功能，AI 接入应该先叠加，而不是替换。
+
+### 2. Store 自己必须保护工作流边界
+
+不能只靠页面"理论上不会乱点"。
+
+只要一个状态写入会影响 workflow，就要在 store 里做阶段保护。
+
+### 3. 工作流重启时必须清旧状态
+
+新一轮流程最容易踩的坑就是：
+
+- 旧的衍生状态没清掉
+
+这类 bug 在 AI 产品里会非常隐蔽，因为看起来像"模型回错了"，实际上是状态污染。
+
+### 4. AI 反馈是第二层，不是替代层
+
+Task 8 最重要的产品取舍就是：
+
+- 基础测验继续存在
+- AI 反馈作为附加增强层
+
+这能显著降低改造风险。
+
+## 你可以自己复现什么
+
+### 跑 Task 8 针对测试
+
+```bash
+node --test tests/ai-quiz-reflection.test.js -v
+```
+
+### 跑关联测试
+
+```bash
+node --test tests/ai-payloads.test.js tests/ai-study-session.test.js tests/quiz-daily-attempts.test.js tests/ai-quiz-reflection.test.js -v
+```
+
+### 跑构建
+
+```bash
+npm run build
+```
+
+### 看 Task 8 的关键提交
+
+```bash
+git log --oneline -5
+```
+
+你会看到大致这几类演进：
+
+- 初始 AI quiz/reflection 接线
+- 修基础测验不被阻断
+- 修错误阶段写回问题
+- 修 completed run 重启时的状态污染
+
+## 这一步你应该学会什么
+
+- 如何把 AI 能力叠加到已有测验系统上
+- 为什么 store 必须自己守阶段边界
+- 为什么 run restart 需要清理旧的派生状态
+- 为什么 contextual quiz 只能在正确阶段出现
+- 为什么"自动生成复盘"也要有严格阶段保护
+
+## 下一步会做什么
+
+下一步是 `Task 9`：
+
+- 文档
+- 环境变量
+- 最终验证
+
+也就是说，接下来要做的是把前面 1 到 8 步形成的 AI 工作流改造，整理成真正可交付、可运行、可复现的项目闭环。
